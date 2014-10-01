@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.opentestsystem.delivery</groupId>
+  <artifactId>tds-itemselection-aironline</artifactId>
+  <version>0.0.1</version>
+  <packaging>jar</packaging>
+
+  <name>TDS Item Selection AIR Online</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.opentestsystem.delivery</groupId>
+    	<artifactId>tds-itemselection-common</artifactId>
+    	<version>0.0.1</version>
+    </dependency>
+		<dependency>
+			<groupId>org.opentestsystem.delivery</groupId>
+			<artifactId>tds-itemselection-impl</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+	<dependency>
+		<groupId>org.opentestsystem.shared</groupId>
+		<artifactId>shared-db-test</artifactId>
+		<scope>test</scope>
+		<version>1.0.1</version>
+	</dependency>
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-log4j12</artifactId>
+		<version>1.7.5</version>
+		<scope>test</scope>
+	</dependency>		
+	<dependency>
+		<groupId>com.mchange</groupId>
+		<artifactId>c3p0</artifactId>
+		<version>0.9.2.1</version>
+		<scope>test</scope>
+	</dependency>
+  </dependencies>
+  <description>Output points of the project ItemSelectionShell.
+Invoke from SelectionService</description>
+  <parent>
+  	<groupId>org.opentestsystem.delivery</groupId>
+  	<artifactId>tds-itemselection-master</artifactId>
+  	<version>0.0.1</version>
+  </parent>
+</project>

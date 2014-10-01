@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<!-- TDSSettings bean. This gives access to clientname and any other info 
+		such as session type etc. -->
+	<!-- Needed for @Autowired all beans -->
+	<context:component-scan
+		base-package="tds.itemselection.dll,
+  						tds.itemselection.fixedform, 
+  						tds.student.dll.test, 
+  						tds.dll.mysql, 
+  						tds.dll.mssql" />
+	<import resource="classpath:opentestsystem.shared.test-db-context-module.xml" />
+
+	<bean id="tdsSettings" class="TDS.Shared.Configuration.TDSSettingsNoWeb" scope="prototype"/>	
+	<!--  Repositories -->
+	
+	<!-- AIROnline -->
+	<!-- <bean id="aironline" class="tds.itemselection.aironline.AIROnline2" /> -->
+	<!-- <bean id="aironline" class="tds.itemselection.aironline.AIROnline2012" /> -->
+	<bean id="aironline" class="tds.itemselection.aironline.AIROnline2013" />
+	
+
+	<!-- ItemSelectors -->
+
+	<bean id="ffSelector" class="tds.itemselection.algorithms.FixedFormSelector" />
+	<bean id="ftSelector" class="tds.itemselection.algorithms.FieldTestSelector" />
+	<bean id="aaSelector" class="tds.itemselection.algorithms.AdaptiveSelector" />
+	<bean id="aa2Selector" class="tds.itemselection.algorithms.AdaptiveSelector2" />
+	<bean id="aa2013Selector" class="tds.itemselection.algorithms.AdaptiveSelector2013" />
+	
+	<!-- Loader -->
+	<bean id="aa2DBLoader" class="tds.itemselection.loader.AA2DBLoader " />
+	<bean id="itemDBLoader" class="tds.itemselection.loader.ISDBLoader " />
+
+	<!-- DLLs -->
+	<bean id="iCommonDLL" class="tds.dll.mysql.CommonDLL" />
+	<bean id="iStudentDLL" class="tds.dll.mysql.StudentDLL" />
+	<bean id="itemSelDLL" class="tds.dll.mysql.ItemSelectionDLL " />
+	<bean id="iProctorDLL" class="tds.dll.mysql.ProctorDLL" />
+	<bean id="iRtsDLL" class="tds.dll.mysql.RtsDLL" primary="true" />
+	<bean id="rtsPackageDLL" class="tds.dll.mysql.RtsPackageDLL" />
+	<bean id="irepDLL" class="tds.dll.mysql.ReportingDLL" />
+	
+	<!-- DDLHelper -->
+	<bean id="dllHelper" class="tds.itemselection.algorithms.DLLHelper" /> 
+	<!--  bean id="dllHelper" class="tds.itemselection.debug.DLLHelper" />-->
+
+	<!-- Current timestamp source -->
+	<bean id="abstractDateUtilDll" class="tds.dll.mysql.DateUtilDLL" />
+	
+	<bean id="abstractConnectionManager" class="AIR.Common.DB.AbstractConnectionManager">
+		<property name="databaseDialect" value="${DBDialect}"/>
+		<property name="dataSource" ref="applicationDataSource"/>
+	</bean>
+	
+
+</beans>
