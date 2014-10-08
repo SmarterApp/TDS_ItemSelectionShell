@@ -39,7 +39,7 @@ import tds.itemselection.impl.blueprint.BpElement;
 import tds.itemselection.impl.blueprint.Blueprint;
 import tds.itemselection.impl.blueprint.ReportingCategory;
 import tds.itemselection.loader.IItemSelectionDBLoader;
-import tds.itemselection.loader.StudentHistory2012;
+import tds.itemselection.loader.StudentHistory2013;
 import tds.itemselection.loader.TestSegment;
 
 @RunWith (LifecycleManagingTestRunner.class)
@@ -199,7 +199,7 @@ public class TestAA2DBLoader {
 		_logger.info("Oppkey =  " + OPPKEY);
 		double percent = 0.;
 		
-		StudentHistory2012 stHistory = null;
+		StudentHistory2013 stHistory = null;
 		
 		try {
 			loader.setConnection(_connection);
@@ -287,7 +287,7 @@ public class TestAA2DBLoader {
 		UUID oppkey = (UUID.fromString(OPPKEY));
 		_logger.info("Oppkey =  " + OPPKEY);
 		
-		StudentHistory2012 stHistory = null;
+		StudentHistory2013 stHistory = null;
 		
 		try {
 			loader.setConnection(_connection);

@@ -16,9 +16,9 @@
 	</modules>
 	
 	<scm>
-        <connection>scm:hg:https://bitbucket.org/sbacoss/itemselectionshelldev</connection>
-        <developerConnection>scm:hg:https://bitbucket.org/sbacoss/itemselectionshelldev</developerConnection>
-        <url>https://bitbucket.org/sbacoss/itemselectionshelldev</url>
+        <connection>scm:hg:https://bitbucket.org/sbacoss/itemselectionshell_release</connection>
+        <developerConnection>scm:hg:https://bitbucket.org/sbacoss/itemselectionshell_release</developerConnection>
+        <url>https://bitbucket.org/sbacoss/itemselectionshell_release</url>
     </scm>
 
 	<licenses>
@@ -171,12 +171,5 @@
 		</plugins>
 	</reporting>
 	
-	<distributionManagement>
-       <repository>
-            <id>central</id>
-            <name>libs-releases</name>
-            <url>http://airdev.artifactoryonline.com/airdev/libs-releases-local</url>
-        </repository>
-    </distributionManagement>
 
 </project>

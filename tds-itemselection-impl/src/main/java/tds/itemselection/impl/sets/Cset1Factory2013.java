@@ -30,7 +30,7 @@ import tds.itemselection.impl.bpmatchcomputation.BlueprintMatchComputation;
 import tds.itemselection.impl.item.CsetItem;
 import tds.itemselection.impl.item.PruningStrategy;
 import tds.itemselection.loader.IItemSelectionDBLoader;
-import tds.itemselection.loader.StudentHistory2012;
+import tds.itemselection.loader.StudentHistory2013;
 import tds.itemselection.loader.TestSegment;
 
 public class Cset1Factory2013 {
@@ -119,7 +119,7 @@ public class Cset1Factory2013 {
 
 	 public Cset1 MakeCset1 () throws ItemSelectionException
 	  {
-	    StudentHistory2012 oppHData =  loader.loadOppHistory (oppkey, segment.getSegmentKey ());
+	    StudentHistory2013 oppHData =  loader.loadOppHistory (oppkey, segment.getSegmentKey ());
 	    
 	    customPool 		= oppHData.get_itemPool();
 	    previousGroups 	= oppHData.get_previousTestItemGroups();

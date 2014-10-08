@@ -44,7 +44,7 @@ import tds.itemselection.impl.sets.CsetGroup;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.SegmentCollection2;
 import tds.itemselection.loader.StudentAbility;
-import tds.itemselection.loader.StudentHistory2012;
+import tds.itemselection.loader.StudentHistory2013;
 import tds.itemselection.loader.TestSegment;
 
 /**
@@ -82,7 +82,7 @@ public class AdaptiveSelector2   extends AbstractAdaptiveSelector  implements II
     /**
      * Past test history of the student 
      */
-    private StudentHistory2012 _studentHistory = new StudentHistory2012();
+    private StudentHistory2013 _studentHistory = new StudentHistory2013();
 
     /**
      * Select the next item group to be administered

@@ -108,7 +108,7 @@ public class AIROnline2012 implements IAIROnline {
 		} catch (Exception e) {
 	    	errorRef.set( e.getMessage());
 	    	//TODO insert into SystemErrors
-			_logger.error(errorRef.get());
+			_logger.error(errorRef.get(),e);
 		} 
 	    
 		return result;

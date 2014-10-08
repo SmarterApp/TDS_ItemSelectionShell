@@ -169,10 +169,10 @@ public class ISDBLoader extends AbstractDBLoader implements IItemSelectionDBLoad
   // list of ItemResponse objects</param>
   // / <param name="startAbility">Return this testopp start ability</param>
   // / <returns></returns>
-  public StudentHistory2012 loadOppHistory (UUID oppkey,
+  public StudentHistory2013 loadOppHistory (UUID oppkey,
       String segmentKey) throws ItemSelectionException {
 
-    StudentHistory2012 result = new StudentHistory2012 ();
+    StudentHistory2013 result = new StudentHistory2013 ();
 
     Integer position = null;
     String itemgroupString = null;

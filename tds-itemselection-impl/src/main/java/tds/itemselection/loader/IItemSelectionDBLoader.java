@@ -72,7 +72,7 @@ public interface IItemSelectionDBLoader
    * @return
    * @throws ItemSelectionException 
    */
-  public StudentHistory2012 loadOppHistory (UUID oppkey, String segmentKey) throws ItemSelectionException;
+  public StudentHistory2013 loadOppHistory (UUID oppkey, String segmentKey) throws ItemSelectionException;
   /**
    * 
    * @param oppkey

@@ -161,9 +161,9 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 
 
 	@Override
-	public StudentHistory2012 loadOppHistory(UUID oppkey, String segmentKey)
+	public StudentHistory2013 loadOppHistory(UUID oppkey, String segmentKey)
 			throws ItemSelectionException {
-		StudentHistory2012 studentHistory = new StudentHistory2012();
+		StudentHistory2013 studentHistory = new StudentHistory2013();
 
 		SingleDataResultSet res;
 		try {
