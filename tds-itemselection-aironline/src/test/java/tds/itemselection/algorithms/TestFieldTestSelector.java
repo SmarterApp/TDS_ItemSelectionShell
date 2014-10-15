@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import tds.itemselection.DLLHelper;
 import tds.itemselection.api.IItemSelection;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
@@ -161,12 +162,10 @@ public class TestFieldTestSelector {
 
 		ItemGroup itemGr;
 		ItemCandidatesData itemCandidates = null;
-		//IItemSelectionDBLoader loader = new ISDBLoader();
-		loader.setConnection(_connection);
 
 		try {
 
-			itemCandidates = loader.getItemCandidates(oppkey);
+			itemCandidates = loader.getItemCandidates(_connection, oppkey);
 			if (_debug) {
 				itemCandidates.dumpDebugItemCandidatesData();
 			}
@@ -264,10 +263,8 @@ public class TestFieldTestSelector {
 						try {
 							ItemGroup itemGr;
 							ItemCandidatesData itemCandidates = null;
-							//IItemSelectionDBLoader loader = new ISDBLoader();
-							loader.setConnection(_connection);
 
-							itemCandidates = loader.getItemCandidates(oppkey);
+							itemCandidates = loader.getItemCandidates(_connection, oppkey);
 							if (_debug) {
 								itemCandidates.dumpDebugItemCandidatesData();
 							}

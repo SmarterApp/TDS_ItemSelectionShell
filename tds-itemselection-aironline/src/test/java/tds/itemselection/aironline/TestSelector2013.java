@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 
 import TDS.Shared.Exceptions.ReturnStatusException;
-import tds.itemselection.algorithms.DLLHelper;
+import tds.itemselection.DLLHelper;
 import tds.itemselection.algorithms.TestAdaptiveSelector2;
 import tds.itemselection.api.IItemSelection;
 import tds.itemselection.base.ItemCandidatesData;
@@ -50,7 +50,7 @@ public class TestSelector2013 {
 	private IItemSelection itemSelector = null;
 
 	@Autowired
-	@Qualifier("aa2DBLoader")
+	@Qualifier("aa2013Selector")
 	private IItemSelectionDBLoader loader = null;
 
 	@Autowired
@@ -109,9 +109,8 @@ public class TestSelector2013 {
 
 			ItemGroup itemGr;
 			ItemCandidatesData itemCandidates = null;
-			loader.setConnection(_connection);
 
-			itemCandidates = loader.getItemCandidates(oppkey);
+			itemCandidates = loader.getItemCandidates(_connection, oppkey);
 			if (_debug) {
 				itemCandidates.dumpDebugItemCandidatesData();
 				//itemCandidates.dumpItemCandidatesData ();

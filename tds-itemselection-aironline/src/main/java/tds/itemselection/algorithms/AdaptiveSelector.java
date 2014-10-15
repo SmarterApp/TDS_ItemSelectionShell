@@ -68,9 +68,6 @@ public class AdaptiveSelector  extends AbstractAdaptiveSelector implements IItem
   public ItemGroup getNextItemGroup (SQLConnection connection,
 			ItemCandidatesData itemData) throws ItemSelectionException {
 	  
-	// New connection. Old connection can be closed: Error: "PooledConnection has already been closed"
-	loader.setConnection(connection);
-
     final String messageTemplate = "Exception %1$s executing adaptive algorithm. Exception error: %2$s";
 
     ItemGroup result = null;
@@ -81,7 +78,7 @@ public class AdaptiveSelector  extends AbstractAdaptiveSelector implements IItem
       itemCandidates = itemData;
 
       SegmentCollection segs = SegmentCollection.getInstance ();
-      segment = segs.getSegment (itemCandidates.getSession (), itemCandidates.getSegmentKey (), loader);
+      segment = segs.getSegment (connection, itemCandidates.getSession (), itemCandidates.getSegmentKey (), loader);
       if (segment == null)
       {
         error = "Unable to load blueprint";
@@ -89,7 +86,7 @@ public class AdaptiveSelector  extends AbstractAdaptiveSelector implements IItem
         throw new ItemSelectionException (error);
       }
 
-      result = selectNext ();
+      result = selectNext (connection);
 
       if (result == null) {
         error = "Adaptive item selection failed: Unknown error";
@@ -117,10 +114,10 @@ public class AdaptiveSelector  extends AbstractAdaptiveSelector implements IItem
    *  2. Compute second candidate itemgroup set CSET2
    *  3. Return best itemgroup within CSET2
    */
-  public ItemGroup selectNext () throws ItemSelectionException {
+  public ItemGroup selectNext (SQLConnection connection) throws ItemSelectionException {
 
     csetFactory = new  Cset1Factory(itemCandidates.getOppkey (), loader, segment);
-    cset1 = csetFactory.MakeCset1 ();
+    cset1 = csetFactory.MakeCset1 (connection);
     this.blueprint = cset1.getBlueprint ();
 
     if (this.cset1.itemGroups.size () < 1)
@@ -165,7 +162,7 @@ public class AdaptiveSelector  extends AbstractAdaptiveSelector implements IItem
       // Idea: we don't return the best group. We return random group between n first.
       // Parameter n = 4---6 ???
       int index = rand.nextInt (n);
-      cg = (CsetGroup) cset1.itemGroups.get (index);
+      cg = cset1.itemGroups.get (index);
 
       cg.sort (blueprint.itemWeight);
       this.PruneItemgroup (cg);

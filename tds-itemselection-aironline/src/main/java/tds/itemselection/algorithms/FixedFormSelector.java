@@ -32,15 +32,12 @@ public class FixedFormSelector  extends AbstractItemSelector  implements IItemSe
 	  private static Logger  _logger  = LoggerFactory.getLogger (FixedFormSelector.class);
 
 	  public ItemGroup getNextItemGroup (SQLConnection connection, ItemCandidatesData itemCandidates) throws ItemSelectionException {
-
-		// New connection. Old connection can be closed: Error: "PooledConnection has already been closed"
-		loader.setConnection(connection);
 		
 	    final String messageTemplate = "Exception %1$s executing fixed form selection algorithm. Exception error: %2$s";
  
 	    ItemGroup result = null;
 	    try {
-	      result = loader.getItemGroup (itemCandidates.getOppkey(), itemCandidates.getSegmentKey (), 
+	      result = loader.getItemGroup (connection, itemCandidates.getOppkey(), itemCandidates.getSegmentKey (), 
 	          itemCandidates.getGroupID (), itemCandidates.getBlockID (), false); 
 	    } catch (Exception e)
 	    {

@@ -31,7 +31,7 @@ public interface IItemSelectionDBLoader
    * @throws ReturnStatusException
    * @throws SQLException
    */
-  public ItemCandidatesData getItemCandidates (UUID oppkey) throws ReturnStatusException, SQLException;
+  public ItemCandidatesData getItemCandidates (SQLConnection connection, UUID oppkey) throws ReturnStatusException, SQLException;
   
   /**
    * 
@@ -43,28 +43,16 @@ public interface IItemSelectionDBLoader
    * @return
    * @throws ReturnStatusException
    */
-  public ItemGroup getItemGroup (UUID oppkey, String segmentKey, String groupID,
+  public ItemGroup getItemGroup (SQLConnection connection, UUID oppkey, String segmentKey, String groupID,
       String blockID, Boolean isFieldTest) throws ReturnStatusException;
    /**
-   * 
-   * @param connection
-   * @throws ItemSelectionException
-   */
-  public void setConnection(SQLConnection connection);
-
-  /**
-   * @return
-   */
-  public SQLConnection getConnection ();
-
-  /**
    * @param segmentKey
    * @param seg
    * @param sessionKey
    * @throws ItemSelectionException 
    * @throws ReturnStatusException 
    */
-  public void loadSegment (String segmentKey, TestSegment seg, UUID sessionKey) throws ReturnStatusException, ItemSelectionException;
+  public void loadSegment (SQLConnection connection, String segmentKey, TestSegment seg, UUID sessionKey) throws ReturnStatusException, ItemSelectionException;
 
   /**
    * @param oppkey
@@ -72,7 +60,7 @@ public interface IItemSelectionDBLoader
    * @return
    * @throws ItemSelectionException 
    */
-  public StudentHistory2013 loadOppHistory (UUID oppkey, String segmentKey) throws ItemSelectionException;
+  public StudentHistory2013 loadOppHistory (SQLConnection connection, UUID oppkey, String segmentKey) throws ItemSelectionException;
   /**
    * 
    * @param oppkey
@@ -81,5 +69,5 @@ public interface IItemSelectionDBLoader
    * @return
  * @throws ReturnStatusException 
    */
-  public boolean SetSegmentSatisfied(UUID oppkey, Integer segmentPosition, String reason) throws ReturnStatusException;
+  public boolean SetSegmentSatisfied(SQLConnection connection, UUID oppkey, Integer segmentPosition, String reason) throws ReturnStatusException;
 }

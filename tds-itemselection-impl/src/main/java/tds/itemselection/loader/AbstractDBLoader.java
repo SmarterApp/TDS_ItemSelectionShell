@@ -25,16 +25,7 @@ import TDS.Shared.Exceptions.ReturnStatusException;
 
 public abstract class AbstractDBLoader implements IItemSelectionDBLoader {
 
-	protected SQLConnection   connection;
 	
-	public SQLConnection getConnection() {
-		return connection;
-	}
-
-	public void setConnection(SQLConnection connection) {
-		this.connection = connection;
-	}
-
 	@Autowired
 	IItemSelectionDLL iSelDLL = null;
 
@@ -42,7 +33,7 @@ public abstract class AbstractDBLoader implements IItemSelectionDBLoader {
 			.getLogger(AbstractDBLoader.class);
 
 	@Override
-	public ItemCandidatesData getItemCandidates(UUID oppkey)
+	public ItemCandidatesData getItemCandidates(SQLConnection connection, UUID oppkey)
 			throws ReturnStatusException, SQLException {
 		ItemCandidatesData res = null;
 

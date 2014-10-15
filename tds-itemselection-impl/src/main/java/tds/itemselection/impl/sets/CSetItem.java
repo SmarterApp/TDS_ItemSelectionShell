@@ -271,5 +271,20 @@ public class CSetItem extends CsetItem
         
         selectionMetric = (bpWeight * bpMetric) + (abilityWeight * abilityMetric) + (rcAbilityWeight * rcAbilityMetric);
     }
+    // New variant for AIROnline2013: on 1.0 less then for AIROnline2012
+    // / <summary>
+    // / Normalize the ability match. Blueprint metric still undefined
+    // / </summary>
+    // / <param name="abilityMatch"></param>
+    // / <param name="bpWeight"></param>
+    @Override
+    public void setAbilityMetric (double minAbility, double maxAbility)
+    {
+      if (Math.abs (maxAbility - minAbility) < .001)
+        abilityMetric = 1.0;
+      else
+        abilityMetric = (abilityMatch - minAbility) / (maxAbility - minAbility);
+    }
+
 
 }

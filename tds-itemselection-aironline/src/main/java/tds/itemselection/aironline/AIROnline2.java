@@ -42,9 +42,9 @@ public class AIROnline2  implements IAIROnline {
 	 @Qualifier ("aa2Selector")
 	 private IItemSelection aa2Selector;
 
-	  private static Logger  _logger  = LoggerFactory.getLogger (AIROnline2.class);
+	 private static Logger  _logger  = LoggerFactory.getLogger (AIROnline2.class);
 	  
-	  private boolean _debug = true;
+	 private boolean _debug = true;
 
 	public ItemGroup getNextItemGroup(SQLConnection connection, UUID oppkey, _Ref<String> errorRef)
 			throws ReturnStatusException {
@@ -53,11 +53,10 @@ public class AIROnline2  implements IAIROnline {
 	    ItemCandidatesData itemCandidates = null;
 	    IItemSelection selector = null;
 	    String algorithm = null;
-	    loader.setConnection (connection);
 
 		try {
 
-			itemCandidates = loader.getItemCandidates(oppkey);
+			itemCandidates = loader.getItemCandidates(connection, oppkey);
 
 			if (!itemCandidates.getIsSimulation())
 				itemCandidates.setSession(null);
@@ -111,7 +110,7 @@ public class AIROnline2  implements IAIROnline {
 		} catch (Exception e) {
 	    	errorRef.set( e.getMessage());
 	    	//TODO insert into SystemErrors
-			_logger.error(errorRef.get(),e);
+			_logger.error(errorRef.get(), e);
 		} 
 		return result;
 	}

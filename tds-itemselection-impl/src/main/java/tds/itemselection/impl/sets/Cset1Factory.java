@@ -20,6 +20,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import AIR.Common.DB.SQLConnection;
 import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.ItemGroup;
 import tds.itemselection.base.TestItem;
@@ -91,9 +92,9 @@ public class Cset1Factory
     // What now?
   }
 
-public Cset1 MakeCset1 () throws ItemSelectionException
+public Cset1 MakeCset1 (SQLConnection connection) throws ItemSelectionException
   {
-    StudentHistory2013 oppHData =  loader.loadOppHistory (oppkey, segment.getSegmentKey ());
+    StudentHistory2013 oppHData =  loader.loadOppHistory (connection, oppkey, segment.getSegmentKey ());
     
     customPool = oppHData.getCustomPool ();
     previousGroups = oppHData.getGroups ();// ArrayList<HashSet<String>> _previousTestItemGroups

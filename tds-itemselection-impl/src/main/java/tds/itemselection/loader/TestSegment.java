@@ -15,6 +15,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import AIR.Common.DB.SQLConnection;
 import AIR.Common.DB.results.DbResultRecord;
 import AIR.Common.DB.results.SingleDataResultSet;
 import tds.itemselection.impl.blueprint.Blueprint;
@@ -153,7 +154,7 @@ public class TestSegment
   // / </summary>
   // / <param name="loader"></param>
   // / <returns></returns>
-  public String load (IItemSelectionDBLoader loader, UUID sessionKey)
+  public String load (SQLConnection connection, IItemSelectionDBLoader loader, UUID sessionKey)
   {
     // This object is shared so the method is subject to race conditions. Ensure
     // that at most one thread is loading this at a time
@@ -174,7 +175,7 @@ public class TestSegment
           // In situation means that data in this object will be altered by the
           // loader. (Reload, below, loads an independent object so is not in
           // situ)
-          loader.loadSegment (segmentKey, seg, sessionKey);
+          loader.loadSegment (connection, segmentKey, seg, sessionKey);
           this.segmentBlueprint = seg.segmentBlueprint;
           this.segmentItemPool = seg.segmentItemPool;
           this.refreshMinutes = seg.refreshMinutes;
@@ -201,7 +202,7 @@ public class TestSegment
   // / </summary>
   // / <param name="loader"></param>
   // / <returns></returns>
-  public TestSegment reload (IItemSelectionDBLoader loader, UUID sessionKey, String error)
+  public TestSegment reload (SQLConnection connection, IItemSelectionDBLoader loader, UUID sessionKey, String error)
   {
     // unlike the first-time loader, return the object loaded so it can be
     // replace this object in the collection
@@ -221,7 +222,7 @@ public class TestSegment
           // objects
           TestSegment seg = new TestSegment (segmentKey, false);
           // Load the segment here // this is main  command!
-          loader.loadSegment (segmentKey, seg, sessionKey);
+          loader.loadSegment (connection, segmentKey, seg, sessionKey);
           seg.loaded = true;
           loading = false;
           seg._lastLoadTime = _lastLoadTime = new Date ();
@@ -261,9 +262,9 @@ public class TestSegment
    * @param sessionKey
    * @param loader
    */
-  public synchronized void Load(UUID sessionKey, IItemSelectionDBLoader loader) throws SQLException, Exception
+  public synchronized void Load(SQLConnection connection, UUID sessionKey, IItemSelectionDBLoader loader) throws SQLException, Exception
   {
-		loader.loadSegment(this.segmentKey, this, sessionKey);
+		loader.loadSegment(connection, this.segmentKey, this, sessionKey);
 		_lastLoadTime = new Date();
   }
   

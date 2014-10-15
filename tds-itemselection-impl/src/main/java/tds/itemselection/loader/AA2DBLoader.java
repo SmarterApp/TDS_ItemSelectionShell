@@ -42,13 +42,13 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 	// public ItemGroup LoadItemGroup(StudentTestOpportunity opportunity, int
 	// isFieldTest) throws SQLException, Exception
 	@Override
-	public ItemGroup getItemGroup(UUID oppkey, String segmentKey,
+	public ItemGroup getItemGroup(SQLConnection connection, UUID oppkey, String segmentKey,
 			String groupID, String blockID, Boolean isFieldTest)
 			throws ReturnStatusException {
 
 		ItemGroup group = new ItemGroup();
 		MultiDataResultSet multiDataResultSet = iSelDLL.AA_GetItemgroup_SP(
-				this.connection, oppkey, segmentKey, groupID, blockID,
+				connection, oppkey, segmentKey, groupID, blockID,
 				isFieldTest, false);
 
 		Iterator<SingleDataResultSet> setItr = multiDataResultSet
@@ -106,7 +106,7 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 	 */
 
 	@Override
-	public void loadSegment(String segmentKey, TestSegment segment,
+	public void loadSegment(SQLConnection connection, String segmentKey, TestSegment segment,
 			UUID sessionKey) throws ReturnStatusException,
 			ItemSelectionException {
 		MultiDataResultSet dataSets = null;
@@ -161,7 +161,7 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 
 
 	@Override
-	public StudentHistory2013 loadOppHistory(UUID oppkey, String segmentKey)
+	public StudentHistory2013 loadOppHistory(SQLConnection connection, UUID oppkey, String segmentKey)
 			throws ItemSelectionException {
 		StudentHistory2013 studentHistory = new StudentHistory2013();
 
@@ -208,10 +208,10 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 	}
 
 	@Override
-	public boolean SetSegmentSatisfied(UUID oppkey, Integer segmentPosition,
+	public boolean SetSegmentSatisfied(SQLConnection connection, UUID oppkey, Integer segmentPosition,
 			String reason) throws ReturnStatusException {
 		
-		return iSelDLL.AA_SetSegmentSatisfied_SP(this.connection, oppkey, segmentPosition, reason);
+		return iSelDLL.AA_SetSegmentSatisfied_SP(connection, oppkey, segmentPosition, reason);
 	}
 
 //===========================================================================================

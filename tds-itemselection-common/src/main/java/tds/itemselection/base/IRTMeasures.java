@@ -100,7 +100,7 @@ public class IRTMeasures
 	    Iterator<Dimension> itDimension = item.dimensions.iterator(); 
 		while(itDimension.hasNext())
 		{
-			Dimension dim = (Dimension) itDimension.next();
+			Dimension dim = itDimension.next();
 			// TODO hasDimensions is outer for Dimension?? 
 	    	if (item.hasDimensions && dim.isOverall)
 	    		continue ;

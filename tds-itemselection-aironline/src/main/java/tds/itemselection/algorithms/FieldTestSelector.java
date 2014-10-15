@@ -34,14 +34,11 @@ public class FieldTestSelector  extends AbstractItemSelector  implements IItemSe
 
   public ItemGroup getNextItemGroup (SQLConnection connection, ItemCandidatesData itemCandidates) throws ItemSelectionException {
 
-	// New connection. Old connection can be closed: Error: "PooledConnection has already been closed"
-	loader.setConnection(connection);
-
     final String messageTemplate = "Exception %1$s executing field test selection algorithm. Exception error: %2$s";
 
     ItemGroup result = null;
     try {
-      result = loader.getItemGroup (itemCandidates.getOppkey(), itemCandidates.getSegmentKey (), 
+      result = loader.getItemGroup (connection, itemCandidates.getOppkey(), itemCandidates.getSegmentKey (), 
           itemCandidates.getGroupID (), itemCandidates.getBlockID (), true); 
     } catch (Exception e)
     {

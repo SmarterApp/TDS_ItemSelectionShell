@@ -91,11 +91,6 @@ public class AdaptiveSelector2   extends AbstractAdaptiveSelector  implements II
     public ItemGroup getNextItemGroup(SQLConnection connection,
 			ItemCandidatesData itemData) throws ItemSelectionException 
     {
-  	  if(loader.getConnection() == null )
-  	  {
-  		  loader.setConnection(connection);
-  	  }
-
         ItemGroup candidateItemGroup = null;
  
         try
@@ -104,12 +99,12 @@ public class AdaptiveSelector2   extends AbstractAdaptiveSelector  implements II
             SegmentCollection2 segs = SegmentCollection2.getInstance();
 
             // Get the segment for this opportunity
-            TestSegment segment = segs.getSegment(itemData.getSession(), itemData.getSegmentKey(), loader);
+            TestSegment segment = segs.getSegment(connection, itemData.getSession(), itemData.getSegmentKey(), loader);
             if (segment == null)
                 throw new ItemSelectionException("Unable to load segment");
 
             // Load the opportunities past history
-            _studentHistory = loader.loadOppHistory(itemData.getOppkey(), itemData.getSegmentKey());
+            _studentHistory = loader.loadOppHistory(connection, itemData.getOppkey(), itemData.getSegmentKey());
 
             // Estimate/Update theta for the student based on past history
             // theta is student ability

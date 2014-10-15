@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import AIR.Common.DB.SQLConnection;
 import TDS.Shared.Exceptions.ReturnStatusException;
 import tds.dll.api.IItemSelectionDLL;
+import tds.itemselection.DLLHelper;
 import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.Dimension;
 import tds.itemselection.base.ItemGroup;
@@ -41,6 +42,7 @@ import tds.itemselection.impl.blueprint.ReportingCategory;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.StudentHistory2013;
 import tds.itemselection.loader.TestSegment;
+
 
 @RunWith (LifecycleManagingTestRunner.class)
 @ContextConfiguration (locations = "/test-context.xml")
@@ -106,8 +108,7 @@ public class TestAA2DBLoader {
 
 		// we test this function
 		try {
-			loader.setConnection(_connection);
-			loader.loadSegment(segmentKey, segment, null);
+			loader.loadSegment(_connection, segmentKey, segment, null);
 		} catch (ReturnStatusException | ItemSelectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -135,8 +136,7 @@ public class TestAA2DBLoader {
 
 		// we test this function
 		try {
-			loader.setConnection(_connection);
-			loader.loadSegment(segmentKey, segment, null);
+			loader.loadSegment(_connection, segmentKey, segment, null);
 		} catch (ReturnStatusException | ItemSelectionException e) {
 			_logger.error(e.getMessage());
 			throw new ReturnStatusException("Load Segment test is failed");
@@ -202,8 +202,7 @@ public class TestAA2DBLoader {
 		StudentHistory2013 stHistory = null;
 		
 		try {
-			loader.setConnection(_connection);
-			stHistory = loader.loadOppHistory(oppkey, segmentKey);
+			stHistory = loader.loadOppHistory(_connection, oppkey, segmentKey);
 		} catch (ItemSelectionException e) {
 			_logger.error(e.getMessage());
 			throw new ReturnStatusException("Load History test is failed");
@@ -240,8 +239,8 @@ public class TestAA2DBLoader {
 
 		// we test this function
 		try {
-			loader.setConnection(_connection);
-			loader.loadSegment(segmentKey, segment, null);
+
+			loader.loadSegment(_connection, segmentKey, segment, null);
 		} catch (ReturnStatusException | ItemSelectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -258,8 +257,7 @@ public class TestAA2DBLoader {
 		TestSegment segment = new TestSegment(segmentKey);
 		// we test this function
 		try {
-			loader.setConnection(_connection);
-			loader.loadSegment(segmentKey, segment, null);
+			loader.loadSegment(_connection, segmentKey, segment, null);
 		} catch (ReturnStatusException | ItemSelectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -290,8 +288,7 @@ public class TestAA2DBLoader {
 		StudentHistory2013 stHistory = null;
 		
 		try {
-			loader.setConnection(_connection);
-			stHistory = loader.loadOppHistory(oppkey, segmentKey);
+			stHistory = loader.loadOppHistory(_connection, oppkey, segmentKey);
 		} catch (ItemSelectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -319,8 +316,7 @@ public class TestAA2DBLoader {
 
 		// we test this function
 		try {
-			loader.setConnection(_connection);
-			loader.loadSegment(segmentKey, segment, null);
+			loader.loadSegment(_connection, segmentKey, segment, null);
 		} catch (ReturnStatusException | ItemSelectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

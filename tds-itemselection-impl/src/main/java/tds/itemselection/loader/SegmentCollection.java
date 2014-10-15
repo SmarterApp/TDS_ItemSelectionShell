@@ -16,6 +16,8 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+import AIR.Common.DB.SQLConnection;
 //import AIR.Common.DB.SQLConnection;
 import TDS.Shared.Exceptions.ReturnStatusException;
 //import tds.dll.api.LogDBErrorArgs;
@@ -90,11 +92,11 @@ public class SegmentCollection
   // / <param name="segmentKey">Database key to the test</param>
   // / <param name="loader">The loader object</param>
   // / <returns></returns>
-  public TestSegment getSegment (UUID sessionKey, String segmentKey, IItemSelectionDBLoader loader ) throws ItemSelectionException, InterruptedException, ReturnStatusException
+  public TestSegment getSegment (SQLConnection connection, UUID sessionKey, String segmentKey, IItemSelectionDBLoader loader ) throws ItemSelectionException, InterruptedException, ReturnStatusException
   {
     if (sessionKey == null) // permits general use of this method, even for
                             // non-simulation environments
-      return getSegment (this._segments, segmentKey, loader, null);
+      return getSegment (connection, this._segments, segmentKey, loader, null);
 
     Map<String, TestSegment> session;
     if (!_sessions.containsKey (sessionKey))
@@ -107,7 +109,7 @@ public class SegmentCollection
     }
 
     session = _sessions.get (sessionKey);
-    return getSegment (session, segmentKey, loader, sessionKey);
+    return getSegment (connection, session, segmentKey, loader, sessionKey);
 
   }
 
@@ -118,7 +120,7 @@ public class SegmentCollection
   // / <param name="loader"></param>
   // / <returns></returns>
   //@SuppressWarnings ("unused")
-  private TestSegment getSegment (Map<String, TestSegment> segments, String segmentKey, IItemSelectionDBLoader loader, UUID sessionKey)
+  private TestSegment getSegment (SQLConnection connection, Map<String, TestSegment> segments, String segmentKey, IItemSelectionDBLoader loader, UUID sessionKey)
       throws ItemSelectionException, InterruptedException, ReturnStatusException
   {
     TestSegment segment;
@@ -144,7 +146,7 @@ public class SegmentCollection
       segment = segments.get (segmentKey);
       if (!segment.loaded)
       {
-        error = segment.load (loader, sessionKey); // the segment enforces its
+        error = segment.load (connection, loader, sessionKey); // the segment enforces its
                                                    // own mutual exclusion on
                                                    // loading
         if (error != null) // only the thread that actually loads the segment
@@ -158,7 +160,7 @@ public class SegmentCollection
                                // periodically.
     { // load into a new segment object. The existing segment controls mutual
       // exclusion.
-      TestSegment newseg = segment.reload (loader, sessionKey, error);
+      TestSegment newseg = segment.reload (connection, loader, sessionKey, error);
       // Log the error, but this is not fatal as we still have the old segment
       // data
 //      if (error != null)

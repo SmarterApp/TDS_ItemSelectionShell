@@ -27,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 import AIR.Common.DB.SQLConnection;
 import AIR.Common.Helpers._Ref;
 import TDS.Shared.Exceptions.ReturnStatusException;
-import tds.itemselection.algorithms.DLLHelper;
+import tds.itemselection.DLLHelper;
 import tds.itemselection.api.IAIROnline;
 import tds.itemselection.base.ItemGroup;
 import tds.itemselection.base.TestItem;
@@ -140,7 +140,7 @@ public class TestAIROnline2013 {
 		}
 	}
 
-	@Test
+	//@Test
 	public final void testGetNextItemGroup_2() throws Exception {
 		System.out.println();
 		_logger.info("Test of getNextItemGroup (Connection connection, UUID oppkey, _Ref<String> errorRef) "
@@ -198,7 +198,7 @@ public class TestAIROnline2013 {
 			throw error;
 		}
 	}
-	@Test
+	//@Test
 	public final void testGetNextItemGroup_3() throws Exception {
 		System.out.println();
 		_logger.info("Test of getNextItemGroup (Connection connection, UUID oppkey, _Ref<String> errorRef) "

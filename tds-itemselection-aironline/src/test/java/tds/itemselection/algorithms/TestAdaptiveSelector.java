@@ -31,6 +31,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import tds.itemselection.DLLHelper;
 import tds.itemselection.api.IItemSelection;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
@@ -167,10 +168,8 @@ public class TestAdaptiveSelector
 
 			ItemGroup itemGr;
 			ItemCandidatesData itemCandidates = null;
-			loader.setConnection(_connection);
 
-
-				itemCandidates = loader.getItemCandidates(oppkey);
+				itemCandidates = loader.getItemCandidates(_connection, oppkey);
 				if (_debug) {
 					itemCandidates.dumpDebugItemCandidatesData();
 				}
@@ -252,12 +251,10 @@ public class TestAdaptiveSelector
 						oppkey = record.<UUID> get("oppkey");
 						ItemGroup itemGr;
 						ItemCandidatesData itemCandidates = null;
-						IItemSelectionDBLoader loader = new ISDBLoader();
-						loader.setConnection(_connection);
 
 						try {
 
-							itemCandidates = loader.getItemCandidates(oppkey);
+							itemCandidates = loader.getItemCandidates(_connection, oppkey);
 							if (_debug) {
 								itemCandidates.dumpDebugItemCandidatesData();
 							}

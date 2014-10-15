@@ -52,7 +52,7 @@ public class BP2  extends BlueprintMatchComputation {
         	Collections.sort (group.items);
             // Prune(active - maxitems)?;
         }
-		for (TestItem itm : group.getItems()) {
+		for (TestItem itm : group.getItems()) {// No matter CSetItem or CsetItem
 			if (itm instanceof CsetItem) {
 				CsetItem item = (CsetItem) itm;
 				if (itm.isActive) {

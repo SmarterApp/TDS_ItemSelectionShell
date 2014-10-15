@@ -29,6 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import tds.dll.api.ICommonDLL;
+import tds.itemselection.DLLHelper;
 import tds.itemselection.api.IItemSelection;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
@@ -130,11 +131,10 @@ public class TestFixedFormSelector
     }
 
     ItemCandidatesData itemCandidates = null;
-    loader.setConnection (_connection);
     
     try {
 
-      itemCandidates = loader.getItemCandidates (oppkey);
+      itemCandidates = loader.getItemCandidates (_connection, oppkey);
       if(_debug)
       {
         itemCandidates.dumpDebugItemCandidatesData ();
@@ -177,12 +177,10 @@ public class TestFixedFormSelector
     }
 
     ItemCandidatesData itemCandidates = null;
-    //IItemSelectionDBLoader loader = new ISDBLoader();
-    loader.setConnection (_connection);
     
     try {
 
-      itemCandidates = loader.getItemCandidates (oppkey);
+      itemCandidates = loader.getItemCandidates (_connection, oppkey);
       if(_debug)
       {
         itemCandidates.dumpDebugItemCandidatesData ();
@@ -245,10 +243,8 @@ public class TestFixedFormSelector
 						oppkey = record.<UUID> get("oppkey");
 						try{							
 						    ItemCandidatesData itemCandidates = null;
-						   // IItemSelectionDBLoader loader = new ISDBLoader();
-						    loader.setConnection (_connection);
 
-						      itemCandidates = loader.getItemCandidates (oppkey);
+						      itemCandidates = loader.getItemCandidates (_connection, oppkey);
 						      if(_debug)
 						      {
 						        itemCandidates.dumpDebugItemCandidatesData ();
@@ -323,12 +319,10 @@ public class TestFixedFormSelector
     {
       count++;
       ItemCandidatesData itemCandidates = null;
-      //IItemSelectionDBLoader loader = new ISDBLoader();
-      loader.setConnection (_connection);
       
       try {
 
-        itemCandidates = loader.getItemCandidates (oppkey);
+        itemCandidates = loader.getItemCandidates (_connection, oppkey);
         if(_debug)
         {
           itemCandidates.dumpDebugItemCandidatesData ();
@@ -369,12 +363,10 @@ public class TestFixedFormSelector
     }
 
     ItemCandidatesData itemCandidates = null;
-    //IItemSelectionDBLoader loader = new ISDBLoader();
-    loader.setConnection (_connection);
     
     try {
 
-      itemCandidates = loader.getItemCandidates (oppkey);
+      itemCandidates = loader.getItemCandidates (_connection, oppkey);
       if(_debug)
       {
         itemCandidates.dumpDebugItemCandidatesData ();
@@ -417,12 +409,10 @@ public class TestFixedFormSelector
     }
 
     ItemCandidatesData itemCandidates = null;
-    //IItemSelectionDBLoader loader = new ISDBLoader();
-    loader.setConnection (_connection);
     
     try {
 
-      itemCandidates = loader.getItemCandidates (oppkey);
+      itemCandidates = loader.getItemCandidates (_connection, oppkey);
       if(_debug)
       {
         itemCandidates.dumpDebugItemCandidatesData ();

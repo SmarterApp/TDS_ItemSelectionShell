@@ -275,11 +275,11 @@ public ItemGroup(String groupID2, String segmentKey, String segmentID,
 
   public String getItemIDString (String delim)
   {
-    TestItem itm = (TestItem) getItems ().get (0);
+    TestItem itm = getItems ().get (0);
     String result = itm.itemID;
     for (int i = 1; i < getItems ().size (); ++i)
     {
-      itm = (TestItem) getItems ().get (i);
+      itm = getItems ().get (i);
       result += delim + itm.itemID;
     }
     return result;

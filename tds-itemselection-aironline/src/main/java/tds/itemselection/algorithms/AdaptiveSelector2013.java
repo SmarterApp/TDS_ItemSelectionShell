@@ -73,9 +73,6 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	  public ItemGroup getNextItemGroup (SQLConnection connection,
 				ItemCandidatesData itemData) throws ItemSelectionException {
 		  
-		// New connection. Old connection can be closed: Error: "PooledConnection has already been closed"
-		loader.setConnection(connection);
-
 	    final String messageTemplate = "Exception %1$s executing adaptive algorithm. Exception error: %2$s.";
 
 	    ItemGroup result = null;
@@ -88,7 +85,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	      // We have a collection of segments for our use
 	      SegmentCollection2 segs = SegmentCollection2.getInstance ();
 	      // Get the segment for this opportunity
-	      segment = segs.getSegment (itemCandidates.getSession (), itemCandidates.getSegmentKey (), loader);
+	      segment = segs.getSegment (connection, itemCandidates.getSession (), itemCandidates.getSegmentKey (), loader);
 	      if (segment == null)
 	      {
 	        error = "Unable to load blueprint";
@@ -96,7 +93,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        throw new ItemSelectionException (error);
 	      } 
 
-	      result = selectNext ();
+	      result = selectNext (connection);
 
 	      if (result == null) {
 	        error = "Adaptive item selection failed: Unknown error.  Try to find next segment";
@@ -122,7 +119,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	   *  2. Compute second candidate itemgroup set Cset2
 	   *  3. Return best itemgroup within Cset2
 	   */
-	  public ItemGroup selectNext () throws ItemSelectionException, ReturnStatusException {
+	  public ItemGroup selectNext (SQLConnection connection) throws ItemSelectionException, ReturnStatusException {
 
 		this._error = null;  
 		this.csetFactory = new Cset1Factory2013( itemCandidates.getOppkey (), loader, 
@@ -132,20 +129,22 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 		this.csetFactory.setSegment(segment);
 
 		try{			
-		    cset1 = csetFactory.MakeCset1 ();
+		    cset1 = csetFactory.MakeCset1 (connection);
 		    this.blueprint = cset1.getBlueprint ();
 	        // Record current ability and information approximations (if there is a AdaptiveThetas listener)
-	        //AIROnlineCommon.AALogger.ThetaLogger.WriteLine("," + _oppkey + "," + blueprint.lastAbilityPosition.ToString() + "," + blueprint.theta.ToString() + "," + blueprint.info.ToString());
+	        // AIROnlineCommon.AALogger.ThetaLogger.WriteLine("," + _oppkey + "," + blueprint.lastAbilityPosition.ToString() + "," + blueprint.theta.ToString() + "," + blueprint.info.ToString());
 	
-	        // now that the blueprint has been updated to reflect all
-	        //  previous responses, check that we haven't satisfied configured termination
-	        //  conditions.
+	        // the blueprint has been updated to reflect all previous responses,
+	        // check that we haven't satisfied configured termination conditions.
 	        TerminationManager termMgr = new TerminationManager(this.blueprint);
 	        if (termMgr.IsSegmentComplete())
 	        {
 	            String reason = termMgr.SegmentCompleteReason;
-	            if (!loader.SetSegmentSatisfied(itemCandidates.getOppkey(), segment.position, reason))
-	                _error = String.format("Could not mark segment: {0} as satisfied for reason: {1}.", segment.position, reason);
+	            if (!loader.SetSegmentSatisfied(connection, itemCandidates.getOppkey(), segment.position, reason))
+	            {
+	                _error = String.format("Could not mark segment: %s as satisfied for reason: %s.", segment.position, reason);
+	                _logger.error(_error);
+	            }   
 	            return null;
 	        }
 			    
@@ -181,7 +180,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        {	            
 		        int attmpt = 3;
 	            String path = "C:\\temp\\TEST3\\" + "Java8CsetItemsAfterMatch_" + attmpt + "_" + itemCandidates.getOppkey () + ".csv";
-	            cset1ToCSVFileAfterMatch(cset1, path);
+	            cset1ToCSVFile(cset1, path);
 	        }
 
 	        // Once the ability match for each item is computed, call cset1 to finalize the selection metrics
@@ -192,7 +191,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        if(_debug)
 	        {	            
 		        int attmpt = 3;
-	            String path = "C:\\temp\\TEST3\\" + "Java9CsetItemsAfter_Final_" + attmpt + "_"  + itemCandidates.getOppkey () + ".csv";
+	            String path = "C:\\temp\\TEST3\\" + "Java9CsetItems_Final_" + itemCandidates.getOppkey () + ".csv";
 	        	cset1ToCSVFile(cset1, path);
 	        }
 
@@ -368,70 +367,31 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 				: cset1.getBlueprint().rcAbilityWeight; // w1
 
 		// (blueprintWeight * bpMetric) + (abilityWeight * abilityMetric) + (rcAbilityWeight * rcAbilityMetric)
-		strBuilder.append("groupID").append(csvSeparator).append("irtModel")
-				.append(csvSeparator).append("selectionMetric")
-				.append(csvSeparator).append("blueprintWeight(w0)")
-				.append(csvSeparator).append("bpMetric").append(csvSeparator)
-				.append("abilityWeight(w2)").append(csvSeparator)
-				.append("abilityMetric").append(csvSeparator)
-				.append("rcAbilityWeight(w1)").append(csvSeparator)
-				.append("rcAbilityMetric").append(csvSeparator)
-				.append("BpJitter").append(ls);
+		strBuilder.append("groupID")
+		.append(csvSeparator).append("irtModel")
+		.append(csvSeparator).append("selectionMetric")
+		.append(csvSeparator).append("blueprintWeight(w0)")
+		.append(csvSeparator).append("bpMetric")
+		.append(csvSeparator).append("abilityWeight(w2)")
+		.append(csvSeparator).append("abilityMatch")
+		.append(csvSeparator).append("rcAbilityWeight(w1)")
+		.append(csvSeparator).append("rcAbilityMatch")
+		.append(csvSeparator).append("BpJitter")
+		.append(ls);
 
 		for (CsetGroup gr : cset1.itemGroups) {
-
-			strBuilder.append(gr.groupID).append(csvSeparator)
-					.append(gr.items.get(0).irtModel).append(csvSeparator)
-					.append(gr.selectionMetric).append(csvSeparator)
-					.append(bpWeight).append(csvSeparator).append(gr.bpMetric)
-					.append(csvSeparator).append(abilityWeight)
-					.append(csvSeparator).append(gr.abilityMetric)
-					.append(csvSeparator).append(rcAbilityWeight)
-					.append(csvSeparator).append(gr.rcAbilityMetric)
-					.append(csvSeparator).append(gr.getBpJitter()).append(ls);
-
+			strBuilder.append(gr.groupID)
+			.append(csvSeparator).append(gr.items.get(0).irtModel)
+			.append(csvSeparator).append(gr.selectionMetric)
+			.append(csvSeparator).append(bpWeight)
+			.append(csvSeparator).append(gr.bpMetric)
+			.append(csvSeparator).append(abilityWeight)
+			.append(csvSeparator).append(gr.abilityMetric)
+			.append(csvSeparator).append(rcAbilityWeight)
+			.append(csvSeparator).append(gr.rcAbilityMetric)
+			.append(csvSeparator).append(gr.getBpJitter())
+			.append(ls);
 		}
-
-		toString2File(path, strBuilder.toString());
-	}
-	//
-	private void cset1ToCSVFileAfterMatch(Cset1 cset1, String path) {
-		StringBuilder strBuilder = new StringBuilder();
-
-		double bpWeight = cset1.getBlueprint().bpWeight; // w0
-		double abilityWeight = (cset1.getBlueprint().cset1Order
-				.equalsIgnoreCase("DISTRIBUTION")) ? 0.0
-				: cset1.getBlueprint().abilityWeight; // w2
-		double rcAbilityWeight = (cset1.getBlueprint().cset1Order
-				.equalsIgnoreCase("DISTRIBUTION")) ? 0.0
-				: cset1.getBlueprint().rcAbilityWeight; // w1
-
-		//( blueprintWeight * bpMetric) + (abilityWeight * abilityMetric) + (rcAbilityWeight * rcAbilityMetric)
-		strBuilder.append("groupID").append(csvSeparator).append("irtModel")
-				.append(csvSeparator).append("selectionMetric")
-				.append(csvSeparator).append("blueprintWeight(w0)")
-				.append(csvSeparator).append("bpMetric")
-				.append(csvSeparator).append("abilityWeight(w2)")
-				.append(csvSeparator).append("abilityMatch")
-				.append(csvSeparator).append("rcAbilityWeight(w1)")
-				.append(csvSeparator).append("rcAbilityMatch")
-				.append(csvSeparator).append("BpJitter").append(ls);
-
-		for (CsetGroup gr : cset1.itemGroups) {
-
-			strBuilder.append(gr.groupID).append(csvSeparator)
-					.append(gr.items.get(0).irtModel).append(csvSeparator)
-					.append(gr.selectionMetric).append(csvSeparator)
-					.append(bpWeight).append(csvSeparator)
-					.append(gr.bpMetric).append(csvSeparator)
-					.append(abilityWeight).append(csvSeparator)
-					.append(gr.abilityMatch).append(csvSeparator)
-					.append(rcAbilityWeight).append(csvSeparator)
-					.append(gr.rcAbilityMatch).append(csvSeparator)
-					.append(gr.getBpJitter()).append(ls);
-
-		}
-
 		toString2File(path, strBuilder.toString());
 	}
 

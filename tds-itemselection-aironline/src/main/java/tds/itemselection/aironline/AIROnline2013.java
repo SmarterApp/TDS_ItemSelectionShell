@@ -38,16 +38,12 @@ public class AIROnline2013 implements IAIROnline {
 	 private IItemSelection ftSelector;
 	 
 	 @Autowired
-	 @Qualifier ("aa2Selector")
-	 private IItemSelection aa2Selector;
-
-	 @Autowired
 	 @Qualifier ("aa2013Selector")
 	 private IItemSelection aa2013Selector;
 
-	  private static Logger  _logger  = LoggerFactory.getLogger (AIROnline2012.class);
+	 private static Logger  _logger  = LoggerFactory.getLogger (AIROnline2013.class);
 	  
-	  private boolean _debug = true;
+	 private boolean _debug = true;
 
 	public ItemGroup getNextItemGroup(SQLConnection connection, UUID oppkey, _Ref<String> errorRef)
 			throws ReturnStatusException {
@@ -56,11 +52,10 @@ public class AIROnline2013 implements IAIROnline {
 	    ItemCandidatesData itemCandidates = null;
 	    IItemSelection selector = null;
 	    String algorithm = null;
-	    loader.setConnection (connection);
 
 		try {
 
-			itemCandidates = loader.getItemCandidates(oppkey);
+			itemCandidates = loader.getItemCandidates(connection, oppkey);
 
 			if (!itemCandidates.getIsSimulation())
 				itemCandidates.setSession(null);
@@ -114,7 +109,7 @@ public class AIROnline2013 implements IAIROnline {
 		} catch (Exception e) {
 	    	errorRef.set( e.getMessage());
 	    	//TODO insert into SystemErrors
-			_logger.error(errorRef.get(),e);
+			_logger.error(errorRef.get(), e);
 		} 
 		return result;
 	}

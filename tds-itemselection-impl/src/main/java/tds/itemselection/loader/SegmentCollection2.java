@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import AIR.Common.DB.SQLConnection;
+
 public class SegmentCollection2 {
 	/**
 	 * Singleton instance
@@ -66,9 +68,9 @@ public class SegmentCollection2 {
   * @param loader
   * @return
   */
- public TestSegment getSegment(String segmentKey, IItemSelectionDBLoader loader) throws SQLException, Exception
+ public TestSegment getSegment(SQLConnection connection, String segmentKey, IItemSelectionDBLoader loader) throws SQLException, Exception
  {
-     return _getSegment(null, segmentKey, _segments, loader);
+     return _getSegment(connection, null, segmentKey, _segments, loader);
  }
 
  /**
@@ -78,10 +80,10 @@ public class SegmentCollection2 {
   * @param loader
   * @return
   */
- public TestSegment getSegment(UUID sessionKey, String segmentKey, IItemSelectionDBLoader loader)  throws SQLException, Exception
+ public TestSegment getSegment(SQLConnection connection, UUID sessionKey, String segmentKey, IItemSelectionDBLoader loader)  throws SQLException, Exception
  {
      if (sessionKey == null) // permits general use of this method, even for non-simulation environments
-         return getSegment(segmentKey, loader);
+         return getSegment(connection, segmentKey, loader);
      if (!_sessions.containsKey(sessionKey))
      {
          synchronized (_segmentCollectionLock)
@@ -93,7 +95,7 @@ public class SegmentCollection2 {
          }
      }
      Map<String, TestSegment> session = _sessions.get(sessionKey);
-     return _getSegment(sessionKey, segmentKey, session, loader);
+     return _getSegment(connection, sessionKey, segmentKey, session, loader);
  }
 
  /**
@@ -122,7 +124,7 @@ public class SegmentCollection2 {
   * @param loader
   * @return
   */
- private TestSegment _getSegment(UUID sessionKey, String segmentKey, 
+ private TestSegment _getSegment(SQLConnection connection, UUID sessionKey, String segmentKey, 
  		Map<String, TestSegment> segments, IItemSelectionDBLoader loader) throws SQLException, Exception
  {
      if (!segments.containsKey(segmentKey))
@@ -133,7 +135,7 @@ public class SegmentCollection2 {
              {
                  // Add a new segment and load it
                  TestSegment segment = new TestSegment(segmentKey);
-                 segment.Load(sessionKey, loader);
+                 segment.Load(connection, sessionKey, loader);
                  segments.put(segmentKey, segment);
              }
              else
@@ -144,7 +146,7 @@ public class SegmentCollection2 {
                  if (testSegment.RequireRefresh())
                  {
                      TestSegment segment = new TestSegment(segmentKey);
-                     segment.Load(sessionKey, loader);
+                     segment.Load(connection, sessionKey, loader);
                      segments.put(segmentKey, segment);
                  }
              }

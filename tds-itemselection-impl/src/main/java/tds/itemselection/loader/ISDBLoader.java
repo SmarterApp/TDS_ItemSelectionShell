@@ -55,7 +55,7 @@ public class ISDBLoader extends AbstractDBLoader implements IItemSelectionDBLoad
   /*
   * 
   */
-  public ItemGroup getItemGroup (UUID oppkey,
+  public ItemGroup getItemGroup (SQLConnection connection, UUID oppkey,
       String segmentKey,
       String groupID,
       String blockID,
@@ -169,7 +169,7 @@ public class ISDBLoader extends AbstractDBLoader implements IItemSelectionDBLoad
   // list of ItemResponse objects</param>
   // / <param name="startAbility">Return this testopp start ability</param>
   // / <returns></returns>
-  public StudentHistory2013 loadOppHistory (UUID oppkey,
+  public StudentHistory2013 loadOppHistory (SQLConnection connection, UUID oppkey,
       String segmentKey) throws ItemSelectionException {
 
     StudentHistory2013 result = new StudentHistory2013 ();
@@ -277,7 +277,7 @@ public class ISDBLoader extends AbstractDBLoader implements IItemSelectionDBLoad
   // data</param>
   // / <param name="sessionKey">For simulations, the non-null database key to
   // the session</param>
-  public void loadSegment (String segmentKey, TestSegment segment, UUID sessionKey) throws ReturnStatusException, ItemSelectionException
+  public void loadSegment (SQLConnection connection, String segmentKey, TestSegment segment, UUID sessionKey) throws ReturnStatusException, ItemSelectionException
   {
     MultiDataResultSet dataSets = null;
     if (sessionKey == null)
@@ -549,10 +549,10 @@ public class ISDBLoader extends AbstractDBLoader implements IItemSelectionDBLoad
   }
 
 	@Override
-	public boolean SetSegmentSatisfied(UUID oppkey, Integer segmentPosition,
+	public boolean SetSegmentSatisfied(SQLConnection connection, UUID oppkey, Integer segmentPosition,
 			String reason) throws ReturnStatusException {
 
-		return iSelDLL.AA_SetSegmentSatisfied_SP(this.connection, oppkey,
+		return iSelDLL.AA_SetSegmentSatisfied_SP(connection, oppkey,
 				segmentPosition, reason);
 	}
 }
