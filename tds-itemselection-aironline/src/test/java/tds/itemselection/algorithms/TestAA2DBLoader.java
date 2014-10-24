@@ -128,7 +128,7 @@ public class TestAA2DBLoader {
 		FilePrint.string2File(path5, resultItems2String(segment.segmentItemPool.getItems()));
 		
 	}
-	@Test
+	//@Test
 	public void test_loadSegment_Main()throws ReturnStatusException {
 		String segmentKey = "(SBAC)CAT-M3-ONON-S1-A1-MATH-3-Fall-2013-2014";
 		TestSegment segment = new TestSegment(segmentKey);
@@ -141,6 +141,7 @@ public class TestAA2DBLoader {
 			_logger.error(e.getMessage());
 			throw new ReturnStatusException("Load Segment test is failed");
 		}
+		// To compare with
 		String path = "c:\\temp\\TEST3" ;
 
 		String path1 = path + "\\NET1Blueprint.csv";
@@ -209,6 +210,7 @@ public class TestAA2DBLoader {
 		}
 		if(stHistory != null)
 		{
+			// To compare with
 			String path = "c:\\temp\\TEST3" ;
 	
 			String path1 = path + "\\NET6GroupStrings.csv";
@@ -252,7 +254,7 @@ public class TestAA2DBLoader {
 	}
 	
 	
-	@Test
+	//@Test
 	public void test_loadSegment2File() {
 		TestSegment segment = new TestSegment(segmentKey);
 		// we test this function
@@ -308,7 +310,7 @@ public class TestAA2DBLoader {
 		System.out.println("% of the coinsistent fields = " + ret + "%");		
 	}
 	
-	@Test
+	//@Test
 	public void test_loadSegment2() {
 		String segmentKey = "(SBAC)CAT-M3-ONON-S1-A1-MATH-3-Fall-2013-2014";
 		TestSegment segment = new TestSegment(segmentKey);

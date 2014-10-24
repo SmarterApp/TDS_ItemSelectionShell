@@ -64,7 +64,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	  int                itemsRequired  = -1;
 	  int                maxItems       = -1;
 	  // for debug
-	  private boolean 	 _debug 		= true;
+	  private boolean 	 _debug 		= false;
 	  private String 	 csvSeparator	= ", ";
 	  private String 	 ls				= System.getProperty("line.separator");
 	  
@@ -178,8 +178,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        	        
 	        if(_debug)
 	        {	            
-		        int attmpt = 3;
-	            String path = "C:\\temp\\TEST3\\" + "Java8CsetItemsAfterMatch_" + attmpt + "_" + itemCandidates.getOppkey () + ".csv";
+	            String path = "C:\\temp\\TEST4\\" + "Java8CsetItemsAfterMatch_" + itemCandidates.getOppkey () + ".csv";
 	            cset1ToCSVFile(cset1, path);
 	        }
 
@@ -190,8 +189,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        
 	        if(_debug)
 	        {	            
-		        int attmpt = 3;
-	            String path = "C:\\temp\\TEST3\\" + "Java9CsetItems_Final_" + itemCandidates.getOppkey () + ".csv";
+	            String path = "C:\\temp\\TEST4\\" + "Java9CsetItems_Final_" + itemCandidates.getOppkey () + ".csv";
 	        	cset1ToCSVFile(cset1, path);
 	        }
 
@@ -373,9 +371,9 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 		.append(csvSeparator).append("blueprintWeight(w0)")
 		.append(csvSeparator).append("bpMetric")
 		.append(csvSeparator).append("abilityWeight(w2)")
-		.append(csvSeparator).append("abilityMatch")
+		.append(csvSeparator).append("abilityMetric")
 		.append(csvSeparator).append("rcAbilityWeight(w1)")
-		.append(csvSeparator).append("rcAbilityMatch")
+		.append(csvSeparator).append("rcAbilityMetric")
 		.append(csvSeparator).append("BpJitter")
 		.append(ls);
 
