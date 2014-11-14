@@ -81,7 +81,7 @@ public class TestAIROnline2013 {
 	// public void testCreateNextItemGroup () throws SQLException,
 	// ReturnStatusException, Exception {
 
-	@Test
+	//@Test
 	public final void testGetNextItemGroup() throws Exception {
 		System.out.println();
 		_logger.info("Test of getNextItemGroup (Connection connection, UUID oppkey, _Ref<String> errorRef) "
@@ -140,7 +140,7 @@ public class TestAIROnline2013 {
 		}
 	}
 
-	//@Test
+	@Test
 	public final void testGetNextItemGroup_2() throws Exception {
 		System.out.println();
 		_logger.info("Test of getNextItemGroup (Connection connection, UUID oppkey, _Ref<String> errorRef) "

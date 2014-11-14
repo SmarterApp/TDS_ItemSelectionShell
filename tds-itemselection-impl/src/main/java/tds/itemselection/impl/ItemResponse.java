@@ -8,14 +8,24 @@
  ******************************************************************************/
 package tds.itemselection.impl;
 
+import java.io.StringReader;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import tds.itemselection.api.ItemSelectionException;
 import AIR.Common.DB.results.DbResultRecord;
 import AIR.Common.DB.results.SingleDataResultSet;
 import tds.itemselection.base.TestItem;
@@ -47,6 +57,8 @@ public String groupID;
  * Students score value for this item
  */
 public Integer score;
+
+private Map<String, Integer> dimensionScores;
 
 public Integer getScore() {
 	return score;
@@ -184,8 +196,43 @@ public void setDimensionScores(Map<String, Integer> dimensionScores) {
             score = record.<Integer> get("score");
             itemPosition = record.<Integer> get("position");
             isFieldTest = record.<Boolean> get ("isFieldTest");
+            String scoreDimensions = record.<String> get("scoreDimensions");
+            this.dimensionScores = new HashMap<String, Integer>(); 
+            loadDimensionScores(scoreDimensions);
       	}
     
   }
+  
+  private void loadDimensionScores(String scoreDimensions) {
+	  if(scoreDimensions != null) // if (scoreDimensions == null) dimensionScores = new HashMap<String, Integer>();
+	  {
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		try {
+			DocumentBuilder docBuilder = dbFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(new InputSource(new StringReader(
+					scoreDimensions)));
+			doc.getDocumentElement().normalize();
+			NodeList nodeList = doc.getElementsByTagName("ScoreInfo");
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Node node = nodeList.item(i);
+				if (node.getNodeType() != Node.ELEMENT_NODE)
+					throw new SQLException("Score node parsing error");
+				Element element = (Element) node;
+				String dimension = element.getAttribute("scoreDimension");
+				
+				Integer score = -1;
+				try {
+					score = Integer
+							.parseInt(element.getAttribute("scorePoint"));
+				} catch (Exception ex) {
+					score = -1;
+				}
+				dimensionScores.put(dimension, score);
+			}
+		} catch (Exception ex) {
+			_logger.error(ex.getMessage(), ex);
+		}
+	  }
+	}
 
 }

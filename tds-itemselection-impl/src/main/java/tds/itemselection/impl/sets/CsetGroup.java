@@ -86,7 +86,7 @@ public class CsetGroup extends ItemGroup implements Comparable<Object>
   private double                         _panicWeight    = 1.0;
   private double                         _jitter         = 0.0;
   
-  private boolean _debug = true;
+  private boolean _debug = false;
 
   private boolean pruned;
 

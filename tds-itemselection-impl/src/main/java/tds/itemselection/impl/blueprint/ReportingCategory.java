@@ -162,8 +162,8 @@ public class ReportingCategory extends BpElement implements IReportingCategory
             this.abilityWeight = (abilityWeight != null && abilityWeight != 0.)? abilityWeight: 1.0;
             this.adaptiveWeight = (scalar != null)?scalar: 5.0; // previous default
             this.precisionTarget = (precisionTarget  != null)?precisionTarget: Double.MAX_VALUE;
-            this.precisionTargetMetWeight = (precisionTargetMetWeight != null)?precisionTargetMetWeight: 1.0;
-            this.precisionTargetNotMetWeight = (precisionTargetNotMetWeight != null)?precisionTargetNotMetWeight: 1.0;
+            this.precisionTargetMetWeight = (precisionTargetMetWeight != null && precisionTargetMetWeight != 0.)?precisionTargetMetWeight: 1.0;
+            this.precisionTargetNotMetWeight = (precisionTargetNotMetWeight != null && precisionTargetNotMetWeight != 0.)?precisionTargetNotMetWeight: 1.0;
 
             minLambda = lambda = 0.00632; // previous default
     }
@@ -181,10 +181,10 @@ public class ReportingCategory extends BpElement implements IReportingCategory
     public void initialize(DbResultRecord record) throws SQLException
     {
     	super.initialize(record);    
-    	abilityWeight 			= float2Double(record, "abilityWeight");
-    	hweightBeforeTargetMet 	= float2Double(record, "precisionTargetMetWeight");
-    	hweightAfterTargetMet 	= float2Double(record, "precisionTargetNotMetWeight");
-    	targetInformation 		= float2Double(record, "precisionTarget");
+    	abilityWeight 					= float2Double(record, "abilityWeight");
+    	precisionTargetMetWeight 		= float2Double(record, "precisionTargetMetWeight");
+    	precisionTargetNotMetWeight 	= float2Double(record, "precisionTargetNotMetWeight");
+    	targetInformation 				= float2Double(record, "precisionTarget");
     	
     	isStrand = false;
     	isReportingCategory = true;

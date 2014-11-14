@@ -171,6 +171,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	            cset1.getBlueprint().abilityWeight = 1.0;
 	            cset1.getBlueprint().rcAbilityWeight = 1.0;
 	            cset1.getBlueprint().precisionTargetMetWeight = 1.0;
+	            cset1.getBlueprint().precisionTargetNotMetWeight = 1.0;
 	        }
 	
 	        // compute the ability match for each group in cset1
@@ -368,9 +369,9 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 		strBuilder.append("groupID")
 		.append(csvSeparator).append("irtModel")
 		.append(csvSeparator).append("selectionMetric")
-		.append(csvSeparator).append("blueprintWeight(w0)")
+		.append(csvSeparator).append("blueprintWeight(w2)")
 		.append(csvSeparator).append("bpMetric")
-		.append(csvSeparator).append("abilityWeight(w2)")
+		.append(csvSeparator).append("abilityWeight(w0)")
 		.append(csvSeparator).append("abilityMetric")
 		.append(csvSeparator).append("rcAbilityWeight(w1)")
 		.append(csvSeparator).append("rcAbilityMetric")

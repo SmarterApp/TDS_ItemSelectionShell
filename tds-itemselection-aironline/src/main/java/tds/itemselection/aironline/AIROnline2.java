@@ -24,7 +24,8 @@ import AIR.Common.DB.SQLConnection;
 import AIR.Common.Helpers._Ref;
 import TDS.Shared.Exceptions.ReturnStatusException;
 
-public class AIROnline2013 implements IAIROnline {
+public class AIROnline2  implements IAIROnline {
+	
 	 @Autowired
 	 @Qualifier("aa2DBLoader")
 	  private IItemSelectionDBLoader loader = null;
@@ -36,14 +37,14 @@ public class AIROnline2013 implements IAIROnline {
 	 @Autowired
 	 @Qualifier ("ftSelector")
 	 private IItemSelection ftSelector;
-	 
-	 @Autowired
-	 @Qualifier ("aa2013Selector")
-	 private IItemSelection aa2013Selector;
 
-	 private static Logger  _logger  = LoggerFactory.getLogger (AIROnline2013.class);
+	 @Autowired
+	 @Qualifier ("aa2Selector")
+	 private IItemSelection aa2Selector;
+
+	 private static Logger  _logger  = LoggerFactory.getLogger (AIROnline2.class);
 	  
-	 private boolean _debug = false;
+	 private boolean _debug = true;
 
 	public ItemGroup getNextItemGroup(SQLConnection connection, UUID oppkey, _Ref<String> errorRef)
 			throws ReturnStatusException {
@@ -69,18 +70,18 @@ public class AIROnline2013 implements IAIROnline {
 						.getNextItemGroup(connection, itemCandidates);
 			} else if (algorithm.equalsIgnoreCase("adaptive")
 					|| algorithm.equalsIgnoreCase("adaptive2")) {
-				selector = aa2013Selector;
+				selector = aa2Selector;
 				if (selector == null) {
-					errorRef.set(String.format("Unsupported adaptive algorithm: %s", algorithm));
+					errorRef.set( String.format("Unsupported adaptive algorithm: %s", algorithm));
 				} else {
 					result = selector.getNextItemGroup(connection, itemCandidates);
 					if (selector.getItemSelectorError() != null) {
-						errorRef.set(selector.getItemSelectorError());
+						errorRef.set( selector.getItemSelectorError());
 					} else if (result == null) {
 						if (selector.isSegmentCompleted()) {
-                           // this segment has been terminated based on configured conditions.
-                           //  Call recursively in case there are more segments to administer.
-                           //  Eventually we'll drop down into the SATISFIED case.
+                            // this segment has been terminated based on configured conditions.
+                            //  Call recursively in case there are more segments to administer.
+                            //  Eventually we'll drop down into the SATISFIED case.
 							result = getNextItemGroup(connection, oppkey, errorRef);
 						} else {
 							errorRef.set("Adaptive item selection failed: Unknown error");
@@ -90,12 +91,12 @@ public class AIROnline2013 implements IAIROnline {
 			} else if (algorithm.equalsIgnoreCase("SATISFIED")) {
 				errorRef.set("Test Complete");
 			} else {
-				errorRef.set(String.format("Unknown algorithm:  %s", itemCandidates.getAlgorithm()));
+				errorRef.set(String.format("Unknown algorithm: %s", itemCandidates.getAlgorithm()));
 			}
 
 	      if(result != null)
 	      {
-		      result.setSegmentID(itemCandidates.getSegmentID());
+ 		      result.setSegmentID(itemCandidates.getSegmentID());
 		      result.setSegmentKey(itemCandidates.getSegmentKey());
 		      result.setSegmentPosition(new Long(itemCandidates.getSegmentPosition()));
 

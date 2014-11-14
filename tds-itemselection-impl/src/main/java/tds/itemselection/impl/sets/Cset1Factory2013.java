@@ -65,7 +65,7 @@ public class Cset1Factory2013 {
 	  private double                              panicWeight;
 	  // blueprint and itempool for segment
 	  private TestSegment                         segment;
-	  private boolean _debug = true;
+	  private boolean _debug = false;
 	  public TestSegment getSegment() {
 		return segment;
 	}
@@ -349,6 +349,11 @@ public class Cset1Factory2013 {
 	      cset1Size = Math.max (bp.cSet1Size, bp.randomizerInitialIndex);
 	    else
 	      cset1Size = Math.max (bp.cSet1Size, bp.randomizerIndex);
+	    
+	    if(_debug)
+	    {
+	    	cset1Size = groups.size ();
+	    }
 
 	    maxMetric = firstGroup.selectionMetric;
 	    // find the 'last' group index

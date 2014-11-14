@@ -27,26 +27,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 
-import TDS.Shared.Exceptions.ReturnStatusException;
 import tds.itemselection.DLLHelper;
-import tds.itemselection.algorithms.TestAdaptiveSelector2;
 import tds.itemselection.api.IItemSelection;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
 import tds.itemselection.base.TestItem;
-//import tds.itemselection.debug.DLLHelper;
-import tds.itemselection.impl.sets.CsetGroup;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import AIR.Common.DB.SQLConnection;
 import AIR.Common.DB.SqlParametersMaps;
 import AIR.Common.DB.results.DbResultRecord;
 import AIR.Common.DB.results.SingleDataResultSet;
+import TDS.Shared.Exceptions.ReturnStatusException;
 
 @RunWith (LifecycleManagingTestRunner.class)
 @ContextConfiguration (locations = "/test-context.xml")
-public class TestSelector2013 {
+public class TestSelector2 {
 	@Autowired
-	@Qualifier("aa2013Selector")
+	@Qualifier("aa2Selector")
 	private IItemSelection itemSelector = null;
 
 	@Autowired
@@ -56,7 +53,7 @@ public class TestSelector2013 {
 	@Autowired
 	private DLLHelper _myDllHelper = null;
 
-	private static final Logger _logger = LoggerFactory.getLogger(TestSelector2013.class);
+	private static final Logger _logger = LoggerFactory.getLogger(TestSelector2.class);
 	private SQLConnection 		_connection 				= null;
 	private Boolean 			_preexistingAutoCommitMode 	= null;
 	private boolean 			_debug 						= true;
@@ -101,9 +98,7 @@ public class TestSelector2013 {
 		System.out.println();
 
 		try {
-			String OPPKEY = "0514d9cb-1e14-4c04-ab75-5e143245861a";	// main test
-//			String OPPKEY = "a1674ef0-9042-428e-beab-9f082bdc93f8"; // This is student with 3 previous items!
-//			String OPPKEY = "24f000c7-a32f-439b-a55b-9a6e74af0649";
+			String OPPKEY = "a1674ef0-9042-428e-beab-9f082bdc93f8";
 			UUID oppkey = (UUID.fromString(OPPKEY));
 			_logger.info("Oppkey =  " + OPPKEY);
 
@@ -124,25 +119,15 @@ public class TestSelector2013 {
 
 			if(itemGr != null)
 			{
-				// TODO delete System.out.println() !!!
-				System.out.println(String.format("groupID: %s", itemGr.groupID));
-				System.out.println(String.format("itemsRequired: %s",	itemGr.getNumRequired()));
-				System.out.println(String.format("maxReqItems: %s", itemGr.getMaxItems()));
 				_logger.info(String.format("groupID: %s", itemGr.groupID));
-				_logger.info(String.format("itemsRequired: %s",	itemGr.getNumRequired()));
+				_logger.info(String.format("itemsRequired: %s",
+						itemGr.getNumRequired()));
 				_logger.info(String.format("maxReqItems: %s", itemGr.getMaxItems()));
+				System.out.println();
 	
 				List<TestItem> items = itemGr.getItems();
 				int itemsNumber = items.size();
-				System.out.println(String.format("Number of items: %s", itemsNumber));
 				_logger.info(String.format("Number of items: %s", itemsNumber));
-//				for (TestItem item : items) {
-//					System.out.println("Group ID = " + item.groupID);
-//					System.out.println("Item ID = " + item.itemID);
-//					item.dump();
-//					System.out.println("TEST FINISHED");
-//				}
-				
 			} else
 			{
 				_logger.info("Selected Item Group is NULL");
@@ -234,5 +219,4 @@ public class TestSelector2013 {
 			System.out.println(e.getMessage());
 		}
 	}
-
 }
