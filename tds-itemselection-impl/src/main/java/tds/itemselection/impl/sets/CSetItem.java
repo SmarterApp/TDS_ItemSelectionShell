@@ -147,7 +147,7 @@ public class CSetItem extends CsetItem
     	fInformation = GetInformation(rcMeasures);
     	return rc.weight *
     				ComputeHK(rc.hweightBeforeTargetMet, rc.hweightAfterTargetMet, 
-    							fInformation, rcMeasures.Information, rc.targetInformation);
+    							fInformation, rcMeasures.Information, rc.precisionTarget);
     }
  	
  	private double GetInformation(IRTMeasures irtMeasures)

@@ -21,12 +21,10 @@ public class ActualInfoComputation  {
             // if this is a multi-dimensional item, don't count the overall dim, just the components
             if (dim.isOverall && response.getBaseItem().hasDimensions)
                 continue;
-            double info = bpComponent.getInfo();
-            double theta = bpComponent.getTheta();
-            double se = bpComponent.getStandartError();
-            double d1 = dim.irtModelInstance.D1LnlWrtTheta(response.getDimensionScores().get(dim.IRTModelName), theta);
-            bpComponent.setInfo(info + (-1 * dim.irtModelInstance.D2LnlWrtTheta(response.getDimensionScores().get(dim.IRTModelName), theta)));
-            bpComponent.setTheta(theta - (d1 / (-1 *info)));
+
+            double d1 = dim.irtModelInstance.D1LnlWrtTheta(response.getDimensionScores().get(dim.name), bpComponent.getTheta());
+            bpComponent.setInfo(bpComponent.getInfo() + (-1 * dim.irtModelInstance.D2LnlWrtTheta(response.getDimensionScores().get(dim.name), bpComponent.getTheta())));
+            bpComponent.setTheta(bpComponent.getTheta() - (d1 / (-1 * bpComponent.getInfo())));
         }
         bpComponent.setStandartError( AAMath.SEfromInfo(bpComponent.getInfo()));
     }

@@ -11,6 +11,8 @@ package tds.itemselection.algorithms;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -131,6 +133,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 		try{			
 		    cset1 = csetFactory.MakeCset1 (connection);
 		    this.blueprint = cset1.getBlueprint ();
+
 	        // Record current ability and information approximations (if there is a AdaptiveThetas listener)
 	        // AIROnlineCommon.AALogger.ThetaLogger.WriteLine("," + _oppkey + "," + blueprint.lastAbilityPosition.ToString() + "," + blueprint.theta.ToString() + "," + blueprint.info.ToString());
 	
@@ -160,6 +163,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        {
 	            minitems = minfirstitems;
 	        }
+	        
 	        int n = Math.min(minitems, cset1.itemGroups.size());
 	        
 	        if(_debug)
@@ -177,24 +181,40 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        // compute the ability match for each group in cset1
 	        ComputeAbilityMatch();
 	        	        
-	        if(_debug)
-	        {	            
-	            String path = "C:\\temp\\TEST4\\" + "Java8CsetItemsAfterMatch_" + itemCandidates.getOppkey () + ".csv";
-	            cset1ToCSVFile(cset1, path);
-	        }
-
 	        // Once the ability match for each item is computed, call cset1 to finalize the selection metrics
 	        // by normalizing ability metrics and combining with blueprint metrics. 
 	        // SetSelectionMetrics also orders the csetgroups from best (index 0) to worst (index n -1)
 	        cset1.setSelectionMetrics();
-	        
-	        if(_debug)
-	        {	            
-	            String path = "C:\\temp\\TEST4\\" + "Java9CsetItems_Final_" + itemCandidates.getOppkey () + ".csv";
-	        	cset1ToCSVFile(cset1, path);
-	        }
 
 	        int index = rand.nextInt(n);
+
+	        if(_debug)
+	        {	            	        	
+	        	List<String> selectedGroups = new ArrayList<String>(); 
+	        	String selectedGroup = "I-200-27733";
+	        	selectedGroups.add(selectedGroup);
+	        		        	
+	        	Integer out = null;
+	        	for(CsetGroup group: cset1.itemGroups)
+	        	{
+	        		CsetGroup outGr = getSelectedGroup(group, selectedGroups);
+	        		if(outGr != null)
+	        		{
+	        			index = cset1.itemGroups.indexOf(outGr);
+	        			out = index;
+	        			break;
+	        		}
+	        	}
+	        	if(out == null)
+	        	{
+	        		index = 0;
+	        		
+		            String path = "C:\\temp\\TEST9\\" + "Java9CsetItems_Final_" + itemCandidates.getOppkey () + ".csv";
+		        	cset1ToCSVFile(cset1, path);
+	        	}
+	        		        	
+	        }
+
 	        
 	        cg = cset1.itemGroups.get(index);
 	
@@ -330,7 +350,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 		PruneItemgroup(group);
 	}
 	//
-	//====================================================================================
+	//=======================DEBUGGING=========================================
 	//
 	private void toString2File(String path, String res) {
 		try {
@@ -392,6 +412,20 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 			.append(ls);
 		}
 		toString2File(path, strBuilder.toString());
+	}
+	
+	protected CsetGroup getSelectedGroup(CsetGroup group, List<String> sGroups)
+	{
+		CsetGroup out = null;
+		for(String  sGr: sGroups)
+		{
+			if(sGr.equals(group.groupID))
+			{
+				out = group;
+				break;
+			}			
+		}
+		return out;
 	}
 
 }

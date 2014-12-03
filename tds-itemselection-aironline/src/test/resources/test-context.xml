@@ -14,7 +14,7 @@
   						tds.dll.mysql, 
   						tds.dll.mssql" />
 	<import resource="classpath:opentestsystem.shared.test-db-context-module.xml" />
-	<import resource="classpath:opentestsystem.shared.tr-api-context-module.xml" /> 
+	<import resource="classpath:opentestsystem.shared.tr-api-context-module.xml" />
 	
 	<bean id="tdsSettings" class="TDS.Shared.Configuration.TDSSettingsNoWeb" scope="prototype"/>	
 	<!--  Repositories -->

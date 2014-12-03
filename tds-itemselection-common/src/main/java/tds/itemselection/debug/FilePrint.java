@@ -246,6 +246,4 @@ public class FilePrint {
   	  return result.toString();
   	}
 
-
-
 }

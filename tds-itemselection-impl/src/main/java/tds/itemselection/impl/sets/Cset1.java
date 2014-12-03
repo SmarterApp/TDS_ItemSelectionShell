@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tds.itemselection.base.ItemGroup;
-import tds.itemselection.expectedability.ExpectedAbilityComputationSmarter;
 import tds.itemselection.expectedability.ExpectedInfoComputation;
 import tds.itemselection.impl.blueprint.Blueprint;
 

@@ -46,16 +46,16 @@ public class ReportingCategory extends BpElement implements IReportingCategory
 	/**
 	 * Target information for this reporting category (tk) 
 	 */
-	public Double targetInformation = 0.0;	// DEFAUL value;
+	//public Double targetInformation = 0.0;	// DEFAUL value;
 	
-	// specific to examinee
-	public double precisionTarget = Double.MAX_VALUE;
+	//  = targetInformation
+	public Double precisionTarget = Double.MAX_VALUE;
 	
     // independent of examinee
     public double adaptiveCut ;  // the cut point for strands in adaptive ability match
     //TODO compare with targetInformation
     public double startInfo = 0.2;        // for adaptive ability match
-    public double adaptiveWeight = 5.0;     // 
+    public Double adaptiveWeight = 5.0;     // 
     public double startAbility;
     // specific to examinee
     public double standardError = AAMath.SEfromInfo(this.startInfo);
@@ -71,8 +71,8 @@ public class ReportingCategory extends BpElement implements IReportingCategory
 
     // new for 2013
     //TODO compare with hweightBeforeTargetMet and hweightAfterTargetMet
-    public double precisionTargetMetWeight;
-    public double precisionTargetNotMetWeight;
+    public Double precisionTargetMetWeight = 1.0;
+    public Double precisionTargetNotMetWeight = 1.0;
 
     public int vectorIndex = -1;      // to be set by Blueprint when added to strands vector
 
@@ -81,7 +81,8 @@ public class ReportingCategory extends BpElement implements IReportingCategory
 	}
 
 	public void setStartAbility(double startAbility) {
-		this.startAbility = startAbility;
+		this.startAbility 	= startAbility;
+		this.theta 			= startAbility;
 	}
 
 	public Double getStandardError() {
@@ -150,20 +151,28 @@ public class ReportingCategory extends BpElement implements IReportingCategory
      * Constructor
      */
      public ReportingCategory(String name, int minrequired, int maxrequired, boolean isStrict, double bpweight,
-            Double cut, double info, double startAbility, Double abilityWeight, Double scalar, 
-            Double precisionTarget, Double precisionTargetMetWeight, Double precisionTargetNotMetWeight, BpElementType type)
+            Double cut, 
+            double info, 
+            double startAbility, 
+            Double abilityWeight, 
+            Double scalar, 
+            Double precisionTarget, 
+            Double precisionTargetMetWeight, 
+            Double precisionTargetNotMetWeight, 
+            BpElementType type)
         {
     	super(name, minrequired, maxrequired, isStrict, bpweight, type);
             this.isStrand = false;
+            this.isReportingCategory = true;
             this.adaptiveCut = (cut != null)? cut:-9999.0;
             this.startInfo = this.info = info;
             this.standardError = AAMath.SEfromInfo(this.startInfo);  // initialize SE based on start info
             this.startAbility = startAbility;
             this.abilityWeight = (abilityWeight != null && abilityWeight != 0.)? abilityWeight: 1.0;
             this.adaptiveWeight = (scalar != null)?scalar: 5.0; // previous default
-            this.precisionTarget = (precisionTarget  != null)?precisionTarget: Double.MAX_VALUE;
-            this.precisionTargetMetWeight = (precisionTargetMetWeight != null && precisionTargetMetWeight != 0.)?precisionTargetMetWeight: 1.0;
-            this.precisionTargetNotMetWeight = (precisionTargetNotMetWeight != null && precisionTargetNotMetWeight != 0.)?precisionTargetNotMetWeight: 1.0;
+            this.precisionTarget = (precisionTarget  != null)? precisionTarget: Double.MAX_VALUE;
+            this.precisionTargetMetWeight = (precisionTargetMetWeight != null && precisionTargetMetWeight != 0.)? precisionTargetMetWeight: 1.0;
+            this.precisionTargetNotMetWeight = (precisionTargetNotMetWeight != null && precisionTargetNotMetWeight != 0.)? precisionTargetNotMetWeight: 1.0;
 
             minLambda = lambda = 0.00632; // previous default
     }
@@ -180,17 +189,34 @@ public class ReportingCategory extends BpElement implements IReportingCategory
     @Override
     public void initialize(DbResultRecord record) throws SQLException
     {
-    	super.initialize(record);    
+    	super.initialize(record);
+    	startInfo						= float2Double(record, "startInfo");
+    	info 							= startInfo;
+    	startAbility 					= float2Double(record, "startAbility");
+    	
+    	standardError 					= AAMath.SEfromInfo(this.startInfo);
+    	    	
     	abilityWeight 					= float2Double(record, "abilityWeight");
+       	abilityWeight 					= (abilityWeight != null && abilityWeight != 0.)? abilityWeight: 1.0;
+       	
+       	adaptiveWeight					= float2Double(record, "Scalar");
+       	adaptiveWeight 					= (adaptiveWeight != null && adaptiveWeight != 0.)? adaptiveWeight: 5.0;
+    	
+    	precisionTarget 				= float2Double(record, "precisionTarget");
+    	precisionTarget					= (precisionTarget != null)?precisionTarget: Double.MAX_VALUE;
+    	
     	precisionTargetMetWeight 		= float2Double(record, "precisionTargetMetWeight");
+    	precisionTargetMetWeight		= (precisionTargetMetWeight != null && precisionTargetMetWeight != 0.)? precisionTargetMetWeight: 1.0;
+    	
     	precisionTargetNotMetWeight 	= float2Double(record, "precisionTargetNotMetWeight");
-    	targetInformation 				= float2Double(record, "precisionTarget");
+    	precisionTargetNotMetWeight		= (precisionTargetNotMetWeight != null && precisionTargetNotMetWeight != 0.)? precisionTargetNotMetWeight: 1.0;
     	
-    	isStrand = false;
-    	isReportingCategory = true;
+    	isStrand 						= false;
+    	isReportingCategory 			= true;
     	
-    	abilityWeight = (abilityWeight != null && abilityWeight != 0.)? abilityWeight: 1.0;
-    }
+    	minLambda = lambda = 0.00632; // previous default
+    	
+     }
     private Double float2Double(DbResultRecord record, String columnName)
     {
   	  try

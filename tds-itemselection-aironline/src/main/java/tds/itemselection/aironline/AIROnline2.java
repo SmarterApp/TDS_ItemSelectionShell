@@ -44,7 +44,7 @@ public class AIROnline2  implements IAIROnline {
 
 	 private static Logger  _logger  = LoggerFactory.getLogger (AIROnline2.class);
 	  
-	 private boolean _debug = true;
+	 private boolean _debug = false;
 
 	public ItemGroup getNextItemGroup(SQLConnection connection, UUID oppkey, _Ref<String> errorRef)
 			throws ReturnStatusException {

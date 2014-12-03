@@ -53,12 +53,31 @@ public String itemID;
  */    
 public String groupID;
 
+
+private String scoreDimensions;
+
+public String getScoreDimensions() {
+	return scoreDimensions;
+}
+
+public void setScoreDimensions(String scoreDimensions) {
+	this.scoreDimensions = scoreDimensions;
+}
+
+private Map<String, Integer> DimensionScores = new HashMap<String, Integer>();
+
+public Map<String, Integer> getDimensionScores() {
+	return DimensionScores;
+}
+
+public void setDimensionScores(Map<String, Integer> dimensionScores) {
+	DimensionScores = dimensionScores;
+}
+
 /**
  * Students score value for this item
  */
 public Integer score;
-
-private Map<String, Integer> dimensionScores;
 
 public Integer getScore() {
 	return score;
@@ -89,17 +108,6 @@ public ItemResponse()
   private double _b;
   private String _strand;
   TestItem       _baseItem = null;
-  private String scoreDimensions;
-  private Map<String, Integer> DimensionScores =new HashMap<String, Integer>();
-
-  public Map<String, Integer> getDimensionScores() {
-	return DimensionScores;
-}
-
-public void setDimensionScores(Map<String, Integer> dimensionScores) {
-	DimensionScores = dimensionScores;
-}
-
 /**
    * @return the _baseItem
    */
@@ -197,7 +205,8 @@ public void setDimensionScores(Map<String, Integer> dimensionScores) {
             itemPosition = record.<Integer> get("position");
             isFieldTest = record.<Boolean> get ("isFieldTest");
             String scoreDimensions = record.<String> get("scoreDimensions");
-            this.dimensionScores = new HashMap<String, Integer>(); 
+            this.setScoreDimensions(scoreDimensions);
+            this.DimensionScores = new HashMap<String, Integer>(); 
             loadDimensionScores(scoreDimensions);
       	}
     
@@ -227,7 +236,7 @@ public void setDimensionScores(Map<String, Integer> dimensionScores) {
 				} catch (Exception ex) {
 					score = -1;
 				}
-				dimensionScores.put(dimension, score);
+				DimensionScores.put(dimension, score);
 			}
 		} catch (Exception ex) {
 			_logger.error(ex.getMessage(), ex);

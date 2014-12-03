@@ -91,7 +91,7 @@ public class TestSelector2 {
 	    }
 	}
 
-	@Test
+	//@Test
 	public final void testGetNextItemGroup() throws Exception {
 		System.out.println();
 		_logger.info("Test of getNextItemGroup (Connection connection, UUID oppkey) for AdaptiveSelector2013: ");
@@ -149,7 +149,7 @@ public class TestSelector2 {
 			throw error;
 		}				
 	}
-	  //@Test
+	  @Test
 	  // this is not test. it is temporary file to update tblsetofadmititems.clstring column on my MySQL
 		public void TestUpdateDB() throws Exception {
 			try {

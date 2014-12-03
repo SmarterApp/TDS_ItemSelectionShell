@@ -309,7 +309,7 @@ public class AdaptiveSelector2   extends AbstractAdaptiveSelector  implements II
 		{
 			ReportingCategory rc = reportingCategories.get(i);
 			IRTMeasures irtMeasure = studentAbility.getRCAbility(rc.ID);
-			bCanTerminate = irtMeasure != null && ((irtMeasure.Information >= rc.targetInformation));
+			bCanTerminate = irtMeasure != null && ((irtMeasure.Information >= rc.precisionTarget));
 		}
 		return bCanTerminate;
     }

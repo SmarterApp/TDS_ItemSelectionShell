@@ -113,19 +113,19 @@ public class TestAA2DBLoader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String path = "c:\\temp\\TEST3" ;
+		String path = "c:\\temp\\TEST9" ;
 
 		String path1 = path + "\\Java1Blueprint.csv";
 		String path2 = path + "\\Java2ReportingCategories.csv";			
 		String path3 = path + "\\Java3BlueprintElements.csv";		
-		String path4 = path + "\\Java4Groups.csv";			
-		String path5 = path + "\\Java5TestItems.csv";
+//		String path4 = path + "\\Java4Groups.csv";			
+//		String path5 = path + "\\Java5TestItems.csv";
 		
 		FilePrint.string2File(path1, resultBp2String(segment.segmentBlueprint));
 		FilePrint.string2File(path2, resultRC2String(segment.segmentBlueprint.getReportingCategories()));
 		FilePrint.string2File(path3, resultBpElem2String(segment.segmentBlueprint.getBPElements()));
-		FilePrint.string2File(path4, resultGroups2String(segment.segmentItemPool.getItemGroups()));
-		FilePrint.string2File(path5, resultItems2String(segment.segmentItemPool.getItems()));
+//		FilePrint.string2File(path4, resultGroups2String(segment.segmentItemPool.getItemGroups()));
+//		FilePrint.string2File(path5, resultItems2String(segment.segmentItemPool.getItems()));
 		
 	}
 	//@Test
@@ -142,7 +142,7 @@ public class TestAA2DBLoader {
 			throw new ReturnStatusException("Load Segment test is failed");
 		}
 		// To compare with
-		String path = "c:\\temp\\TEST3" ;
+		String path = "c:\\temp\\TEST9" ;
 
 		String path1 = path + "\\NET1Blueprint.csv";
 		String path2 = path + "\\NET2ReportingCategories.csv";			
@@ -191,7 +191,7 @@ public class TestAA2DBLoader {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void test_loadHistory_Main() throws ReturnStatusException {
 		//TODO change oppkey
 		String OPPKEY = "a1674ef0-9042-428e-beab-9f082bdc93f8";
@@ -211,7 +211,7 @@ public class TestAA2DBLoader {
 		if(stHistory != null)
 		{
 			// To compare with
-			String path = "c:\\temp\\TEST3" ;
+			String path = "c:\\temp\\TEST9" ;
 	
 			String path1 = path + "\\NET6GroupStrings.csv";
 			String path2 = path + "\\NET7Responses.csv";			
@@ -248,7 +248,7 @@ public class TestAA2DBLoader {
 			e.printStackTrace();
 		}
 
-		String path1 = "c:\\temp\\AA_Java-Outputs\\Java1Blueprint_2.csv";
+		String path1 = "c:\\temp\\TEST9\\Java1Blueprint_2.csv";
 		FilePrint.string2File(path1, dumpBp2String(segment.segmentBlueprint));
 			
 	}
@@ -264,7 +264,7 @@ public class TestAA2DBLoader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String path1 = "C:\\temp\\AA_NET-Outputs\\NET1Blueprint.csv";
+		String path1 = "C:\\temp\\TEST9\\NET1Blueprint.csv";
 		String res = FilePrint.fieldsToString(segment.getBp());
 		FilePrint.string2File(path1, res);
 		
@@ -279,7 +279,7 @@ public class TestAA2DBLoader {
 		System.out.println("% of the coinsistent fields = " + ret + "%");		
 	}
 	
-	@Test
+	//@Test
 	public void test_loadOppHistory()
 	{
 		String OPPKEY = "a1674ef0-9042-428e-beab-9f082bdc93f8";
@@ -406,7 +406,7 @@ public class TestAA2DBLoader {
 		stb.append("startAbility").append(FilePrint.csvDelimeter)
 				.append(bp.startAbility).append(FilePrint.ls);
 		stb.append("cset1size").append(FilePrint.csvDelimeter)
-				.append(bp.cSet2Size).append(FilePrint.ls);
+				.append(bp.cSet1Size).append(FilePrint.ls);
 		stb.append("cset1Order").append(FilePrint.csvDelimeter)
 				.append(bp.cset1Order).append(FilePrint.ls);
 		stb.append("slope").append(FilePrint.csvDelimeter).append(bp.slope)

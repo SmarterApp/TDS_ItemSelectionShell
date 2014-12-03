@@ -129,7 +129,7 @@ public class Cset1Factory2013 {
 	    startAbility 	= oppHData.getStartAbility ();
 	    // make a copy
 	    bp = segment.getBp ();
-	    bp.startAbility = startAbility;
+	    bp.setStartAbilityRC( startAbility);
 	    bp.setActualInfoComputation(actualInfoCalc);
 	    
 	    ProcessResponses ();
@@ -155,33 +155,8 @@ public class Cset1Factory2013 {
 
 	    return this.cset1;
 	  }
-	 /*
-     int currentSegment = 1;
-     res.Sort();
-     // update my local blueprint with this examinee's items and _responses for blueprint satisfaction and ability estimation
-     foreach (ItemResponse R in res)    // Is the adaptive ability estimate computation commutative? If not, then we need to compute in the same order every time
-     {
-         item = pool.GetItem(R.ID);
-         if (item == null)   // then this response is to a sibling item not in this segment
-             item = pool.GetSiblingItem(R.segment, R.ID);
-         // Why do we care about sibling items? Because the segments may include common item groups with non-intersecting partitions of items 
-         R.item = item;
-         if (!excludeGroups.ContainsKey(R.groupID))
-             excludeGroups.Add(R.groupID, R.groupID);
 
-         // if this is a segmented test, then overall ability estimates need to percolate down the segments
-         // This is solely for the integrity of strands
-         if (R.segment > currentSegment)
-         {
-             currentSegment = R.segment;
-             blueprint.SetStartAbility(blueprint.theta);
-         }
-         blueprint.ProcessResponse(R, _segment.position);
-     }
-
-	 
-
-	  /**
+	 /**
 	   * Add response item groups to excludeGroups, and update blueprint
 	   * satisfaction and ability estimates
 	   */
@@ -286,6 +261,11 @@ public class Cset1Factory2013 {
 	          }
 	        }
 	      }
+	    }
+	    if(_debug)
+	    {
+	    //
+	    	bp.cSet1Size = items.size();
 	    }
 	    // QUESTION: Should we 'index' the used items by chronology? Or just run
 	    // through them all when recycling.

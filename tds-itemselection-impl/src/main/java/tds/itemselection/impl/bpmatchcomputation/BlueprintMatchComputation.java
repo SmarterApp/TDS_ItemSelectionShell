@@ -9,10 +9,8 @@
 package tds.itemselection.impl.bpmatchcomputation;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Random;
 
-import tds.itemselection.impl.sets.Cset1Factory;
 import tds.itemselection.impl.sets.Cset1Factory2013;
 import tds.itemselection.impl.sets.CsetGroup;
 

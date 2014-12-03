@@ -14,12 +14,17 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.junit.runner.RunWith;
+import org.opentestsystem.shared.test.LifecycleManagingTestRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ContextConfiguration;
 
 import AIR.Common.DB.AbstractDLL;
 import AIR.Common.DB.SQLConnection;
 
+@RunWith(LifecycleManagingTestRunner.class)
+@ContextConfiguration(locations = "/test-context.xml")
 public class DLLHelper  extends AbstractDLL  {
 	  @Autowired
 	  @Qualifier ("applicationDataSource")
