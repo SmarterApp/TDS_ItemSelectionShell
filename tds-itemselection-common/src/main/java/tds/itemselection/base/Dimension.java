@@ -33,6 +33,7 @@ import tds.itemgroupselection.measurementmodels.IRTModelGPC;
  */
 public class Dimension 
 {
+	public static Double MIN_B_VALUE = -9999.0; 
 	/**
 	 * IRTModel for this dimension
 	 */
@@ -82,6 +83,29 @@ public class Dimension
     	return bVector.size();
     }
     
+	public double averageB;
+
+    public double getAverageB() {
+		return averageB;
+	}
+
+    public void setAverageB(double averageB) {
+		this.averageB = averageB;   
+    }
+    
+	public void updateAverageB() {
+        double sum = 0.0;
+        if(this.bVector != null)
+        {
+	        for(int i = 0; i < this.bVector.size(); i++)
+	        {
+	        	sum += this.bVector.get(i);
+	        }
+	        sum /= this.bVector.size();
+        }       
+        averageB = ((this.bVector == null || this.bVector.isEmpty())? MIN_B_VALUE : (this.bVector.size() == 1 ? this.bVector.get(0) : sum));
+	}
+   
     /**
      * Add dimension entry collected from the table
      * @param irtModel
@@ -132,7 +156,7 @@ public class Dimension
      */
     private double[] ParamArray = new double[]{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
-    public double CalculateExpectedInformation(double theta, double se)
+	public double CalculateExpectedInformation(double theta, double se)
     {
         if (this.bVector.size() == 1)
             return this.expectedInfoIRTModel.Information(theta);
@@ -149,7 +173,7 @@ public class Dimension
      	int i = 0;
     	for(Double d: this.bVector)
     	{
-    		System.out.println ("bVector[" + i + " }="  + d);
+    		System.out.println ("bVector[" + i + " ] = "  + d);
     		i++;
     	}
        	System.out.println (String.format ("ParamC %s", this.ParamC));

@@ -149,7 +149,8 @@ public class TestAIROnline2013 {
 
 		try {
 			//String OPPKEY = "a1674ef0-9042-428e-beab-9f082bdc93f8"; // This is student with 3 previous items!
-			String OPPKEY = "69bf361f-7663-4f6e-a401-12430e3fe251"; // This will be student with 1 previous items!
+			//String OPPKEY = "69bf361f-7663-4f6e-a401-12430e3fe251"; // This is student with 1 previous items! TEST9-1
+			String OPPKEY = "5337a26e-cf61-49bd-96f0-143f12b8c8df";	// This is student with 2 previous items! TEST9-3
 
 			UUID oppkey = (UUID.fromString(OPPKEY));
 			_logger.info("Oppkey =  " + OPPKEY);
@@ -170,14 +171,15 @@ public class TestAIROnline2013 {
 				System.out.println(String.format("groupID: %s", itemGr.groupID));
 				System.out.println(String.format("itemsRequired: %s", itemGr.getNumRequired()));
 				System.out.println(String.format("maxReqItems: %s", itemGr.getMaxItems()));
+				System.out.println(String.format("Oppkey: %s", OPPKEY));
 				_logger.info(String.format("groupID: %s", itemGr.groupID));
 				_logger.info(String.format("itemsRequired: %s", itemGr.getNumRequired()));
 				_logger.info(String.format("maxReqItems: %s", itemGr.getMaxItems()));
+				_logger.info(String.format("Oppkey: %s", OPPKEY));
 
 				List<TestItem> items = itemGr.getItems();
 				int itemsNumber = items.size();
-				System.out.println(String.format("Number of items: %s",
-						itemsNumber));
+				System.out.println(String.format("Number of items: %s", itemsNumber));
 				_logger.info(String.format("Number of items: %s", itemsNumber));
 
 			} else {

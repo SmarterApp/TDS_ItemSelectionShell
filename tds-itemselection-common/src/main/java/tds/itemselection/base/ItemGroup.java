@@ -292,7 +292,7 @@ public ItemGroup(String groupID2, String segmentKey, String segmentID,
   public double getGroupB () {
     double sum = 0.0;
     for (TestItem itm : getItems ())
-      sum += itm.b;
+      sum += itm.getAverageB();
     return sum / getItems ().size ();
   }
 

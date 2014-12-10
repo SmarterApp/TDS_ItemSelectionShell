@@ -224,7 +224,7 @@ public double getBpJitter ()
       }
       if (citem != null && citem.isActive ())
       {
-        sum += citem.b;
+        sum += citem.getAverageB();
         ++cnt;
       }
     }

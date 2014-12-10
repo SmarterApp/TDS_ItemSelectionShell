@@ -577,7 +577,7 @@ public class TestAA2DBLoader {
 				stb.append(dm.ParamA).append(FilePrint.csvDelimeter);
 				stb.append(dm.bVector).append(FilePrint.csvDelimeter);
 				stb.append(dm.ParamC).append(FilePrint.csvDelimeter);
-				stb.append("?").append(FilePrint.csvDelimeter);
+				stb.append(dm.averageB).append(FilePrint.csvDelimeter);
 			}
 			List<String> cls = it.contentLevels;
 			for (String ctlstr : cls) {

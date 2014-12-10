@@ -12,10 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +26,7 @@ import AIR.Common.DB.results.DbResultRecord;
 public class TestItem implements Comparable<Object>
 {
   
-    private static String OVERALL_DIM_NAME 	= "OVERALL";
+    private static String OVERALL_DIM_NAME 	= "overall";
     private static String DELIM 			= ";";
     
 	private static Logger _logger        	= LoggerFactory.getLogger (TestItem.class);
@@ -79,6 +76,22 @@ public class TestItem implements Comparable<Object>
    * Flag to indicate whether this item has sub dimensions for measurement
    */
   public boolean hasDimensions = false ;
+  
+  public double getAverageB()
+  {
+	  if(dimensions == null || dimensions.isEmpty())
+		  return b;
+	  else
+	  {
+		  double avg = 0.0;
+		  for(Dimension dim: dimensions)
+		  {
+			  avg += dim.averageB;
+		  }
+		  avg /= dimensions.size();
+		  return avg;
+	  } 
+  }
   
   /**
    * @return the _groupID
@@ -324,13 +337,16 @@ public class TestItem implements Comparable<Object>
       }
     }
     this.contentLevels = baseItem.contentLevels;
-    this.dimensions = baseItem.dimensions; // TODO scorepoints, hasDimensions, segmentPosition
+    this.dimensions = baseItem.dimensions; 
+    this.hasDimensions = baseItem.hasDimensions;
+    this.segmentPosition = baseItem.segmentPosition;
   }
 
   /**
    * @return the _scorePoints
    */
   public int getScorePoints () {
+	  // TODO sum by dimensions
     return bVector.length;
   }
 
@@ -473,14 +489,14 @@ public class TestItem implements Comparable<Object>
 			String irtModel, int paramNum, String sParamName, Double fParamValue) {
 
 		if (sDimensionName == null || sDimensionName.isEmpty())
-			sDimensionName = "OVERALL";
+			sDimensionName = OVERALL_DIM_NAME;
 
 		Dimension dim = getDimByName(sDimensionName);
 		if (dim == null)
 		{
 			dim = new Dimension();
-			dim.isOverall = sDimensionName.equals("OVERALL");
-			dim.name = "OVERALL";
+			dim.isOverall = sDimensionName.equalsIgnoreCase(OVERALL_DIM_NAME);
+			dim.name = OVERALL_DIM_NAME;
 			dimensions.add(dim);
 		}
 		dim.InitializeDimensionEntry(irtModel, paramNum, sParamName,
@@ -509,8 +525,8 @@ public class TestItem implements Comparable<Object>
 		{
 			if(dim.name.equalsIgnoreCase(name))
 			{
-			ret = dim ;
-			break;
+				ret = dim ;
+				break;
 			}
 		}
 		return ret;
@@ -560,7 +576,8 @@ public class TestItem implements Comparable<Object>
     {  
     	Dimension dim = new Dimension();
     	dim.IRTModelName = irtModel;
-        dim.name = (name != null) ? name : OVERALL_DIM_NAME;
+    	// !!!! always will be in Lower Case because will use as map key !!!!
+        dim.name = (name != null) ? name.toLowerCase() : OVERALL_DIM_NAME;
         dim.isOverall = dim.name.equalsIgnoreCase(OVERALL_DIM_NAME);
         
         double sum = 0.0;
@@ -580,9 +597,8 @@ public class TestItem implements Comparable<Object>
         dim.ParamC = c;
         dim.bVector = bVec;
         
-        //dim.averageB = ((bVec == null || bVec.isEmpty())? b : (bVec.size() == 1 ? bVector[0] : sum);
-        
-        
+        dim.averageB = ((bVec == null || bVec.isEmpty())? b : (bVec.size() == 1 ? bVec.get(0) : sum));
+       
         try {
 			dim.irtModelInstance = IRTModel.CreateModel(irtModel, a, bVec, c);
 		} catch (Exception e) {

@@ -22,7 +22,7 @@ public class ActualInfoComputation  {
             if (dim.isOverall && response.getBaseItem().hasDimensions)
                 continue;
 
-            double d1 = dim.irtModelInstance.D1LnlWrtTheta(response.getDimensionScores().get(dim.name), bpComponent.getTheta());
+            double d1 = dim.irtModelInstance.D1LnlWrtTheta(response.getDimensionScores().get((dim.name).toLowerCase()), bpComponent.getTheta());
             bpComponent.setInfo(bpComponent.getInfo() + (-1 * dim.irtModelInstance.D2LnlWrtTheta(response.getDimensionScores().get(dim.name), bpComponent.getTheta())));
             bpComponent.setTheta(bpComponent.getTheta() - (d1 / (-1 * bpComponent.getInfo())));
         }

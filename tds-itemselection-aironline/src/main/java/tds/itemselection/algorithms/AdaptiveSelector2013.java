@@ -66,7 +66,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	  int                itemsRequired  = -1;
 	  int                maxItems       = -1;
 	  // for debug
-	  private boolean 	 _debug 		= false;
+	  private boolean 	 _debug 		= true;
 	  private String 	 csvSeparator	= ", ";
 	  private String 	 ls				= System.getProperty("line.separator");
 	  
@@ -189,10 +189,13 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        int index = rand.nextInt(n);
 
 	        if(_debug)
-	        {	            	        	
-	        	List<String> selectedGroups = new ArrayList<String>(); 
-	        	String selectedGroup = "I-200-27733";
-	        	selectedGroups.add(selectedGroup);
+	        {
+	        	index = 0;
+	        	
+				// TEST9-3
+	        	List<String> selectedGroups = new ArrayList<String>();
+	        	selectedGroups.add("I-200-2942");
+	        	selectedGroups.add("I-200-18601");
 	        		        	
 	        	Integer out = null;
 	        	for(CsetGroup group: cset1.itemGroups)
@@ -214,9 +217,14 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        	}
 	        		        	
 	        }
-
 	        
 	        cg = cset1.itemGroups.get(index);
+	        
+	        if(_debug)
+	        {
+				System.out.println(String.format("Oppkey: %s: %s", itemCandidates.getOppkey(), cg.groupID));
+				_logger.info(String.format("Oppkey: %s: %s", itemCandidates.getOppkey(), cg.groupID));
+	        }
 	
 	        SortSelectedGroup(cg);
 	        PruneSelectedGroup(cg);
