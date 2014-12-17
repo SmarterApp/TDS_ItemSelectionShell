@@ -602,22 +602,22 @@ public class TestItem implements Comparable<Object>
         try {
 			dim.irtModelInstance = IRTModel.CreateModel(irtModel, a, bVec, c);
 		} catch (Exception e) {
-			_logger.error("Cannot create intModel with name " + irtModel + ". Item = " + this.itemID + ". By default Model will be IRT3(1., 0., 0.)");
+			_logger.info("Cannot create intModel of type " + irtModel + ". Item = " + this.itemID + ". By default Model will be IRT3PL(1., 0., 0.)");
 			try {
 				dim.irtModelInstance = IRTModel.CreateModel("IRT3PL", 1., Arrays.asList(new Double(0.0)), 0.0);
 			} catch (Exception e1) {
-				_logger.error("Cannot create intModel with name IRT3PL");
+				_logger.error("Cannot create intModel of type IRT3PL");
 			}
 		}
 
         try {
 			dim.setExpectedInfoIRTModel(IRTModel.CreateModel(irtModel, 1., bVec, c));
 		} catch (Exception e) {
-			_logger.error("Cannot create ExpectedInfoIRTModel with name " + irtModel + ". Item = " + this.itemID + ". By default Model will be IRT3(1., 0., 0.)");
+			_logger.info("Cannot create ExpectedInfoIRTModel of type " + irtModel + ". Item = " + this.itemID + ". By default Model will be IRT3PL(1., 0., 0.)");
 			try {
 				dim.setExpectedInfoIRTModel(IRTModel.CreateModel("IRT3PL", 1., Arrays.asList(new Double(0.0)), 0.0));
 			} catch (Exception e1) {
-				_logger.error("Cannot create intModel with name IRT3PL");
+				_logger.error("Cannot create intModel of type IRT3PL");
 			}
 		}
         
