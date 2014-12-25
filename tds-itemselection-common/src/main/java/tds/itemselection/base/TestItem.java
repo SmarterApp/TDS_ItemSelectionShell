@@ -435,12 +435,13 @@ public class TestItem implements Comparable<Object>
 	{
 		// Uses for AA_GetSegment2_SP()! Renamed fields: IRT_A -> irtA,...
 
+		/*
 		this.b = Double.parseDouble(record.<String> get("irtB"));
 		float A = record.<Float> get("irtA");
 		float C = record.<Float> get("irtC");
 		this.a = new Double(A);
 		this.c = new Double(C);
-		
+		*/
 		itemID = record.<String> get("itemkey");
 		groupID = record.<String> get("GID");
 
@@ -453,6 +454,7 @@ public class TestItem implements Comparable<Object>
 		if (strContentLevels != null)
 			contentLevels = Arrays.asList(strContentLevels.split("\\s*;\\s*"));
 		
+		/*
 		irtModel = record.<String> get("irtModel");
 		
 		String bVectrs = record.<String> get("bVector");
@@ -472,8 +474,8 @@ public class TestItem implements Comparable<Object>
 	    		this.bVector[i++] = 0.0;	    		
 	    	}
 	    }
-	    
 		dimensions = CreateDimensions(this.irtModel, this.a, this.b, bVectrs, this.c, 0.0);
+		*/
 	}
 
 	/**

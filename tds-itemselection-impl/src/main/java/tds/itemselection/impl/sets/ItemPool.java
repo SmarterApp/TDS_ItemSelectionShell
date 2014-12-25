@@ -254,7 +254,6 @@ public class ItemPool
 			DbResultRecord record;
 			while (recItr.hasNext()) {
 				record = recItr.next();
-				// int nSegmentPosition = itemDimensionsTable.getInt("segmentPosition");
 				String sItemKey = record.<String> get("itemkey");
 				String sDimensionName = record.<String> get("Dimension");
 				String irtModel = record.<String> get("irtModel");
@@ -269,11 +268,9 @@ public class ItemPool
 			// Now construct the IRT model objects for dimensions
 			Iterator<TestItem> itTI = _items.values().iterator();
 			while (itTI.hasNext()) {
-//				TestItem item = (TestItem) itTI.next();
 				TestItem item = itTI.next();
 				Iterator<Dimension> itDimension = item.dimensions.iterator();
 				while (itDimension.hasNext()) {
-//					Dimension dim = (Dimension) itDimension.next();
 					Dimension dim = itDimension.next();
 					dim.initializeIRT();
 				}

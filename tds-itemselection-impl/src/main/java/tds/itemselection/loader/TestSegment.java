@@ -279,11 +279,9 @@ public class TestSegment
 	  DbResultRecord record;
       record = res.getCount () > 0 ? res.getRecords ().next () : null;
       if (record != null) {
-    	Long tmp = record.<Long> get ("refreshMinutes");
-        refreshMinutes = new Integer(tmp.toString());
+    	refreshMinutes = record.<Integer> get ("refreshMinutes");
         parentTest = record.<String> get ("ParentTest");
-        tmp = record.<Long> get ("segmentPosition");
-        position = new Integer(tmp.toString());
+        position = record.<Integer> get ("segmentPosition");
         segmentBlueprint.initializeOverallBluePrint(res);
       }
   }   

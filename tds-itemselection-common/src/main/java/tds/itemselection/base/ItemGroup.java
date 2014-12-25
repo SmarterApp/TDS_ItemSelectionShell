@@ -246,8 +246,9 @@ public ItemGroup(String groupID2, String segmentKey, String segmentID,
  */
   public void initialize(DbResultRecord record) throws SQLException
   {
-		groupID = record.<String> get("itemGroup"); // why itemGroup? TODO: check it
-		numberOfItemsRequired = record.<Integer> get("itemsRequired");
+	  	groupID = record.<String> get("itemGroup"); // why itemGroup? TODO: check it
+	  	Long l  = record.<Long> get("itemsRequired");
+		numberOfItemsRequired = (Integer)1 ;
 		maximumNumberOfItems = record.<Integer> get("maxItems");
 		// TODO AK: what does do with bpweight?
   }
@@ -262,7 +263,7 @@ public ItemGroup(String groupID2, String segmentKey, String segmentID,
   {
     for (TestItem item : getItems ())
     {
-      if (item.itemID == ID)
+      if (item.itemID.equals(ID))
         return item;
     }
     return null;

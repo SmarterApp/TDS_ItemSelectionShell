@@ -990,8 +990,7 @@ public class Blueprint implements IBpInfoContainer {
 
 		while (recItr.hasNext()) {
 			record = recItr.next();
-			Boolean isRC = (record.<Long> get("isReportingCategory") == 1) ? true
-					: false;
+			Boolean isRC = (record.<String> get("isReportingCategory").equalsIgnoreCase("true")) ? true : false;
 			if (isRC) {
 				ReportingCategory rc = new ReportingCategory();
 				rc.initialize(record);

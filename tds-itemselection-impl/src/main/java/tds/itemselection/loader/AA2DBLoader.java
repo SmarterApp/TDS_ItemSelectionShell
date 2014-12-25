@@ -18,11 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import tds.dll.api.IItemSelectionDLL;
+import tds.dll.api.ISimDLL;
 import tds.itemselection.api.ItemSelectionException;
-import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
 import tds.itemselection.base.TestItem;
-import AIR.Common.DB.DbComparator;
 import AIR.Common.DB.SQLConnection;
 import AIR.Common.DB.results.DbResultRecord;
 import AIR.Common.DB.results.MultiDataResultSet;
@@ -33,7 +32,7 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 	
 	@Autowired
 	IItemSelectionDLL iSelDLL = null;
-
+	
 	private static Logger _logger = LoggerFactory.getLogger(AA2DBLoader.class);
 
 	public AA2DBLoader() {
@@ -113,8 +112,7 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 		if (sessionKey == null) {
 			dataSets = iSelDLL.AA_GetSegment2_SP(connection, segmentKey);
 		} else {
-			dataSets = iSelDLL.AA_SIM_GetSegment_SP(connection, sessionKey,
-					segmentKey);
+			dataSets = iSelDLL.AA_SIM_GetSegment2_SP(connection, sessionKey, segmentKey, false);
 		}
 
 		Iterator<SingleDataResultSet> sItr = dataSets.getResultSets();
