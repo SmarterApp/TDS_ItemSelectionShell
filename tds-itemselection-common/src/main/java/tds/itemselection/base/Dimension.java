@@ -20,12 +20,15 @@
 package tds.itemselection.base;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import tds.itemgroupselection.measurementmodels.IRTModel;
 import tds.itemgroupselection.measurementmodels.IRTModel3pl;
 import tds.itemgroupselection.measurementmodels.IRTModelGPC;
-//import measurementmodels.*;
 
 /**
  * Class representing IRT parameters associated with item measurement dimension
@@ -34,6 +37,9 @@ import tds.itemgroupselection.measurementmodels.IRTModelGPC;
 public class Dimension 
 {
 	public static Double MIN_B_VALUE = -9999.0; 
+	 
+	private static Logger  _logger  = LoggerFactory.getLogger (Dimension.class);
+
 	/**
 	 * IRTModel for this dimension
 	 */
@@ -75,8 +81,6 @@ public class Dimension
      * Flag to indicate whether this dimension is overall
      */
     public boolean isOverall = true;
-    
-    public int ScorePoints;
     
     public int getScorePoints()
     {
@@ -149,7 +153,9 @@ public class Dimension
             }
         }
         irtModelInstance = IRTModel.CreateModel(enmModel, ParamA, bVector, ParamC);
-    }
+        updateAverageB();        
+ 		setExpectedInfoIRTModel(IRTModel.CreateModel(enmModel, 1., bVector, ParamC));
+     }
     
     /*
      * This is used to parse and get the dimension data from database - (Maximum 10 values)

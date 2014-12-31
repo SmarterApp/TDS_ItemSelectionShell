@@ -261,8 +261,11 @@ public class ItemPool
 				String sParamName = record.<String> get("parmname");
 				Double fParamValue = float2Double(record, "parmvalue");
 				TestItem item = _items.get(sItemKey);
-				item.initializeDimensionEntry(sDimensionName, irtModel,
+				if(item != null)
+				{
+					item.initializeDimensionEntry(sDimensionName, irtModel,
 						paramNum, sParamName, fParamValue);
+				}
 			}
 
 			// Now construct the IRT model objects for dimensions

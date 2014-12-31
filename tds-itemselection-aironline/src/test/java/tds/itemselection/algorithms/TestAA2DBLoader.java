@@ -573,7 +573,7 @@ public class TestAA2DBLoader {
 			for (Dimension dm : dms) {
 				stb.append(dm.IRTModelName).append(FilePrint.csvDelimeter);
 				stb.append(dm.isOverall).append(FilePrint.csvDelimeter);
-				stb.append(dm.ScorePoints).append(FilePrint.csvDelimeter);
+				stb.append(dm.getScorePoints()).append(FilePrint.csvDelimeter);
 				stb.append(dm.ParamA).append(FilePrint.csvDelimeter);
 				stb.append(dm.bVector).append(FilePrint.csvDelimeter);
 				stb.append(dm.ParamC).append(FilePrint.csvDelimeter);

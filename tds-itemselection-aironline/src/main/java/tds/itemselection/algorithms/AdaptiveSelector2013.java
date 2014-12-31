@@ -408,7 +408,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 
 		for (CsetGroup gr : cset1.itemGroups) {
 			strBuilder.append(gr.groupID)
-			.append(csvSeparator).append(gr.items.get(0).irtModel)
+			.append(csvSeparator).append(gr.items.get(0).dimensions.get(0).IRTModelName)
 			.append(csvSeparator).append(gr.selectionMetric)
 			.append(csvSeparator).append(bpWeight)
 			.append(csvSeparator).append(gr.bpMetric)

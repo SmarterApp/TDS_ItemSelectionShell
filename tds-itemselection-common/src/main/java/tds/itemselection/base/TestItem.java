@@ -454,7 +454,7 @@ public class TestItem implements Comparable<Object>
 		if (strContentLevels != null)
 			contentLevels = Arrays.asList(strContentLevels.split("\\s*;\\s*"));
 		
-		/*
+/*
 		irtModel = record.<String> get("irtModel");
 		
 		String bVectrs = record.<String> get("bVector");
@@ -475,7 +475,7 @@ public class TestItem implements Comparable<Object>
 	    	}
 	    }
 		dimensions = CreateDimensions(this.irtModel, this.a, this.b, bVectrs, this.c, 0.0);
-		*/
+*/
 	}
 
 	/**
