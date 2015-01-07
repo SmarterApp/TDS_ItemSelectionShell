@@ -12,25 +12,25 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
-import org.junit.Before;
 import org.junit.Test;
 
-public class GaussHermiteQuadratureTest {
+public class GaussHermiteQuadratureTest
+{
 
-	@Test
-	public void testIntegrate() throws Exception {
-		double fMean = 0D;
-		double fStdDev = 0.2D;
-		
-		double paramA = 0.2;
-		double paramB = 0.05;
-		double paramC = 0.2 ;
-		ArrayList<Double> paramBList = new ArrayList<Double>(); 
-		paramBList.add(paramB);				
-		IRTModel model = IRTModel.CreateModel("IRT3PL", paramA, paramBList, paramC); 		
-		GaussianFunctionIRT gfIRT = new GaussianFunctionIRT(model, fMean, fStdDev);		
-		double fExpectedIntegratedValue = 0.006652108056427089;
-		double fErrorMargin = 0.00001;
-		assertEquals(fExpectedIntegratedValue, GaussHermiteQuadrature.Integrate(gfIRT), fErrorMargin);
-	}
+  @Test
+  public void testIntegrate () throws Exception {
+    double fMean = 0D;
+    double fStdDev = 0.2D;
+
+    double paramA = 0.2;
+    double paramB = 0.05;
+    double paramC = 0.2;
+    ArrayList<Double> paramBList = new ArrayList<Double> ();
+    paramBList.add (paramB);
+    IRTModel model = IRTModel.CreateModel ("IRT3PL", paramA, paramBList, paramC);
+    GaussianFunctionIRT gfIRT = new GaussianFunctionIRT (model, fMean, fStdDev);
+    double fExpectedIntegratedValue = 0.006652108056427089;
+    double fErrorMargin = 0.00001;
+    assertEquals (fExpectedIntegratedValue, GaussHermiteQuadrature.Integrate (gfIRT), fErrorMargin);
+  }
 }

@@ -12,25 +12,25 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
-import org.junit.Before;
 import org.junit.Test;
 
-public class GaussianFunctionIRTTest {	
-	@Test
-	public void testApply() throws Exception {
-		double fMean = 0D;
-		double fStdDev = 0.2D;
-		
-		double paramA = 0.2;
-		double paramB = 0.05;
-		double paramC = 0.2 ;
-		ArrayList<Double> paramBList = new ArrayList<Double>(); 
-		paramBList.add(paramB);				
-		IRTModel model = IRTModel.CreateModel("IRT3PL", paramA, paramBList, paramC); 		
-		GaussianFunctionIRT gfIRT = new GaussianFunctionIRT(model, fMean, fStdDev);
-		double fValue = 0D;
-		double fExpectedValue = 0.00665535210267177;
-		double fErrorMargin = .00001;
-		assertEquals(fExpectedValue, gfIRT.Apply(fValue), fErrorMargin);
-	}
+public class GaussianFunctionIRTTest
+{
+  @Test
+  public void testApply () throws Exception {
+    double fMean = 0D;
+    double fStdDev = 0.2D;
+
+    double paramA = 0.2;
+    double paramB = 0.05;
+    double paramC = 0.2;
+    ArrayList<Double> paramBList = new ArrayList<Double> ();
+    paramBList.add (paramB);
+    IRTModel model = IRTModel.CreateModel ("IRT3PL", paramA, paramBList, paramC);
+    GaussianFunctionIRT gfIRT = new GaussianFunctionIRT (model, fMean, fStdDev);
+    double fValue = 0D;
+    double fExpectedValue = 0.00665535210267177;
+    double fErrorMargin = .00001;
+    assertEquals (fExpectedValue, gfIRT.Apply (fValue), fErrorMargin);
+  }
 }
