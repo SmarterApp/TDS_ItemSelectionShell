@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import TDS.Shared.Exceptions.ReturnStatusException;
 import AIR.Common.DB.SQLConnection;
+import AIR.Common.Helpers._Ref;
 import tds.itemselection.api.IItemSelection;
 import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.ItemCandidatesData;
@@ -45,19 +46,23 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 
 	  @Autowired
 	  @Qualifier("aa2DBLoader")
-	  private IItemSelectionDBLoader loader = null;
+	  private IItemSelectionDBLoader 	loader = null;
 	  
 	  // a combination of test-constant and examinee-variable data
-	  Blueprint          blueprint;
+	  protected Blueprint          		blueprint;
 
-	  Cset1              cset1;
+	  protected Cset1              		cset1;
 
-	  ItemCandidatesData itemCandidates;
+	  protected ItemCandidatesData 		itemCandidates;
 	  // itemCandidates contains oppkey, segmentKey, itempool;
-	  TestSegment        segment;
-	  Cset1Factory2013       csetFactory;
+	  protected TestSegment        		segment;
+	  protected Cset1Factory2013       	csetFactory;
+	  
+      public String 					terminationReason;
+      public Boolean 					segmentComplete; // have termination condition(s) been met.
+      public String 					_error;
 		
-	  private static Random rand = new Random();
+	  private static Random 			rand = new Random();
 
 	  // min/max ability are used to determine final range of ability matches
 	  // computed and normalize all ability matches to range [0,1]
@@ -130,30 +135,53 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 			new PruningStrategySmarter(rand));
 		this.csetFactory.setSegment(segment);
 
-		try{			
-		    cset1 = csetFactory.MakeCset1 (connection);
-		    this.blueprint = cset1.getBlueprint ();
-
-	        // Record current ability and information approximations (if there is a AdaptiveThetas listener)
-	        // AIROnlineCommon.AALogger.ThetaLogger.WriteLine("," + _oppkey + "," + blueprint.lastAbilityPosition.ToString() + "," + blueprint.theta.ToString() + "," + blueprint.info.ToString());
-	
+		try{
+			// load all previous responses and calculate working actuals
+			csetFactory.LoadHistory(connection);
 	        // the blueprint has been updated to reflect all previous responses,
 	        // check that we haven't satisfied configured termination conditions.
-	        TerminationManager termMgr = new TerminationManager(this.blueprint);
+            // now check to see if we've satisfied configured termination conditions for this segment.
+	        TerminationManager termMgr = new TerminationManager(cset1.getBlueprint ());
 	        if (termMgr.IsSegmentComplete())
 	        {
 	            String reason = termMgr.SegmentCompleteReason;
-	            if (!loader.SetSegmentSatisfied(connection, itemCandidates.getOppkey(), segment.position, reason))
-	            {
-	                _error = String.format("Could not mark segment: %s as satisfied for reason: %s.", segment.position, reason);
-	                _logger.error(_error);
-	            }   
+	            terminateSegment(connection, itemCandidates, reason);
 	            return null;
 	        }
-			    
+	        
+            // now that we have a working bp and theta estimate, and the test is not terminated, 
+            //  check to see if we need to append any off-grade items to the pool
+            if (csetFactory.getBp().offGradeItemsProps.countByDesignator.size() > 0  // 1 or more off-grade designators are configured for this test
+                &&!csetFactory.getBp().offGradeItemsProps.poolFilter.isEmpty())  // have not already added off-grade items to the pool
+            {
+                String filter = csetFactory.getBp().GetOffGradeFilter();
+                if (!filter.isEmpty())
+                {
+                    _Ref<String> reason = new _Ref<>();
+                    String status = loader.AddOffGradeItems(connection,itemCandidates.getOppkey (), 
+                    		filter, null,  reason);
+                    if (!status.equalsIgnoreCase("success"))
+                        throw new ReturnStatusException(String.format("Attempt to include off-grade items: %s returned a status of:  %s, reason:  %s", filter, status, reason));
+                    if (reason.get().isEmpty())
+                    {
+                        // the student's custom item pool has been updated with off-grade items; reload history to include
+                        //  the updated itempool
+                        csetFactory.LoadHistory(connection);
+                    }
+                }
+            }
+		    cset1 = csetFactory.MakeCset1 (connection);
+			this.blueprint = cset1.getBlueprint ();	
+			
+            // Record current ability and information approximations (if there is a AdaptiveThetas listener)
+            //AIROnlineCommon.AALogger.ThetaLogger.WriteLine("," + _oppkey + "," + blueprint.lastAbilityPosition.ToString() + "," + blueprint.theta.ToString() + "," + blueprint.info.ToString());
+
+            // Per Jon, if we're out of groups, terminate the segment.	
 		    if (this.cset1.itemGroups.size () < 1)
-		      return null;
-	
+		    {
+		    	terminateSegment(connection, itemCandidates, "POOL EMPTY");
+		    	return null;
+		    }
 		    int minitems = Math.max (1, this.blueprint.randomizerIndex);
 		    int minfirstitems = Math.max (1, this.blueprint.randomizerInitialIndex);
 	
@@ -357,6 +385,21 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	protected void PruneSelectedGroup(CsetGroup group) {
 		PruneItemgroup(group);
 	}
+    /// <summary>
+    /// Terminates the current segment for the reason provided.
+    /// </summary>
+    /// <param name="reason"></param>
+    private void terminateSegment(SQLConnection connection, ItemCandidatesData itemCandidates, String reason) throws ReturnStatusException
+    {
+        if (loader.setSegmentSatisfied(connection, itemCandidates.getOppkey(), segment.position, reason))
+        {
+            this.segmentComplete = true;
+            this.terminationReason = reason;
+        }
+        else
+            _error = String.format("Could not mark segment: %s as satisfied for reason: %s.", segment.position.toString(), reason);
+    }
+
 	//
 	//=======================DEBUGGING=========================================
 	//

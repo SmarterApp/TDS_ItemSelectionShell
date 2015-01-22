@@ -104,8 +104,8 @@ public class StudentHistory2013
   public void setStartAbility (Float startAbility) {
     this.startAbility = startAbility;
   }
-//===============Adaptive2 Algorithm==============================
   
+//===============Adaptive2 Algorithm==========================================  
   /**
    * Standard error in start ability measurement
    */
@@ -136,7 +136,14 @@ public class StudentHistory2013
    * Custom item pool for this student
    */
   private ArrayList<String> _itemPool = new ArrayList<String>();
-
+	
+  /**
+   * //AM: added in 2014; 
+   * will be "OFFGRADE ABOVE" or "OFFGRADE BELOW" or null 
+   * if the student doesn't have the relevant accommodation
+   */
+  private String offgrade = null;
+  
   public Double get_startSE() {
 	return _startSE;
 }
@@ -230,7 +237,13 @@ public void set_itemPool(ArrayList<String> _itemPool) {
         return new ArrayList<CSetItemGroup>(candidateGroups.values());
     } 
     
-    /**
+    public String getOffgrade() {
+		return offgrade;
+	}
+	public void setOffgrade(String offgrade) {
+		this.offgrade = offgrade;
+	}
+	/**
      * Constructor 
      */
     public StudentHistory2013()
@@ -255,6 +268,9 @@ public void set_itemPool(ArrayList<String> _itemPool) {
 			String[] items = itemPool.split(ITEM_POOL_DELIMITER);
 			for (int i = 0; i < items.length; ++i)
 				_itemPool.add(items[i].trim());
+			//AM: added in 2014; will be "OFFGRADE ABOVE" or "OFFGRADE BELOW" or null if the student doesn't have the relevant accommodation
+			if (res.hasColumn("offgrade"))
+			offgrade = record.<String> get("offgrade");			
 		}
 	}
     

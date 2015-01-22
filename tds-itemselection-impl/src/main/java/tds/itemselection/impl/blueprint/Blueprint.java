@@ -14,18 +14,23 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import TDS.Shared.Exceptions.ReturnStatusException;
 import AIR.Common.DB.results.DbResultRecord;
 import AIR.Common.DB.results.SingleDataResultSet;
+import AIR.Common.Helpers._Ref;
 import tds.itemselection.api.IBpInfoContainer;
+import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.TestItem;
 import tds.itemselection.debug.FilePrint;
 import tds.itemselection.impl.ItemResponse;
 import tds.itemselection.impl.item.CsetItem;
 import tds.itemselection.impl.math.AAMath;
+import tds.itemselection.impl.math.CDF;
 import tds.itemselection.impl.sets.CSetItem;
 import tds.itemselection.impl.sets.PriorAdmins;
 import tds.itemselection.impl.sets.UsedSequence;
@@ -36,6 +41,7 @@ import tds.itemselection.impl.sets.UsedSequence;
  */
 
 // TODO: (AK) all
+// Blueprint2013 -> see line after 699
 public class Blueprint implements IBpInfoContainer {
 	private static Logger _logger = LoggerFactory.getLogger(Blueprint.class);
 
@@ -49,16 +55,8 @@ public class Blueprint implements IBpInfoContainer {
 	public static final String ADAPTIVE_VERSION = "bp1";
 
 	public BpElements elements = new BpElements();
-	public List<BpElement> strictMaxes = new ArrayList<BpElement>(); // every
-																		// element
-																		// which
-																		// has a
-																		// strict
-																		// maximum
-																		// of
-																		// items
-																		// to
-																		// administer
+	// every element which has a strict maximum of items to administer
+	public List<BpElement> strictMaxes = new ArrayList<BpElement>(); 
 	// Following List: the elements that are used in computing ability match
 	public List<Strand> strands = new ArrayList<Strand>();
 	// public List<ReportingCategory> reportingCategories = new
@@ -109,6 +107,8 @@ public class Blueprint implements IBpInfoContainer {
 	// examinee specific. not to be used for
 	// number of operational items administered so far
 	public int numAdministered = 0;
+	// the number of operational items administered for the entire test (across segments)
+    public int numAdministeredTest = 0; 
 	// an adaptive algorithm parameter used in computing ability metric for
 	// overall
 	public double info;
@@ -140,10 +140,10 @@ public class Blueprint implements IBpInfoContainer {
 		return precisionTarget <= standardError;
 	}
 
-	// / <summary>
-	// / Copy the generic blueprint for examinee computation of satisfaction
-	// / </summary>
-	// / <returns></returns>
+	/**
+	 *  Copy the generic blueprint for examinee computation of satisfaction
+	 *
+	 */
 	public Blueprint copy() {
 		Strand strnd;
 		Blueprint bp = new Blueprint();
@@ -189,7 +189,7 @@ public class Blueprint implements IBpInfoContainer {
 	public void Initialize(String segmentkey, int segmentPosition,
 			int minOpItems, int maxOpItems, double bpWeight, double itemWeight,
 			double abilityOffset, int randomizer, int initialRandom,
-			int numAdministered, double startInfo, double startAbility,
+			int numAdministered, int numAdministeredTest, double startInfo, double startAbility,
 			int lastAbilityPosition) {
 
 		this.segmentKey = segmentkey;
@@ -202,6 +202,7 @@ public class Blueprint implements IBpInfoContainer {
 		this.randomizerIndex = randomizer;
 		this.randomizerInitialIndex = initialRandom;
 		this.numAdministered = numAdministered;
+		this.numAdministeredTest = numAdministeredTest;
 		this.info = startInfo;
 		this.startAbility = startAbility;
 		this.theta = startAbility;
@@ -252,27 +253,28 @@ public class Blueprint implements IBpInfoContainer {
 
 	}
 
-	// / <summary>
-	// / NEW Constructor to use for building generalized test blueprint. Use
+	/** <summary>
+	 * NEW Constructor to use for building generalized test blueprint. Use
 	// Copy() to create a CSET1 blueprint
-	// / 3/2013: Added adaptiveVersion parameter
-	// / </summary>
-	// / <param name="segmentkey"></param>
-	// / <param name="segmentPosition"></param>
-	// / <param name="minOpItems"></param>
-	// / <param name="maxOpItems"></param>
-	// / <param name="bpWeight"></param>
-	// / <param name="itemWeight"></param>
-	// / <param name="abilityOffset"></param>
-	// / <param name="randomizer"></param>
-	// / <param name="initialRandom"></param>
-	// / <param name="startInfo"></param>
-	// / <param name="startAbility"></param>
-	// / <param name="cset1Size"></param>
-	// / <param name="cset1Order"></param>
-	// / <param name="slope"></param>
-	// / <param name="intercept"></param>
-	// / <param name="adaptiveVersion"></param>
+	 * 3/2013: Added adaptiveVersion parameter
+	 * </summary>
+	 * <param name="segmentkey"></param>
+	 * <param name="segmentPosition"></param>
+	 * <param name="minOpItems"></param>
+	 * <param name="maxOpItems"></param>
+	 * <param name="bpWeight"></param>
+	 * <param name="itemWeight"></param>
+	 * <param name="abilityOffset"></param>
+	 * <param name="randomizer"></param>
+	 * <param name="initialRandom"></param>
+	 * <param name="startInfo"></param>
+	 * <param name="startAbility"></param>
+	 * <param name="cset1Size"></param>
+	 * <param name="cset1Order"></param>
+	 * <param name="slope"></param>
+	 * <param name="intercept"></param>
+	 * <param name="adaptiveVersion"></param>
+	 */ 
 	public void Initialize(String segmentkey, int segmentPosition,
 			int minOpItems, int maxOpItems, double bpWeight, double itemWeight,
 			double abilityOffset, int randomizer, int initialRandom,
@@ -300,10 +302,11 @@ public class Blueprint implements IBpInfoContainer {
 
 	}
 
-	// / <summary>
-	// / Add a CSET Item to all of its blueprint contentlevel elements
-	// / </summary>
-	// / <param name="item"></param>
+	/*
+	 * Add a CSET Item to all of its blueprint contentlevel elements
+	 * </summary>
+	 * <param name="item"></param>
+	 */
 	public void addCsItem(CSetItem cSetItem) {
 		BpElement elem;
 		if (_items == null)
@@ -489,20 +492,19 @@ public class Blueprint implements IBpInfoContainer {
 	// / <param name="segment">The current segment under consideration</param>
 	public void ProcessResponse(ItemResponse resp, int segmentPosition) {
 
-		if (!resp.isFieldTest && resp.score > -1) // is this operational item
-													// response
-			// scored? Then use it to update ability
-			// UpdateAbility (resp.itemPosition, resp.get_strand (), resp.get_b
-			// (), resp.score);
+		// is this operational item response scored?
+		// Then use it to update ability UpdateAbility (resp.itemPosition,
+		// resp.get_strand (), resp.get_b(), resp.score);
+		if (!resp.isFieldTest && resp.score > -1) 
 			UpdateAbility(resp);
-		if (!resp.isFieldTest && resp.segmentPosition == segmentPosition) // is
-																			// this
-																			// operational
-																			// item
-																			// on
-			// this segment? Then update
-			// blueprint satisfaction
+			
+		// is this operational item on this segment? Then update blueprint
+		// satisfaction
+		if (!resp.isFieldTest && resp.segmentPosition == segmentPosition) 
 			UpdateSatisfaction(resp.getBaseItem());
+					
+        if (!resp.isFieldTest)
+            numAdministeredTest++;
 	}
 
 	// / <summary>
@@ -696,10 +698,10 @@ public class Blueprint implements IBpInfoContainer {
 	}
 
 	// ===========================================================================================
-	public Integer minOpItems = 1; // minimum number of operational items for a
-									// test to be complete
-	public Integer maxOpItems = 10; // maximum number of operational items
-									// allowed a test
+	public Integer minOpItems = 1; 	// minimum number of operational items for a test to be complete
+	public Integer maxOpItems = 10; // maximum number of operational items allowed a test
+    public Integer minOpItemsTest;  // minimum number of operational items for a test (cross-segment) to be complete
+    public Integer maxOpItemsTest;  // maximum number of operational items for a test (cross-segment) to be complete
 
 	//
 	public Double bpWeight = 1D; // (w2) weight of blueprint satisfaction metric
@@ -825,6 +827,13 @@ public class Blueprint implements IBpInfoContainer {
 	public Boolean terminateBaseOnFlagsAnd = false;
 	// public boolean terminationFlagsAnd;
 	// termination conditions
+	// ================================================================
+	
+	// ================================================================
+    // new for 2014-2015 to support off-grade items
+    public OffGradeItemsProps offGradeItemsProps = new OffGradeItemsProps();
+
+    // new for 2014-2015 to support off-grade items
 	// ================================================================
 
 	/**
@@ -1007,6 +1016,69 @@ public class Blueprint implements IBpInfoContainer {
 			}
 		}
 	}
+/*
+ *     * <summary>
+    * Loads values from tblItemSelectionParm into the properties/fields for the corresponding bpContainer.
+    * </summary>
+    * <param name="bpContainer">Either the Bluepring, BpElement, or ReportingCategory that is being populated</param>
+    * <param name="bpElementID">Either Blueprint.segmentID or BpElement.ID</param>
+ */
+	public void initializeBluePrintOffGradeItemsProps(SingleDataResultSet res)
+			throws SQLException {
+		DbResultRecord record;
+		Iterator<DbResultRecord> recItr = res.getRecords();
+
+		while (recItr.hasNext()) {
+			record = recItr.next();
+			
+			String value 	= record.<String> get("value");
+			if(value == null || value.isEmpty())
+				continue;
+			
+			String bpElementId 	= record.<String> get("bpElementId");
+			String name 	= record.<String> get("name"); // this is field name in a class
+			
+			if(bpElementId.equalsIgnoreCase(this.segmentID))
+			{
+				this.offGradeItemsProps.populateBluePrintOffGradeItemsDesignator(name, value);
+			}
+			else
+			{// find ReportingCategoryt by bpElementId				
+				ReportingCategory rc = this._reportingCategories.get(bpElementId);
+				if(rc != null)
+				{
+					rc.putItemSelectionParam(name, value);
+				}
+				else
+				{// find BpElement by bpElementId
+					BpElement be = this._bluePrintElements.get(bpElementId);
+					if(be != null)
+					{
+						be.putItemSelectionParam(name, value);
+					}
+					else
+						_logger.warn("There is no bpElement with bpElementId = " + bpElementId);
+				}				
+			}
+		}
+	}
+	
+	//OffGradeItemCountByDesignator	
+	public void initializeBluePrintOffGradeItemsDesignator(SingleDataResultSet res)
+			throws SQLException {
+		DbResultRecord record;
+		Iterator<DbResultRecord> recItr = res.getRecords();
+
+		while (recItr.hasNext()) {
+			record = recItr.next();
+			
+			String propvalue 	= record.<String> get("propvalue");
+			Integer count 		= long2Integer(record, "count");
+			if(propvalue != null)
+			this.offGradeItemsProps.countByDesignator.put(propvalue, count);		
+		}
+		
+	}
 
 	private Double float2Double(DbResultRecord record, String columnName) {
 		try {
@@ -1026,7 +1098,7 @@ public class Blueprint implements IBpInfoContainer {
 		}
 
 	}
-
+	
 	@Override
 	public Double getInfo() {
 		return info;
@@ -1056,6 +1128,86 @@ public class Blueprint implements IBpInfoContainer {
 	public void setStandartError(Double standartError) {
 		this.standardError = standartError;
 	}
+
+	/**
+	 * Updates the standard error. Called when all responses so far have been
+	 * processed and actual info values are up to date.
+	 *  
+	 */
+    public void updateStandardError()
+    {
+        actualInfoCalc.calculateSE(this);
+        for (ReportingCategory rc : _reportingCategories.values())
+            actualInfoCalc.calculateSE(rc);
+    }
+    /* <summary>
+    * If off-grade items are supported and configured for this test, and if the student qualifies to have
+    * off-grade items added to the pool, this method will return the filter that will be used to add
+    * those items.
+    * </summary>
+    * <returns>The filter that should be used to add off-grade items to the student's custom item pool, or null if no off-grade items are to be added at this time.</returns>
+    * */
+    public String GetOffGradeFilter() throws ReturnStatusException
+    {
+       // if we're not measuring ability, we don't have a way to determine whether we can introduce off-grade items
+        if (!getMeasureAbility())
+            return null;
+ 
+        // no filters were configured
+        if (this.offGradeItemsProps.countByDesignator.size() == 0)
+            return null;
+
+        // haven't hit the threshold of items administered (cross-segment) yet; return no filter
+        if (numAdministeredTest < this.offGradeItemsProps.minItemsAdministered)
+            return null;
+
+        CDF cdf = new CDF(this.theta, this.standardError);
+        double p = cdf.Calculate(thetaStar());
+
+        for (String designator :this.offGradeItemsProps.countByDesignator.keySet())
+        {
+            switch (designator.toUpperCase())
+            {
+                case "OFFGRADE BELOW":
+                    if ((1 - p) < this.offGradeItemsProps.probAffectProficiency)
+                        return designator;
+                    break;
+                case "OFFGRADE ABOVE":
+                    if (p < this.offGradeItemsProps.probAffectProficiency)
+                        return designator;
+                    break;
+                default:
+                    throw new ReturnStatusException(String.format("Do not understand off-grade item designator: %s", designator));
+            }
+        }
+        return null; 
+    }
+
+    // measure ability if either of the ability weights is not 0 and the cset1Order != DISTRIBUTION, which
+    //  implies that on bp should factor into item selection.
+    public Boolean getMeasureAbility()
+    {
+    	return !((abilityWeight == 0 && rcAbilityWeight == 0)
+    			|| cset1Order.equalsIgnoreCase("DISTRIBUTION"));
+    }
+
+	/**
+	 * Used to determine if off-grade items should be introduced into the pool
+	 * θ* = K/(k-K) (k/K θ^ - t) Where k represents the number of items
+	 * administered so far, K represents the total test length, θ^ is the
+	 * current overall theta, and t represents the proficiency threshold NOTE:
+	 * these are test-level values, not segment-level values 
+	 */
+    private double thetaStar() throws ReturnStatusException
+    {
+        // assumption: proficiency cuts on segmented tests are the same for all segments
+        if (this.offGradeItemsProps.proficientTheta == null)
+            throw new ReturnStatusException("Cannot evaluate off-grade item trigger.  No proficiency cut score was provided.");
+        int K = this.maxOpItemsTest;
+        if (numAdministeredTest >= K) K = numAdministeredTest + 1;
+        
+        return (K / (double)(numAdministeredTest - K)) * (((numAdministeredTest / (double)K) * theta) - this.offGradeItemsProps.proficientTheta);
+    }
 
 	public void dumpBP()// for old algorithm
 	{

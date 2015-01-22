@@ -35,6 +35,7 @@ import AIR.Common.DB.SQLConnection;
 import AIR.Common.DB.results.DbResultRecord;
 import AIR.Common.DB.results.MultiDataResultSet;
 import AIR.Common.DB.results.SingleDataResultSet;
+import AIR.Common.Helpers._Ref;
 import TDS.Shared.Exceptions.ReturnStatusException;
 
 /**
@@ -549,10 +550,18 @@ public class ISDBLoader extends AbstractDBLoader implements IItemSelectionDBLoad
   }
 
 	@Override
-	public boolean SetSegmentSatisfied(SQLConnection connection, UUID oppkey, Integer segmentPosition,
+	public boolean setSegmentSatisfied(SQLConnection connection, UUID oppkey, Integer segmentPosition,
 			String reason) throws ReturnStatusException {
 
 		return iSelDLL.AA_SetSegmentSatisfied_SP(connection, oppkey,
 				segmentPosition, reason);
+	}
+
+	@Override
+	public String AddOffGradeItems(SQLConnection connection, UUID oppkey,
+			String designation, String segmentKey, _Ref<String> reason)
+			throws ReturnStatusException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

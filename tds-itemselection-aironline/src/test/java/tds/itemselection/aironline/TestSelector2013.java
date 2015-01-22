@@ -94,6 +94,11 @@ public class TestSelector2013 {
 	    }
 	}
 
+	/**
+	 * This test with localhost:3306/session_aa2 databases
+	 * see opentestsystem-override-properties_aa2.xml
+	 * @throws Exception
+	 */
 	@Test
 	public final void testGetNextItemGroup() throws Exception {
 		System.out.println();

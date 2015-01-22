@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import AIR.Common.DB.results.DbResultRecord;
+import AIR.Common.Helpers._Ref;
 import tds.itemselection.impl.item.CsetItem;
 import tds.itemselection.impl.sets.CSetItem;
 import tds.itemselection.impl.sets.CsetGroup;
@@ -95,6 +96,24 @@ public void setItems(Map<String, CSetItem> _items) {
 
 public void setBpElementType(BpElementType bpElementType) {
 	this.bpElementType = bpElementType;
+}
+
+// new for 2014 to support off-grade items
+// TODO: this is temporary solution because I don't know field (or property as is in C#)
+// with names TierBPriorCut, TierCPriorCut, TierBSPQCut, TierCSPQCut, SmallCut, BigCut
+// But all of them are Integer
+Map<String, Integer> itemSelectionParams = new HashMap<String, Integer>();
+
+public void putItemSelectionParam(String name, String value)
+{
+	
+	_Ref<Integer> valueRef = new _Ref<Integer>();
+	if(isValueIntegerParsed(value, valueRef))
+	{
+		itemSelectionParams.put(name, valueRef.get());
+	}
+	else
+		_logger.warn("Cannot parse value " + value + " to int");
 }
 
 // / <summary>
@@ -321,5 +340,22 @@ public void setBpElementType(BpElementType bpElementType) {
 	  }	  
   }
 
+	private Boolean isValueIntegerParsed(String value, _Ref<Integer> valueRef)
+	{
+		Boolean isSuccess = false;
+		if(value == null || value.isEmpty())
+			return false;
+		
+		try{
+			Integer out = new Integer(Integer.parseInt(value));
+			valueRef.set(out);
+			isSuccess = true;
+		} catch(Exception e)
+		{
+			_logger.error("Don't parse Integer value " + value + ": " + e.getMessage());
+			isSuccess = false;
+		}
+		return isSuccess;
+	}
 
 }

@@ -26,6 +26,7 @@ import AIR.Common.DB.SQLConnection;
 import AIR.Common.DB.results.DbResultRecord;
 import AIR.Common.DB.results.MultiDataResultSet;
 import AIR.Common.DB.results.SingleDataResultSet;
+import AIR.Common.Helpers._Ref;
 import TDS.Shared.Exceptions.ReturnStatusException;
 
 public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoader {
@@ -109,10 +110,11 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 			UUID sessionKey) throws ReturnStatusException,
 			ItemSelectionException {
 		MultiDataResultSet dataSets = null;
-		if (sessionKey == null) {
-			dataSets = iSelDLL.AA_GetSegment2_SP(connection, segmentKey);
+		Boolean controlTriples = false;
+		if (sessionKey == null) { // TODO: Boolean controlTriples = false. From what we will get this parameter? 
+			dataSets = iSelDLL.AA_GetSegment2_SP(connection, segmentKey, controlTriples);
 		} else {
-			dataSets = iSelDLL.AA_SIM_GetSegment2_SP(connection, sessionKey, segmentKey, false);
+			dataSets = iSelDLL.AA_SIM_GetSegment2_SP(connection, sessionKey, segmentKey, controlTriples);
 		}
 
 		Iterator<SingleDataResultSet> sItr = dataSets.getResultSets();
@@ -151,6 +153,18 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 			if (sItr.hasNext()) {
 				segment.segmentItemPool.InitializeItemDimensions(sItr.next());
 			}
+			if(controlTriples) // The same structure as in AA_GetSegment2_SP() and AA_SIM_GetSegment2_SP()
+			{
+				if (sItr.hasNext())
+				{
+					segment.segmentBlueprint.initializeBluePrintOffGradeItemsProps(sItr.next());
+				}
+			}
+			if (sItr.hasNext())
+			{
+				segment.segmentBlueprint.initializeBluePrintOffGradeItemsDesignator(sItr.next());
+			}
+			
 		} catch (Exception e) {
 			throw new ItemSelectionException(
 					" Error occurs in loadSegment method: " + e.getMessage());
@@ -206,13 +220,42 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 	}
 
 	@Override
-	public boolean SetSegmentSatisfied(SQLConnection connection, UUID oppkey, Integer segmentPosition,
+	public boolean setSegmentSatisfied(SQLConnection connection, UUID oppkey, Integer segmentPosition,
 			String reason) throws ReturnStatusException {
 		
 		return iSelDLL.AA_SetSegmentSatisfied_SP(connection, oppkey, segmentPosition, reason);
 	}
 
-//===========================================================================================
+	/**
+    * Add off-grade items (depending on poolFilterProperty) to the current opportunity.
+    *
+    * <param name="oppkey"></param>
+    * <param name="designation">From OffGradeItemPoolFilter; expecting OFFGRADE ABOVE or OFFGRADE BELOW</param>
+    * <param name="segmentKey">Typlically null to add off-grade items to the entire test.  Can be passed in to do so for the current segment only.</param>
+    * <param name="reason">Returns the reason for the status from the sproc to the caller.  Will be String.Empty for typical successful call.</param>
+    * <returns>status: success | failed</returns>     
+     */
+	@Override
+	public String AddOffGradeItems(SQLConnection connection, UUID oppkey,
+			String designation, String segmentKey, _Ref<String> reason) throws ReturnStatusException {
+		String status = "failed";
+		reason.set("");
+		try {
+			SingleDataResultSet res = iSelDLL.AA_AddOffgradeItems_SP(connection, oppkey,
+					designation /* poolfilterProperty */, segmentKey);
+			DbResultRecord record;
+			record = res.getCount() > 0 ? res.getRecords().next() : null;
+			if (record != null) {
+				status = record.<String> get("status");
+				reason.set(record.<String> get("reason"));
+			}
+		} catch (Exception e) {
+			_logger.error("Failed to add Offgrade items: " + e.getMessage());
+			throw new ReturnStatusException(e);
+		}
+		return status;
+	}
+	//===========================================================================================
 //	/**
 //	 * (c) Copyright American Institutes for Research, unpublished work created 2008-2013
 //	 *  All use, disclosure, and/or reproduction of this material is

@@ -65,7 +65,7 @@ public class Cset1Factory2013 {
 	  private double                              panicWeight;
 	  // blueprint and itempool for segment
 	  private TestSegment                         segment;
-	  private boolean _debug = false;
+	  private boolean _debug = true;
 	  public TestSegment getSegment() {
 		return segment;
 	}
@@ -120,19 +120,21 @@ public class Cset1Factory2013 {
 
 	 public Cset1 MakeCset1 (SQLConnection connection) throws ItemSelectionException
 	  {
-	    StudentHistory2013 oppHData =  loader.loadOppHistory (connection, oppkey, segment.getSegmentKey ());
-	    
-	    customPool 		= oppHData.get_itemPool();
-	    previousGroups 	= oppHData.get_previousTestItemGroups();
-	    excludeGroups 	= oppHData.get_previousFieldTestItemGroups();
-	    responses 		= oppHData.get_previousResponses();
-	    startAbility 	= oppHData.getStartAbility ();
-	    // make a copy
-	    bp = segment.getBp ();
-	    bp.setStartAbilityRC( startAbility);
-	    bp.setActualInfoComputation(actualInfoCalc);
-	    
-	    ProcessResponses ();
+		 // By any reason this code removed in LoadHistory(SQLConnection connection)
+//	    StudentHistory2013 oppHData =  loader.loadOppHistory (connection, oppkey, segment.getSegmentKey ());
+//	    
+//	    customPool 		= oppHData.get_itemPool();
+//	    previousGroups 	= oppHData.get_previousTestItemGroups();
+//	    excludeGroups 	= oppHData.get_previousFieldTestItemGroups();
+//	    responses 		= oppHData.get_previousResponses();
+//	    startAbility 	= oppHData.getStartAbility ();
+//	    // make a copy
+//	    bp = segment.getBp ();
+//	    bp.setStartAbilityRC( startAbility);
+//	    bp.setActualInfoComputation(actualInfoCalc);
+//	    bp.offGradeItemsProps.poolFilter = oppHData.getOffgrade();
+//	    
+//	    ProcessResponses ();
 	    // initialized Pool and created itemGroups!
 	    initializePool ();
 
@@ -155,6 +157,35 @@ public class Cset1Factory2013 {
 
 	    return this.cset1;
 	  }
+	 
+	/**
+	 * Load the student's previous responses into a copy of the BP that can be
+	 * modified for this student/opp.
+	 * @throws ItemSelectionException 
+	 */
+     public void LoadHistory(SQLConnection connection) throws ItemSelectionException
+     {
+ 	    StudentHistory2013 oppHData =  loader.loadOppHistory (connection, oppkey, segment.getSegmentKey ());
+	    
+ 	    customPool 		= oppHData.get_itemPool();
+ 	    previousGroups 	= oppHData.get_previousTestItemGroups();
+ 	    excludeGroups 	= oppHData.get_previousFieldTestItemGroups();
+ 	    responses 		= oppHData.get_previousResponses();
+ 	    startAbility 	= oppHData.getStartAbility ();
+ 	    // TODO: make a copy
+ 	    bp = segment.getBp ();
+ 	    bp.setStartAbilityRC( startAbility);
+ 	    bp.setActualInfoComputation(actualInfoCalc);
+ 	    bp.offGradeItemsProps.poolFilter = oppHData.getOffgrade();
+ 	    
+        ProcessResponses();
+
+         // if there are previous responses, calculate the standard error at the BP and RC levels
+         //  This can only be done after info values have been tallied for all responses so far.
+         if (responses.size() > 0)
+             bp.updateStandardError();
+     }
+
 
 	 /**
 	   * Add response item groups to excludeGroups, and update blueprint

@@ -28,4 +28,10 @@ public class ActualInfoComputation  {
         }
         bpComponent.setStandartError( AAMath.SEfromInfo(bpComponent.getInfo()));
     }
+    
+    public void calculateSE(IBpInfoContainer bpComponent)
+    {
+        bpComponent.setStandartError(AAMath.SEfromInfo(bpComponent.getInfo()));
+    }
+
 }

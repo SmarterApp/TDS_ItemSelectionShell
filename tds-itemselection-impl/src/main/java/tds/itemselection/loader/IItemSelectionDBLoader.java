@@ -15,6 +15,7 @@ import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
 import AIR.Common.DB.SQLConnection;
+import AIR.Common.Helpers._Ref;
 import TDS.Shared.Exceptions.ReturnStatusException;
 
 /**
@@ -67,7 +68,17 @@ public interface IItemSelectionDBLoader
    * @param segmentPosition
    * @param reason
    * @return
- * @throws ReturnStatusException 
+   * @throws ReturnStatusException 
    */
-  public boolean SetSegmentSatisfied(SQLConnection connection, UUID oppkey, Integer segmentPosition, String reason) throws ReturnStatusException;
+  public boolean setSegmentSatisfied(SQLConnection connection, UUID oppkey, Integer segmentPosition, String reason) throws ReturnStatusException;
+  /**
+   * @param connection
+   * @param oppkey
+   * @param designation
+   * @param segmentKey
+   * @param reason
+   * @return
+   * @throws ReturnStatusException
+   */
+  public String AddOffGradeItems(SQLConnection connection, UUID oppkey,	String designation, String segmentKey, _Ref<String> reason) throws ReturnStatusException;
 }

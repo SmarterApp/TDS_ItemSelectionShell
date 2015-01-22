@@ -201,7 +201,7 @@ public class TestAIROnline2013 {
 			throw error;
 		}
 	}
-	//@Test
+	@Test
 	public final void testGetNextItemGroup_3() throws Exception {
 		System.out.println();
 		_logger.info("Test of getNextItemGroup (Connection connection, UUID oppkey, _Ref<String> errorRef) "
