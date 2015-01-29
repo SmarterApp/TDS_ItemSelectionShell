@@ -80,5 +80,5 @@ public interface IItemSelectionDBLoader
    * @return
    * @throws ReturnStatusException
    */
-  public String AddOffGradeItems(SQLConnection connection, UUID oppkey,	String designation, String segmentKey, _Ref<String> reason) throws ReturnStatusException;
+  public String addOffGradeItems(SQLConnection connection, UUID oppkey,	String designation, String segmentKey, _Ref<String> reason) throws ReturnStatusException;
 }

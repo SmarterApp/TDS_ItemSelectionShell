@@ -17,6 +17,7 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import TDS.Shared.Exceptions.ReturnStatusException;
 import tds.itemselection.base.ItemGroup;
 import tds.itemselection.expectedability.ExpectedInfoComputation;
 import tds.itemselection.impl.blueprint.Blueprint;
@@ -125,7 +126,7 @@ public class Cset1
     }
 
 
-	public void ComputeExpectedAbility(ExpectedInfoComputation comp) {
+	public void ComputeExpectedAbility(ExpectedInfoComputation comp) throws ReturnStatusException {
 		for (CsetGroup group : itemGroups) {
 			comp.ComputeExpectedInfo(this.getBlueprint(), group);
 		}

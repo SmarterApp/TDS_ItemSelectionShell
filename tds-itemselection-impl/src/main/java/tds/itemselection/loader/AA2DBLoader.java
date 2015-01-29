@@ -236,7 +236,7 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
     * <returns>status: success | failed</returns>     
      */
 	@Override
-	public String AddOffGradeItems(SQLConnection connection, UUID oppkey,
+	public String addOffGradeItems(SQLConnection connection, UUID oppkey,
 			String designation, String segmentKey, _Ref<String> reason) throws ReturnStatusException {
 		String status = "failed";
 		reason.set("");

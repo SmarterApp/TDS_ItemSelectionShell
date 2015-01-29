@@ -194,7 +194,7 @@ public void putItemSelectionParam(String name, String value)
     if (isStrand)
     {
       Strand s = (Strand) this;
-      elem = s.copy (preserveStatistics);
+      elem = s.Copy (preserveStatistics);
     }
     else if (isReportingCategory) {
 		ReportingCategory rc = (ReportingCategory) this;

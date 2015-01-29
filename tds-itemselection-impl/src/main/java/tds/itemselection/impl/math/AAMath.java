@@ -18,12 +18,21 @@ public class AAMath // is this class singleton
   {
       return 1.0 / (1.0 + Math.exp(b - theta));
   }
+  /**
+   * Calculate standard error given info
+     Flooring at 1/4 in case info is not yet > 0 in the early stages of a test.
+     This bounds the SE at 2.0.
+   * @param info
+   * @return
+   */
   public static double SEfromInfo(double info)
   {
-      if (info == 0.0)
-          return 0.0;
-      else
-          return 1 / Math.sqrt(info);
+	  return 1 / Math.sqrt(Math.max(0.25, info));
+
+//      if (info == 0.0)
+//          return 0.0;
+//      else
+//          return 1 / Math.sqrt(info);
   }
 
 }

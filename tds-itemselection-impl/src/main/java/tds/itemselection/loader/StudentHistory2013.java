@@ -237,10 +237,10 @@ public void set_itemPool(ArrayList<String> _itemPool) {
         return new ArrayList<CSetItemGroup>(candidateGroups.values());
     } 
     
-    public String getOffgrade() {
+    public String getOffgradeFilter() {
 		return offgrade;
 	}
-	public void setOffgrade(String offgrade) {
+	public void setOffgradeFilter(String offgrade) {
 		this.offgrade = offgrade;
 	}
 	/**

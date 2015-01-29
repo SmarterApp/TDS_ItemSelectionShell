@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import TDS.Shared.Exceptions.ReturnStatusException;
 import AIR.Common.DB.SQLConnection;
 import tds.itemselection.api.IItemSelection;
 import tds.itemselection.api.ItemSelectionException;
@@ -114,7 +115,7 @@ public class AdaptiveSelector  extends AbstractAdaptiveSelector implements IItem
    *  2. Compute second candidate itemgroup set CSET2
    *  3. Return best itemgroup within CSET2
    */
-  public ItemGroup selectNext (SQLConnection connection) throws ItemSelectionException {
+  public ItemGroup selectNext (SQLConnection connection) throws ItemSelectionException, ReturnStatusException {
 
     csetFactory = new  Cset1Factory(itemCandidates.getOppkey (), loader, segment);
     cset1 = csetFactory.MakeCset1 (connection);

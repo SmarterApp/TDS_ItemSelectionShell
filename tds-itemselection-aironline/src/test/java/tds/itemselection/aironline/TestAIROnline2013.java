@@ -77,11 +77,11 @@ public class TestAIROnline2013 {
 		}
 	}
 
-	// @Test
-	// public void testCreateNextItemGroup () throws SQLException,
-	// ReturnStatusException, Exception {
-
-	//@Test
+	/**
+	 * <entry key="TDSSessionDBName">sessio_aa2n</entry>
+	 * @throws Exception
+	 */
+	@Test
 	public final void testGetNextItemGroup() throws Exception {
 		System.out.println();
 		_logger.info("Test of getNextItemGroup (Connection connection, UUID oppkey, _Ref<String> errorRef) "
@@ -140,6 +140,28 @@ public class TestAIROnline2013 {
 		}
 	}
 
+	/**
+	 *  This test deals with 
+	 1. config file in C:\Users\akulakov file with name opentestsystem-test-override-properties.xml
+	 2. containing
+	<?xml version="1.0" encoding="UTF-8"?>
+		<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+		<properties>			
+			<entry key="AppName">Student</entry>
+			<entry key="SessionType">0</entry>
+		    <entry key="ClientName">SBAC_PT</entry>		
+			<entry key="EnableLoadData">false</entry>
+			<entry key="TDSSessionDBName">session</entry>
+			<entry key="ItembankDBName">itembank</entry>
+			<entry key="TDSArchiveDBName">archive</entry>
+			<entry key="TDSConfigsDBName">configs</entry>				
+			<entry key="jdbc.url">jdbc:mysql://tds-db.dev.opentestsystem.org:3306/session?useServerPrepStmts=false&amp;rewriteBatchedStatements=true</entry>
+			<entry key="jdbc.userName">root</entry>
+			<entry key="jdbc.password">root</entry>
+			<entry key="DBDialect">MYSQL</entry>			
+		</properties>	 
+	 * @throws Exception
+	 */
 	@Test
 	public final void testGetNextItemGroup_2() throws Exception {
 		System.out.println();

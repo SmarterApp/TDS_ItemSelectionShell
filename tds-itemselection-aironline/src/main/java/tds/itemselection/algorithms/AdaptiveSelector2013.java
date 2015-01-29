@@ -71,7 +71,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	  int                itemsRequired  = -1;
 	  int                maxItems       = -1;
 	  // for debug
-	  private boolean 	 _debug 		= true;
+	  private boolean 	 _debug 		= false;
 	  private String 	 csvSeparator	= ", ";
 	  private String 	 ls				= System.getProperty("line.separator");
 	  
@@ -141,7 +141,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        // the blueprint has been updated to reflect all previous responses,
 	        // check that we haven't satisfied configured termination conditions.
             // now check to see if we've satisfied configured termination conditions for this segment.
-	        TerminationManager termMgr = new TerminationManager(cset1.getBlueprint ());
+	        TerminationManager termMgr = new TerminationManager(csetFactory.getBp());
 	        if (termMgr.IsSegmentComplete())
 	        {
 	            String reason = termMgr.SegmentCompleteReason;
@@ -152,14 +152,15 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
             // now that we have a working bp and theta estimate, and the test is not terminated, 
             //  check to see if we need to append any off-grade items to the pool
             if (csetFactory.getBp().offGradeItemsProps.countByDesignator.size() > 0  // 1 or more off-grade designators are configured for this test
-                &&!csetFactory.getBp().offGradeItemsProps.poolFilter.isEmpty())  // have not already added off-grade items to the pool
+                &&(csetFactory.getBp().offGradePoolFilter == null
+                || csetFactory.getBp().offGradePoolFilter.isEmpty()))  // have not already added off-grade items to the pool !!!
             {
-                String filter = csetFactory.getBp().GetOffGradeFilter();
+                String filter = csetFactory.getBp().getOffGradeFilter();
                 if (!filter.isEmpty())
                 {
                     _Ref<String> reason = new _Ref<>();
-                    String status = loader.AddOffGradeItems(connection,itemCandidates.getOppkey (), 
-                    		filter, null,  reason);
+                    String status = loader.addOffGradeItems(connection,itemCandidates.getOppkey (), 
+                    		filter, null,  reason); // filter = designator = poolfilterProperty = ("OFFGRADE ABOVE"/"OFFGRADE BELOW"/null)
                     if (!status.equalsIgnoreCase("success"))
                         throw new ReturnStatusException(String.format("Attempt to include off-grade items: %s returned a status of:  %s, reason:  %s", filter, status, reason));
                     if (reason.get().isEmpty())
@@ -222,8 +223,8 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        	
 				// TEST9-3
 	        	List<String> selectedGroups = new ArrayList<String>();
-	        	selectedGroups.add("I-200-2942");
-	        	selectedGroups.add("I-200-18601");
+//	        	selectedGroups.add("I-200-2942");
+//	        	selectedGroups.add("I-200-18601");
 	        		        	
 	        	Integer out = null;
 	        	for(CsetGroup group: cset1.itemGroups)
@@ -363,7 +364,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	    }
 	  }
 	  
-	  protected void ComputeAbilityMatch() {
+	  protected void ComputeAbilityMatch() throws ReturnStatusException {
 		cset1.ComputeExpectedAbility(new ExpectedAbilityComputationSmarter());
 	}
 

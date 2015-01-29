@@ -122,6 +122,31 @@ public class Strand extends BpElement
     s.vectorIndex = this.vectorIndex;
     return s;
   }
+  /// <summary>
+  /// Make a copy to use in examinee-specific thread context
+  /// </summary>
+  /// <returns></returns>
+  public Strand Copy(boolean preserveStatistics)
+  {
+	  Strand strnd = new Strand(ID, minRequired, maxRequired, 
+			   weight, isStrictMax, 
+			   adaptiveCut, startInfo,
+			   _startAbility,
+			  adaptiveWeight);
+      strnd.vectorIndex = this.vectorIndex;
+      if (preserveStatistics)
+      {
+          strnd.info = this.info;
+          strnd.theta = this.theta;
+          strnd.numAdministered = this.numAdministered;
+          strnd.gamma = this.gamma;
+          strnd.bstar = this.bstar;
+          strnd.phistar = this.phistar;
+          strnd.phidiff = this.phidiff;
+      }
+      return strnd;
+  }
+
 
   // / <summary>
   // / This to be used for examinee-specific (OLD VERSION)

@@ -63,7 +63,13 @@ public class ReportingCategory extends BpElement implements IReportingCategory
     public double lambda = 0.00632;    // lambda is an intermediate value used for computing Phi*_kt
     public double minLambda = 0.00632;
     public double info;
-    // The following are computed by the adaptive algorithm in determining best item to administer
+ 
+	@Override
+	public String getName() {
+		 return ID;
+	}
+
+	// The following are computed by the adaptive algorithm in determining best item to administer
     public double gamma;
     public double bstar;
     public double phistar;
@@ -142,9 +148,9 @@ public class ReportingCategory extends BpElement implements IReportingCategory
 	public void setStandartError(Double standartError) {
 		this.standardError = standartError;		
 	}
-	// TODO all changes of standardError
+	// As in .NET code!
 	public boolean getPrecisionTargetMet() {
-		return precisionTarget <= standardError;
+		return standardError <= precisionTarget;
 	}
 	
     /**
@@ -245,5 +251,6 @@ public class ReportingCategory extends BpElement implements IReportingCategory
         }
         return rc;
     }
+
     
 }

@@ -16,4 +16,5 @@ public interface IBpInfoContainer {
 	public void setTheta(Double theta);
 	public Double getStandartError() ;
 	public void setStandartError(Double standartError);
+	public String getName();
 }

@@ -64,6 +64,8 @@ public class CSetItem extends CsetItem
     public double rcAbilityMetric = 0.0; //added for 2013; normalized ability match value WRT RCs
     public double selectionMetric;
     public double BpJitter;
+
+	public boolean abilityMatchCalculated = false;
     /**
      * Constructor
      * @param item

@@ -28,6 +28,7 @@ import tds.itemselection.base.TestItem;
 import tds.itemselection.impl.ItemResponse;
 import tds.itemselection.impl.blueprint.Blueprint;
 import tds.itemselection.impl.blueprint.BpElement;
+import tds.itemselection.impl.blueprint.OffGradeItemsProps;
 import tds.itemselection.impl.blueprint.Strand;
 import tds.itemselection.impl.sets.CsetGroupString;
 import tds.itemselection.impl.sets.ItemPool;
@@ -369,6 +370,7 @@ public class ISDBLoader extends AbstractDBLoader implements IItemSelectionDBLoad
     record = bpTbl.getCount () > 0 ? bpTbl.getRecords ().next () : null;
     if (record != null) {
       String segmentKey = record.<String> get ("segmentkey");
+      String segmentID 	= record.<String> get ("SegmentID");
       Long tmp = record.<Long> get ("segmentPosition");
       Integer segmentPosition = new Integer(tmp.toString());
       tmp = record.<Long> get ("minOpItems");
@@ -388,8 +390,15 @@ public class ISDBLoader extends AbstractDBLoader implements IItemSelectionDBLoad
       Double intercept = new Double(record.<Float> get ("intercept"));
       String adaptiveVersion = record.<String> get ("adaptiveVersion");
 
+      // Not needed for old algorithm
+      OffGradeItemsProps offGradeItemsProps = new OffGradeItemsProps();
+      String offGradePoolFilter = null;
+      int minOpItemsTest = 1; // default value
+      int maxOpItemsTest = 10;// default value
+
       blueprint.Initialize (
           segmentKey,
+          segmentID,
           segmentPosition,
           minOpItems,
           maxOpItems,
@@ -404,7 +413,12 @@ public class ISDBLoader extends AbstractDBLoader implements IItemSelectionDBLoad
           cset1Order,
           slope,
           intercept,
-          adaptiveVersion);
+          adaptiveVersion,
+          offGradeItemsProps,
+          offGradePoolFilter,
+          minOpItemsTest,
+          maxOpItemsTest
+          );
     }
     // C#: The content-levels (BpElements)
     // contentLevel minItems maxItems isStrictMax bpweight adaptiveCut
@@ -558,7 +572,7 @@ public class ISDBLoader extends AbstractDBLoader implements IItemSelectionDBLoad
 	}
 
 	@Override
-	public String AddOffGradeItems(SQLConnection connection, UUID oppkey,
+	public String addOffGradeItems(SQLConnection connection, UUID oppkey,
 			String designation, String segmentKey, _Ref<String> reason)
 			throws ReturnStatusException {
 		// TODO Auto-generated method stub

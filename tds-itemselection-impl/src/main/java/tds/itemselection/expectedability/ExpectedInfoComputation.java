@@ -8,6 +8,7 @@
  ******************************************************************************/
 package tds.itemselection.expectedability;
 
+import TDS.Shared.Exceptions.ReturnStatusException;
 import tds.itemselection.impl.blueprint.Blueprint;
 import tds.itemselection.impl.sets.CsetGroup;
 
@@ -46,5 +47,5 @@ public abstract class ExpectedInfoComputation {
     /// </summary>
     /// <param name="bp"></param>
     /// <param name="group"></param>
-    public abstract void ComputeExpectedInfo(Blueprint bp, CsetGroup group);
+    public abstract void ComputeExpectedInfo(Blueprint bp, CsetGroup group) throws ReturnStatusException;
 }

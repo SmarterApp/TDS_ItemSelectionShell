@@ -10,6 +10,7 @@ package tds.itemselection.expectedability;
 
 import java.util.List;
 
+import TDS.Shared.Exceptions.ReturnStatusException;
 import tds.itemselection.base.Dimension;
 import tds.itemselection.base.TestItem;
 import tds.itemselection.impl.blueprint.Blueprint;
@@ -31,7 +32,7 @@ public class ExpectedAbilityComputationSmarter extends ExpectedInfoComputation {
 	// / <param name="bp"></param>
 	// / <param name="group"></param>
 	@Override
-	public void ComputeExpectedInfo(Blueprint bp, CsetGroup group) {
+	public void ComputeExpectedInfo(Blueprint bp, CsetGroup group)  throws ReturnStatusException{
 		double sumOverall = 0.0;
 		double sumRc = 0.0;
 
@@ -64,55 +65,56 @@ public class ExpectedAbilityComputationSmarter extends ExpectedInfoComputation {
 	// / </summary>
 	// / <param name="bp"></param>
 	// / <param name="item"></param>
-	public void ComputeExpectedInfo(Blueprint bp, CSetItem item) {
-		// already calc'd. This is something that doesn't change for a cset
-		// item,
-		// so don't need to calculate it again. May have been used to break a
-		// tie
-		// in the bp match.
-		// TODO
-		// if (item.abilityMatchCalculated)
-		// return;
+	public void ComputeExpectedInfo(Blueprint bp, CSetItem item) throws ReturnStatusException{
+	// already calc'd. This is something that doesn't change for a cset item,
+	// so don't need to calculate it again. May have been used to break a tie
+	// in the bp match.
+		 if (item.abilityMatchCalculated)
+			 return;
 
 		double overallInfo = 0.0;
 		double sumRcInfo = 0.0;
-
-		if (bp.abilityWeight != 0) // no need to calc if we're just going to
-									// multiply by 0
-		{
-			for (Dimension dim : item.dimensions) {
-				overallInfo += dim.CalculateExpectedInformation(bp.theta,
-						bp.standardError);
-			}
-			// TODO
-			// overallInfo *= bp.PrecisionTargetMet ?
-			// bp.precisionTargetMetWeight : bp.precisionTargetNotMetWeight; //
-			// h_0
-		}
-
-		if (bp.rcAbilityWeight != 0) {
-			for (String cl : item.contentLevels) {
-				ReportingCategory rc = bp.getReportingCategory(cl);
-				if (rc == null)
-					continue;
-
+		
+        if (bp.getMeasureAbility())
+        {
+			if (bp.abilityWeight != 0) // no need to calc if we're just going to
+										// multiply by 0
+			{
 				for (Dimension dim : item.dimensions) {
-					sumRcInfo += dim.CalculateExpectedInformation(
-							rc.getTheta(), rc.standardError);
+					overallInfo += dim.CalculateExpectedInformation(bp.theta, bp.standardError);
+                    if (Double.isNaN(overallInfo))
+                        throw new ReturnStatusException(String.format("NaN encountered"
+                        		+ " while calculating overall expected info.  Theta: %d, SE: %d", bp.theta, bp.standardError));
+
 				}
-				// TODO
-				// sumRcInfo *= rc.PrecisionTargetMet ?
-				// rc.precisionTargetMetWeight : rc.precisionTargetNotMetWeight;
-				// // h_k
-				sumRcInfo *= rc.abilityWeight; // q_k
+				overallInfo *= bp.getPrecisionTargetMet() ? bp.precisionTargetMetWeight
+						: bp.precisionTargetNotMetWeight; // h_0
+				
+			}
+
+			if (bp.rcAbilityWeight != 0) {
+				for (String cl : item.contentLevels) {
+					ReportingCategory rc = bp.getReportingCategory(cl);
+					if (rc == null)
+						continue;
+
+					for (Dimension dim : item.dimensions) {
+						sumRcInfo += dim.CalculateExpectedInformation(rc.getTheta(), rc.standardError);
+	                    if (Double.isNaN(sumRcInfo))
+	                        throw new ReturnStatusException(String.format("NaN encountered"
+	                        		+ " while calculating expected info for RC: %s. Theta: %d, SE: %d", rc.ID, rc.theta, rc.standardError));
+    					}
+
+					sumRcInfo *= rc.getPrecisionTargetMet() ? rc.precisionTargetMetWeight
+							: rc.precisionTargetNotMetWeight; // h_k
+					sumRcInfo *= rc.abilityWeight; // q_k
+				}
 			}
 		}
-
-		item.abilityMatch = overallInfo; // overall abilityWeight will be
-											// applied when normalizing.
-		item.rcAbilityMatch = sumRcInfo; // rcAbilityWeight will be applied when
-											// normalizing.
-		// TODO
-		// item.abilityMatchCalculated = true;
+        // overall abilityWeight will be applied when normalizing.
+		item.abilityMatch = overallInfo;
+		// rcAbilityWeight will be applied when normalizing.
+		item.rcAbilityMatch = sumRcInfo; 
+		item.abilityMatchCalculated = true;
 	}
 }

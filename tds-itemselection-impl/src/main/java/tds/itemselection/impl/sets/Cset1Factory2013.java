@@ -20,6 +20,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import TDS.Shared.Exceptions.ReturnStatusException;
 import AIR.Common.DB.SQLConnection;
 import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.ItemGroup;
@@ -118,7 +119,7 @@ public class Cset1Factory2013 {
 	    // What now?
 	  }
 
-	 public Cset1 MakeCset1 (SQLConnection connection) throws ItemSelectionException
+	 public Cset1 MakeCset1 (SQLConnection connection) throws ItemSelectionException, ReturnStatusException
 	  {
 		 // By any reason this code removed in LoadHistory(SQLConnection connection)
 //	    StudentHistory2013 oppHData =  loader.loadOppHistory (connection, oppkey, segment.getSegmentKey ());
@@ -162,8 +163,9 @@ public class Cset1Factory2013 {
 	 * Load the student's previous responses into a copy of the BP that can be
 	 * modified for this student/opp.
 	 * @throws ItemSelectionException 
+	 * @throws ReturnStatusException 
 	 */
-     public void LoadHistory(SQLConnection connection) throws ItemSelectionException
+     public void LoadHistory(SQLConnection connection) throws ItemSelectionException, ReturnStatusException
      {
  	    StudentHistory2013 oppHData =  loader.loadOppHistory (connection, oppkey, segment.getSegmentKey ());
 	    
@@ -172,16 +174,16 @@ public class Cset1Factory2013 {
  	    excludeGroups 	= oppHData.get_previousFieldTestItemGroups();
  	    responses 		= oppHData.get_previousResponses();
  	    startAbility 	= oppHData.getStartAbility ();
- 	    // TODO: make a copy
- 	    bp = segment.getBp ();
+ 	    
+ 	    bp = segment.getBp ().copy();
  	    bp.setStartAbilityRC( startAbility);
  	    bp.setActualInfoComputation(actualInfoCalc);
- 	    bp.offGradeItemsProps.poolFilter = oppHData.getOffgrade();
+ 	    bp.offGradePoolFilter = oppHData.getOffgradeFilter();
  	    
         ProcessResponses();
 
          // if there are previous responses, calculate the standard error at the BP and RC levels
-         //  This can only be done after info values have been tallied for all responses so far.
+         // This can only be done after info values have been tallied for all responses so far.
          if (responses.size() > 0)
              bp.updateStandardError();
      }
@@ -190,8 +192,9 @@ public class Cset1Factory2013 {
 	 /**
 	   * Add response item groups to excludeGroups, and update blueprint
 	   * satisfaction and ability estimates
+	 * @throws ReturnStatusException 
 	   */
-	  private void ProcessResponses ()
+	  private void ProcessResponses () throws ReturnStatusException
 	  {
 	    ItemPool pool = segment.getPool ();
 	    TestItem item;
@@ -306,8 +309,9 @@ public class Cset1Factory2013 {
 	  /**
 	   * Computes blueprint satisfaction 
 	   * on all remaining itemgroups (not pruned or used)
+	 * @throws ReturnStatusException 
 	   */
-	  private void ComputeSatisfaction () throws ItemSelectionException
+	  private void ComputeSatisfaction () throws ItemSelectionException, ReturnStatusException
 	  {
 	    // Compute blueprint metric on every itemgroup (CSETGroup) (add jitter?)
 	    // Sort itemgroups by blueprint metric

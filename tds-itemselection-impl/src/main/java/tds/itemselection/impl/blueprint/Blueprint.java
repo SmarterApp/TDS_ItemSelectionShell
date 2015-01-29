@@ -47,7 +47,7 @@ public class Blueprint implements IBpInfoContainer {
 
 	public static final double ABILITY_WEIGHT = 1.0;
 	public static final double ABILITY_OFFSET = 0.0;
-	public static final int CSET1_SIZE = 20;
+	public static final int 	CSET1_SIZE = 20;
 	public static final double SLOPE = 1.0;
 	public static final double INTERCEPT = 0.0;
 	public static final double START_INFO = 0.2;
@@ -65,7 +65,7 @@ public class Blueprint implements IBpInfoContainer {
 
 	// general (not examinee-specific)
 	public String segmentKey; // _Key field to tblSetofAdminSubjects : ITEMBANK
-	public String segmentID; // TestID field : tblSetofAdminSubjects : ITEMBANK
+	public String segmentID;  // TestID field : tblSetofAdminSubjects : ITEMBANK
 	public Integer segmentPosition;
 
 	public double abilityWeight = 1.0; // explicit ability weight; used : new
@@ -120,11 +120,19 @@ public class Blueprint implements IBpInfoContainer {
 	public int poolcount = 0;
 	protected List<CSetItem> _items = new ArrayList<CSetItem>();
 
+	/**
+       m_it = T / (T - t), where T = the total test length.  This has the effect of 
+       increasing the algorithm’s preference for items that have not yet met their minimums 
+       as the end of the test nears and the opportunities to meet the minimum diminish
+       Moved over from private field in Cset1Factory that was passed around.  Needed the value
+       to reflect items selected in the new iterative bp match routine. 
+       /// PvW, Xmas eve 2014: From Jon: use max op items instead of min op items for panic weight.
+	 */
 	public Double getPanicWeight() {
-		if (numAdministered == minOpItems)
-			return (new Double(minOpItems));
+		if (numAdministered >= maxOpItems)
+			return (new Double(maxOpItems));
 		else
-			return minOpItems / (double) (minOpItems - numAdministered);
+			return maxOpItems / (double) (maxOpItems - numAdministered);
 	}
 
 	public List<CSetItem> getItems() {
@@ -135,9 +143,9 @@ public class Blueprint implements IBpInfoContainer {
 		this._items = items;
 	}
 
-	// TODO all changes of standardError
+	// As in .NET code!
 	public boolean getPrecisionTargetMet() {
-		return precisionTarget <= standardError;
+		return standardError <= precisionTarget;
 	}
 
 	/**
@@ -145,22 +153,75 @@ public class Blueprint implements IBpInfoContainer {
 	 *
 	 */
 	public Blueprint copy() {
-		Strand strnd;
+		return copy(false);
+	}
+	
+	/**
+	 * Allows for copying of bp-match and ability/info 
+	 * statistics.  Does not copy items.
+	 * 
+	 * @param preserveStatistics
+	 * @return
+	 */
+	public Blueprint copy(Boolean preserveStatistics) {
 		Blueprint bp = new Blueprint();
 		BpElement newelem;
-		bp.Initialize(segmentKey, segmentPosition, minOpItems, maxOpItems,
+		Strand strnd;
+		bp.Initialize(segmentKey, segmentID, segmentPosition, minOpItems, maxOpItems,
 				bpWeight, itemWeight, abilityOffset, randomizerIndex,
 				randomizerInitialIndex, info, startAbility, cSet1Size,
-				cset1Order, slope, intercept, adaptiveVersion);
-		for (BpElement elem : elements.getValues()) { // ALL elements go into
-														// the master collection
+				cset1Order, slope, intercept, adaptiveVersion,			
+				abilityWeight, 
+				rcAbilityWeight, 
+		        precisionTarget, 
+		        precisionTargetMetWeight, 
+		        precisionTargetNotMetWeight, 
+		        adaptiveCut, 
+		        tooCloseSEs, 
+		        terminateBasedOnOverallInformation, 
+		        terminateBasedOnReportingCategoryInformation, 
+		        terminateBasedOnCount, 
+		        terminateBasedOnScoreTooClose, 
+		        terminateBaseOnFlagsAnd, 						
+				offGradeItemsProps,
+				offGradePoolFilter,
+		        minOpItemsTest,
+		        maxOpItemsTest
+				);
+		// ALL elements go into the master collection		
+		for (BpElement elem : elements.getValues()) { 
 			newelem = elem.copy();
 			bp.elements.addBpElement(newelem);
 			if (newelem.isStrictMax) // 'index' the strict max elements
 				bp.strictMaxes.add(newelem);
 		}
 		bp.releaseAll = this.releaseAll;
+        if (preserveStatistics)
+        {
+            bp.numAdministered 		= this.numAdministered;
+            bp.numAdministeredTest 	= this.numAdministeredTest;
+            bp.recycleAll 			= this.recycleAll;
+            bp.lastAbilityPosition 	= this.lastAbilityPosition;
+            bp.poolcount 			= this.poolcount;
+            bp.theta 				= this.theta;
+            bp.info 				= this.info;
+            bp.standardError 		= this.standardError;
+            bp.actualInfoCalc 		= this.actualInfoCalc;
+            bp.offGradePoolFilter 	= this.offGradePoolFilter;
+        }
+
 		// We MUST preserve the original order of the strands
+        for (ReportingCategory thisRc : _reportingCategories.values())   // 'index' the strands
+        {
+    		ReportingCategory rc = (ReportingCategory)bp.elements.getElementByID(thisRc.ID);
+            bp._reportingCategories.put(thisRc.ID, rc);
+        }
+        for (BpElement bpElem : _bluePrintElements.values())   // 'index' the strands
+        {
+        	BpElement elem = bp.elements.getElementByID(bpElem.ID);
+            bp._bluePrintElements.put(bpElem.ID, elem);
+        }
+        // The code is not needed for AA2
 		for (Strand s : strands) // 'index' the strands
 		{
 			strnd = (Strand) bp.elements.getElementByID(s.ID);
@@ -168,89 +229,6 @@ public class Blueprint implements IBpInfoContainer {
 		}
 
 		return bp;
-	}
-
-	// / <summary>
-	// / DEPRECATED
-	// / </summary>
-	// / <param name="segmentkey"></param>
-	// / <param name="segmentPosition"></param>
-	// / <param name="minOpItems"></param>
-	// / <param name="maxOpItems"></param>
-	// / <param name="bpWeight"></param>
-	// / <param name="itemWeight"></param>
-	// / <param name="abilityOffset"></param>
-	// / <param name="randomizer"></param>
-	// / <param name="initialRandom"></param>
-	// / <param name="numAdministered"></param>
-	// / <param name="startInfo"></param>
-	// / <param name="startAbility"></param>
-	// / <param name="lastAbilityPosition"></param>
-	public void Initialize(String segmentkey, int segmentPosition,
-			int minOpItems, int maxOpItems, double bpWeight, double itemWeight,
-			double abilityOffset, int randomizer, int initialRandom,
-			int numAdministered, int numAdministeredTest, double startInfo, double startAbility,
-			int lastAbilityPosition) {
-
-		this.segmentKey = segmentkey;
-		this.segmentPosition = segmentPosition;
-		this.minOpItems = minOpItems;
-		this.maxOpItems = maxOpItems;
-		this.bpWeight = bpWeight;
-		this.itemWeight = itemWeight;
-		this.abilityOffset = abilityOffset;
-		this.randomizerIndex = randomizer;
-		this.randomizerInitialIndex = initialRandom;
-		this.numAdministered = numAdministered;
-		this.numAdministeredTest = numAdministeredTest;
-		this.info = startInfo;
-		this.startAbility = startAbility;
-		this.theta = startAbility;
-	}
-
-	// / <summary>
-	// / DEPRECATED
-	// / NEW Constructor to use for building generalized test blueprint. Use
-	// Copy() to create a CSET1 blueprint
-	// / </summary>
-	// / <param name="segmentkey"></param>
-	// / <param name="segmentPosition"></param>
-	// / <param name="minOpItems"></param>
-	// / <param name="maxOpItems"></param>
-	// / <param name="bpWeight"></param>
-	// / <param name="itemWeight"></param>
-	// / <param name="abilityOffset"></param>
-	// / <param name="randomizer"></param>
-	// / <param name="initialRandom"></param>
-	// / <param name="numAdministered"></param>
-	// / <param name="startInfo"></param>
-	// / <param name="startAbility"></param>
-	// / <param name="lastAbilityPosition"></param>
-	// / <param name="cset1Size"></param>
-	// / <param name="cset1Order"></param>
-	public void Initialize(String segmentkey, int segmentPosition,
-			int minOpItems, int maxOpItems, double bpWeight, double itemWeight,
-			double abilityOffset, int randomizer, int initialRandom,
-			double startInfo, double startAbility, int cset1Size,
-			String cset1Order, double slope, double intercept) {
-		this.segmentKey = segmentkey;
-		this.segmentPosition = segmentPosition;
-		this.minOpItems = minOpItems;
-		this.maxOpItems = maxOpItems;
-		this.bpWeight = bpWeight;
-		this.itemWeight = itemWeight;
-		this.abilityOffset = abilityOffset;
-		this.randomizerIndex = randomizer;
-		this.randomizerInitialIndex = initialRandom;
-		this.startInfo = startInfo;
-		this.info = startInfo;
-		this.startAbility = startAbility;
-		this.theta = startAbility;
-		this.cset1Order = cset1Order;
-		this.cSet1Size = cset1Size;
-		this.slope = slope;
-		this.intercept = intercept;
-
 	}
 
 	/** <summary>
@@ -274,34 +252,137 @@ public class Blueprint implements IBpInfoContainer {
 	 * <param name="slope"></param>
 	 * <param name="intercept"></param>
 	 * <param name="adaptiveVersion"></param>
+	 * OffGradeItemsProps offGradeItemsProps,
+	 * String offGradePoolFilter,
+	 * int minOpItemsTest,
+	 * int maxOpItemsTest
 	 */ 
-	public void Initialize(String segmentkey, int segmentPosition,
+	public void Initialize(String segmentkey, String segmentID,
+			int segmentPosition,
 			int minOpItems, int maxOpItems, double bpWeight, double itemWeight,
 			double abilityOffset, int randomizer, int initialRandom,
 			double startInfo, double startAbility, int cset1Size,
 			String cset1Order, double slope, double intercept,
-			String adaptiveVersion) {
-		this.segmentKey = segmentkey;
-		this.segmentPosition = segmentPosition;
-		this.minOpItems = minOpItems;
-		this.maxOpItems = maxOpItems;
-		this.bpWeight = bpWeight;
-		this.itemWeight = itemWeight;
-		this.abilityOffset = abilityOffset;
-		this.randomizerIndex = randomizer;
+			String adaptiveVersion,
+			OffGradeItemsProps offGradeItemsProps,
+			String offGradePoolFilter,
+			int minOpItemsTest, int maxOpItemsTest
+			) {
+		this.segmentKey 			= segmentkey;
+		this.segmentID				= segmentID;
+		this.segmentPosition 		= segmentPosition;
+		this.minOpItems 			= minOpItems;
+		this.maxOpItems 			= maxOpItems;
+		this.bpWeight 				= bpWeight;
+		this.itemWeight 			= itemWeight;
+		this.abilityOffset 			= abilityOffset;
+		this.randomizerIndex 		= randomizer;
 		this.randomizerInitialIndex = initialRandom;
-		this.startInfo = startInfo;
-		this.info = startInfo;
-		this.startAbility = startAbility;
-		this.theta = startAbility;
-		this.cset1Order = cset1Order;
-		this.cSet1Size = cset1Size;
-		this.slope = slope;
-		this.intercept = intercept;
-		this.adaptiveVersion = adaptiveVersion;
-
+		this.startInfo 				= startInfo;
+		this.info 					= startInfo;
+		this.startAbility 			= startAbility;
+		this.theta 					= startAbility;
+		this.cset1Order 			= cset1Order;
+		this.cSet1Size 				= cset1Size;
+		this.slope 					= slope;
+		this.intercept 				= intercept;
+		this.adaptiveVersion 		= adaptiveVersion;
+		this.offGradeItemsProps 	= offGradeItemsProps;
+		this.offGradePoolFilter 	= offGradePoolFilter;
+        this.minOpItemsTest 		= minOpItemsTest;
+        this.maxOpItemsTest 		= maxOpItemsTest;
 	}
 
+	/*
+	        /// <summary>
+        /// Constructor to use for building generalized test blueprint. Use Copy() to create a CSET1 blueprint
+        /// 3/2013: Added adaptiveVersion parameter
+        /// </summary>
+        /// <param name="segmentkey"></param>
+        /// <param name="segmentPosition"></param>
+        /// <param name="minOpItems"></param>
+        /// <param name="maxOpItems"></param>
+        /// <param name="bpWeight"></param>
+        /// <param name="itemWeight"></param>
+        /// <param name="abilityOffset"></param>
+        /// <param name="randomizer"></param>
+        /// <param name="initialRandom"></param>
+        /// <param name="startInfo"></param>
+        /// <param name="startAbility"></param>
+        /// <param name="cset1Size"></param>
+        /// <param name="cset1Order"></param>
+        /// <param name="slope"></param>
+        /// <param name="intercept"></param>
+        /// <param name="adaptiveVersion"></param>
+        /// <param name="abilityWeight"></param>
+        /// <param name="rcAbilityWeight"></param>
+        /// <param name="precisionTarget"></param>
+        /// <param name="precisionTargetMetWeight"></param>
+        /// <param name="precisionTargetNotMetWeight"></param>
+        /// <param name="adaptiveCut"></param>
+        /// <param name="tooCloseSEs"></param>
+        /// <param name="terminationOverallInfo"></param>
+        /// <param name="terminationRCInfo"></param>
+        /// <param name="terminationMinCount"></param>
+        /// <param name="terminationTooClose"></param>
+        /// <param name="terminationFlagsAnd"></param>
+	 */
+	public void Initialize(String segmentkey, 
+			String segmentID,
+			int segmentPosition,
+			int minOpItems, 
+			int maxOpItems, 
+			double bpWeight, 
+			double itemWeight,
+			double abilityOffset, 
+			int randomizer, 
+			int initialRandom,
+			double info, 
+			double startAbility, 
+			int cset1Size,
+			String cset1Order, 
+			double slope, 
+			double intercept,
+			String adaptiveVersion,
+			double abilityWeight, 
+	        double rcAbilityWeight, 
+	        double precisionTarget, 
+	        double precisionTargetMetWeight, 
+	        double precisionTargetNotMetWeight, 
+	        double adaptiveCut, 
+	        double tooCloseSEs, 
+	        Boolean terminationOverallInfo, 
+	        Boolean terminationRCInfo, 
+	        Boolean terminationMinCount, 
+	        Boolean terminationTooClose, 
+	        Boolean terminationFlagsAnd, 
+	        OffGradeItemsProps offGradeItemsProps,
+			String offGradePoolFilter,
+			int minOpItemsTest, 
+			int maxOpItemsTest
+			) {
+		this.Initialize(segmentkey, segmentID, segmentPosition, minOpItems, maxOpItems,
+				bpWeight, itemWeight, abilityOffset, randomizer,
+				initialRandom, info, startAbility, cset1Size,
+				cset1Order, slope, intercept, adaptiveVersion,
+				offGradeItemsProps,
+				offGradePoolFilter,
+		        minOpItemsTest,
+		        maxOpItemsTest
+				);
+		this.abilityWeight 			= abilityWeight; 
+		this.rcAbilityWeight 		= rcAbilityWeight; 
+        this.precisionTarget 		= precisionTarget; 
+        this.precisionTargetMetWeight = precisionTargetMetWeight; 
+        this.precisionTargetNotMetWeight = precisionTargetNotMetWeight; 
+        this.adaptiveCut 			= adaptiveCut; 
+        this.tooCloseSEs 			= tooCloseSEs; 
+        this.terminateBasedOnOverallInformation = terminationOverallInfo; 
+        this.terminateBasedOnReportingCategoryInformation = terminationRCInfo; 
+        this.terminateBasedOnCount 	= terminationMinCount; 
+        this.terminateBasedOnScoreTooClose = terminationTooClose; 
+        this.terminateBaseOnFlagsAnd = terminationFlagsAnd; 		
+	}
 	/*
 	 * Add a CSET Item to all of its blueprint contentlevel elements
 	 * </summary>
@@ -490,7 +571,7 @@ public class Blueprint implements IBpInfoContainer {
 	// / </summary>
 	// / <param name="resp">An item response object</param>
 	// / <param name="segment">The current segment under consideration</param>
-	public void ProcessResponse(ItemResponse resp, int segmentPosition) {
+	public void ProcessResponse(ItemResponse resp, int segmentPosition) throws ReturnStatusException {
 
 		// is this operational item response scored?
 		// Then use it to update ability UpdateAbility (resp.itemPosition,
@@ -515,7 +596,7 @@ public class Blueprint implements IBpInfoContainer {
 	// / <param name="itemB"></param>
 	// / <param name="itemScore">Make sure to send the 'compressed score' which
 	// converts partial credit to [0,1] for use in the AA Rasch model</param>
-	private void UpdateAbility(ItemResponse response) {
+	private void UpdateAbility(ItemResponse response) throws ReturnStatusException {
 		actualInfoCalc.compute(this, response);
 		for (String cl : response.getBaseItem().contentLevels) {
 			ReportingCategory rc = getReportingCategory(cl);
@@ -698,10 +779,10 @@ public class Blueprint implements IBpInfoContainer {
 	}
 
 	// ===========================================================================================
-	public Integer minOpItems = 1; 	// minimum number of operational items for a test to be complete
+	public Integer minOpItems = 1; 	// minimum number of operational items for a segment to be complete
 	public Integer maxOpItems = 10; // maximum number of operational items allowed a test
-    public Integer minOpItemsTest;  // minimum number of operational items for a test (cross-segment) to be complete
-    public Integer maxOpItemsTest;  // maximum number of operational items for a test (cross-segment) to be complete
+    public Integer minOpItemsTest = 1;  // minimum number of operational items for a test (cross-segment) to be complete
+    public Integer maxOpItemsTest = 10;  // maximum number of operational items for a test (cross-segment) to be complete
 
 	//
 	public Double bpWeight = 1D; // (w2) weight of blueprint satisfaction metric
@@ -786,7 +867,6 @@ public class Blueprint implements IBpInfoContainer {
 	// ==============================================================
 	// specific to examinee
 	//
-	public boolean isPrecisionTargetMet;
 	private ActualInfoComputation actualInfoCalc;
 
 	public void setActualInfoComputation(ActualInfoComputation actualInfoCalc) {
@@ -832,7 +912,8 @@ public class Blueprint implements IBpInfoContainer {
 	// ================================================================
     // new for 2014-2015 to support off-grade items
     public OffGradeItemsProps offGradeItemsProps = new OffGradeItemsProps();
-
+    //      specific to examinee
+    public String 	offGradePoolFilter;
     // new for 2014-2015 to support off-grade items
 	// ================================================================
 
@@ -949,8 +1030,7 @@ public class Blueprint implements IBpInfoContainer {
 			cset1Order 					= record.<String> get("cset1Order");
 			cSet1Size 					= record.<Integer> get("cset1size");
 			// cSet2Size must be less or equal than cSet1Size always
-			cSet2Size 					= (randomizerIndex <= cSet1Size) ? randomizerIndex
-					: cSet1Size;
+			cSet2Size 					= (randomizerIndex <= cSet1Size) ? randomizerIndex : cSet1Size;
 			slope 						= float2Double(record, "slope");
 			intercept					= float2Double(record, "intercept");
 			
@@ -964,8 +1044,8 @@ public class Blueprint implements IBpInfoContainer {
 			overallTargetInformation			= float2Double(record, "precisionTarget");
 			precisionTarget 	= (overallTargetInformation != null)
 					?overallTargetInformation: precisionTarget;			
-			precisionTargetMetWeight 	= float2Double(record, "precisionTargetNotMetWeight");
-			precisionTargetNotMetWeight = float2Double(record, "precisionTargetMetWeight");
+			precisionTargetMetWeight 	= float2Double(record, "precisionTargetMetWeight");
+			precisionTargetNotMetWeight = float2Double(record, "precisionTargetNotMetWeight");
 			
 			fieldTestStartPosition 		= long2Integer(record, "FTStartPos");
 			fieldTestEndPosition 		= long2Integer(record, "FTEndPos");
@@ -1010,19 +1090,21 @@ public class Blueprint implements IBpInfoContainer {
 			} else { // Where Affinity Group?
 				BpElement bpElement = new BpElement();
 				bpElement.initialize(record);
-				bpElement.isStrand = true; // TODO ??? check
 				_bluePrintElements.put(bpElement.ID, bpElement);
 				elements.addBpElement(bpElement);
 			}
 		}
 	}
-/*
- *     * <summary>
-    * Loads values from tblItemSelectionParm into the properties/fields for the corresponding bpContainer.
-    * </summary>
-    * <param name="bpContainer">Either the Bluepring, BpElement, or ReportingCategory that is being populated</param>
-    * <param name="bpElementID">Either Blueprint.segmentID or BpElement.ID</param>
- */
+
+	/**
+	 * 
+	 * Loads values from tblItemSelectionParm into the properties/fields for the
+	 * corresponding bpContainer.
+	 * 
+	 * <param name="bpContainer">Either the Bluepring, BpElement, or
+	 * ReportingCategory that is being populated</param> 
+	 * <param name="bpElementID">Either Blueprint.segmentID or BpElement.ID</param>
+	 */
 	public void initializeBluePrintOffGradeItemsProps(SingleDataResultSet res)
 			throws SQLException {
 		DbResultRecord record;
@@ -1140,14 +1222,14 @@ public class Blueprint implements IBpInfoContainer {
         for (ReportingCategory rc : _reportingCategories.values())
             actualInfoCalc.calculateSE(rc);
     }
-    /* <summary>
+    /**
     * If off-grade items are supported and configured for this test, and if the student qualifies to have
     * off-grade items added to the pool, this method will return the filter that will be used to add
     * those items.
-    * </summary>
+    * 
     * <returns>The filter that should be used to add off-grade items to the student's custom item pool, or null if no off-grade items are to be added at this time.</returns>
     * */
-    public String GetOffGradeFilter() throws ReturnStatusException
+    public String getOffGradeFilter() throws ReturnStatusException
     {
        // if we're not measuring ability, we don't have a way to determine whether we can introduce off-grade items
         if (!getMeasureAbility())
@@ -1164,7 +1246,7 @@ public class Blueprint implements IBpInfoContainer {
         CDF cdf = new CDF(this.theta, this.standardError);
         double p = cdf.Calculate(thetaStar());
 
-        for (String designator :this.offGradeItemsProps.countByDesignator.keySet())
+        for (String designator: this.offGradeItemsProps.countByDesignator.keySet())
         {
             switch (designator.toUpperCase())
             {
@@ -1184,7 +1266,7 @@ public class Blueprint implements IBpInfoContainer {
     }
 
     // measure ability if either of the ability weights is not 0 and the cset1Order != DISTRIBUTION, which
-    //  implies that on bp should factor into item selection.
+    // implies that on bp should factor into item selection.
     public Boolean getMeasureAbility()
     {
     	return !((abilityWeight == 0 && rcAbilityWeight == 0)
@@ -1203,10 +1285,11 @@ public class Blueprint implements IBpInfoContainer {
         // assumption: proficiency cuts on segmented tests are the same for all segments
         if (this.offGradeItemsProps.proficientTheta == null)
             throw new ReturnStatusException("Cannot evaluate off-grade item trigger.  No proficiency cut score was provided.");
-        int K = this.maxOpItemsTest;
-        if (numAdministeredTest >= K) K = numAdministeredTest + 1;
-        
-        return (K / (double)(numAdministeredTest - K)) * (((numAdministeredTest / (double)K) * theta) - this.offGradeItemsProps.proficientTheta);
+        Double K = (double)this.maxOpItemsTest;
+        if (numAdministeredTest >= K) 
+        	K = (double)numAdministeredTest + 1.0;
+        // TODO check! double
+        return (K / (double)(numAdministeredTest - K)) * (((numAdministeredTest / K) * theta) - this.offGradeItemsProps.proficientTheta);
     }
 
 	public void dumpBP()// for old algorithm
@@ -1263,6 +1346,11 @@ public class Blueprint implements IBpInfoContainer {
 				"terminateBasedOnCount", "terminateBasedOnScoreTooClose",
 				"terminateBaseOnFlagsAnd");
 		return FilePrint.fieldNamesValues(fieldNames, this);
+	}
+
+	@Override // string IBpInfoContainer.name in C# code
+	public String getName() {		
+		return segmentKey;
 	}
 
 }

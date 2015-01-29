@@ -11,6 +11,7 @@ package tds.itemselection.impl.bpmatchcomputation;
 import java.util.Collection;
 import java.util.Random;
 
+import TDS.Shared.Exceptions.ReturnStatusException;
 import tds.itemselection.impl.sets.Cset1Factory2013;
 import tds.itemselection.impl.sets.CsetGroup;
 
@@ -30,7 +31,7 @@ public abstract class BlueprintMatchComputation {
     /// <param name="csetFactory"></param>
     /// <param name="groups"></param>
     /// <param name="rand"></param>
-    public void execute(Cset1Factory2013 csetFactory, Collection<CsetGroup> groups)
+    public void execute(Cset1Factory2013 csetFactory, Collection<CsetGroup> groups) throws ReturnStatusException
     {
         for (CsetGroup group : groups)
             execute(csetFactory, group);
@@ -41,7 +42,7 @@ public abstract class BlueprintMatchComputation {
     /// </summary>
     /// <param name="csetFactory"></param>
     /// <param name="group"></param>
-    public void execute(Cset1Factory2013 csetFactory, CsetGroup group)
+    public void execute(Cset1Factory2013 csetFactory, CsetGroup group) throws ReturnStatusException
     {
         CalculateBpMatchForGroup(csetFactory, group);
         SetBpTieBreakForGroup(csetFactory, group);
@@ -53,7 +54,7 @@ public abstract class BlueprintMatchComputation {
     /// </summary>
     /// <param name="bp">The blueprint to match against</param>
     /// <param name="group">The CSETGroup to calculate values for.  Will update this group's internal members.</param>
-    protected abstract void CalculateBpMatchForGroup(Cset1Factory2013 csetFactory, CsetGroup group);
+    protected abstract void CalculateBpMatchForGroup(Cset1Factory2013 csetFactory, CsetGroup group) throws ReturnStatusException;
 
     /// <summary>
     /// Sets the tie break for groups that have the same bp match value.

@@ -29,16 +29,21 @@ public class ContentLevelCollection {
     		contentLevels.add(cl);
     	}
     }
+    
+    public int getCount()
+    {
+    	return contentLevels.size();
+    }
 
     public ContentLevelCollection()
     {
         contentLevels = new HashSet<String>();
     }
+    
     public ContentLevelCollection(List<String> contentLevels)
     {
         this.contentLevels = new HashSet<String>(contentLevels);
     }
-
     /// <summary>
     /// Compute the bp-metric for this collection of content levels (incl strand and affinity groups)
     /// WRT the blueprint provided.

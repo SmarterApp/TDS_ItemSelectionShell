@@ -37,8 +37,6 @@ public class OffGradeItemsProps {
     public Double 	proficientTheta 	= null; // the cut score representing proficient, can be null
     public Integer 	proficientPLevel 	= null; // the integer level associated with the previous value, can be null
     public Double 	probAffectProficiency = 0.0001; // default value
-    //      specific to examinee
-    public String 	poolFilter;
     
     public OffGradeItemsProps copy()
     {
@@ -48,10 +46,8 @@ public class OffGradeItemsProps {
     	out.proficientTheta 		= this.proficientTheta;
     	out.proficientPLevel 		= this.proficientPLevel;
     	out.probAffectProficiency 	= this.probAffectProficiency;
-    	out.poolFilter 				= this.poolFilter;
     	
-    	return out;
-    	
+    	return out;    	
     }
     
 	public void populateBluePrintOffGradeItemsDesignator(String name, String value)

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import TDS.Shared.Exceptions.ReturnStatusException;
 import tds.itemselection.base.TestItem;
 import tds.itemselection.expectedability.ExpectedAbilityComputationSmarter;
 import tds.itemselection.impl.blueprint.Blueprint;
@@ -46,7 +47,7 @@ public class BPMatchByItemWithIterativeGroupItemSelection extends BlueprintMatch
 
 	@Override
 	protected void CalculateBpMatchForGroup(Cset1Factory2013 csetFactory,
-			CsetGroup group) {
+			CsetGroup group) throws ReturnStatusException {
 		// populate content levels
 		group.populateContentLevels();
 		// record the pruned state of all items the first time through.
@@ -95,16 +96,16 @@ public class BPMatchByItemWithIterativeGroupItemSelection extends BlueprintMatch
 				// the items are required.
 				// If the top 2 items have the same metric value but only 1 is
 				// required, that's the one we'll choose.
-				int maxValueCount = getMaxValueCount(tmpItems,
-						selectionComparer);
+				int maxValueCount = getMaxValueCount(tmpItems, selectionComparer);
+				
 				if (maxValueCount == 1)
 					maxItem = tmpItems.get(0);
 				else {
-					// If ability is weighted at 0, just randomly select an item
-					if (csetFactory.getBp().abilityWeight == 0)
+					// If we're not measuring student ability, just randomly select an item
+					if (!csetFactory.getBp().getMeasureAbility())
 						maxItem = tmpItems.get(rnd.nextInt(maxValueCount));
 					else {
-						// ability weight != 0; calculate expected info for all
+						// otherwise, calculate expected info for all
 						// tied items then pick highest info if there's not
 						// another tie.
 						// otherwise, pick randomly. Note that item-level
@@ -227,7 +228,7 @@ public class BPMatchByItemWithIterativeGroupItemSelection extends BlueprintMatch
     }
 
     // 
-    public void execute(Cset1Factory2013 csetFactory, CsetGroup group)
+    public void execute(Cset1Factory2013 csetFactory, CsetGroup group) throws ReturnStatusException
     {
         // if this group has no more than 1 item, we can just run bp2.
         //  Same if all items in the group are marked as required.

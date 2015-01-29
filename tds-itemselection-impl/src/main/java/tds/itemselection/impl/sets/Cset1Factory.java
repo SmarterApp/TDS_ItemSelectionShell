@@ -20,6 +20,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import TDS.Shared.Exceptions.ReturnStatusException;
 import AIR.Common.DB.SQLConnection;
 import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.ItemGroup;
@@ -92,7 +93,7 @@ public class Cset1Factory
     // What now?
   }
 
-public Cset1 MakeCset1 (SQLConnection connection) throws ItemSelectionException
+public Cset1 MakeCset1 (SQLConnection connection) throws ItemSelectionException, ReturnStatusException
   {
     StudentHistory2013 oppHData =  loader.loadOppHistory (connection, oppkey, segment.getSegmentKey ());
     
@@ -134,8 +135,9 @@ public Cset1 MakeCset1 (SQLConnection connection) throws ItemSelectionException
   /**
    * Add response item groups to excludeGroups, and update blueprin
    * satisfaction and ability estimates
+ * @throws ReturnStatusException 
    */
-  private void ProcessResponses ()
+  private void ProcessResponses () throws ReturnStatusException
   {
     ItemPool pool = segment.getPool ();
     TestItem item;
