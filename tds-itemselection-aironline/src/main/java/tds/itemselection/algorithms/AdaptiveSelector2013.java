@@ -159,7 +159,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
                 if (!filter.isEmpty())
                 {
                     _Ref<String> reason = new _Ref<>();
-                    String status = loader.addOffGradeItems(connection,itemCandidates.getOppkey (), 
+                    String status = loader.addOffGradeItems(connection, itemCandidates.getOppkey (), 
                     		filter, null,  reason); // filter = designator = poolfilterProperty = ("OFFGRADE ABOVE"/"OFFGRADE BELOW"/null)
                     if (!status.equalsIgnoreCase("success"))
                         throw new ReturnStatusException(String.format("Attempt to include off-grade items: %s returned a status of:  %s, reason:  %s", filter, status, reason));

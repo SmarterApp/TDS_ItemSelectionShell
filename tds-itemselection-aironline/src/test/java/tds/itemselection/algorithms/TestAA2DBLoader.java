@@ -26,6 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import AIR.Common.DB.SQLConnection;
+import AIR.Common.DB.results.DbResultRecord;
+import AIR.Common.DB.results.SingleDataResultSet;
+import AIR.Common.Helpers._Ref;
 import TDS.Shared.Exceptions.ReturnStatusException;
 import tds.dll.api.IItemSelectionDLL;
 import tds.itemselection.DLLHelper;
@@ -98,6 +101,38 @@ public class TestAA2DBLoader {
 	      _logger.error (e.getMessage ());
 	      throw e;
 	    }
+	}
+
+	/**
+	 * This test with localhost:3306/session databases
+	 * see opentestsystem-override-test-properties.xml
+	 * @throws Exception
+	 */
+	@Test
+	public final void test_addOffGradeItems() throws Exception {
+
+		_logger.info("Test of addOffGradeItems(SQLConnection connection, "
+				+ "UUID oppkey, String poolfilterProperty, String segmentkey, _Ref<String> reason) for AdaptiveSelector2013: ");			
+
+		try {
+			String OPPKEY = "6A587A25-F2CE-455B-BAB5-BC8B3ABC15E3";	// main test
+			UUID oppkey = (UUID.fromString(OPPKEY));
+			_logger.info("Oppkey =  " + OPPKEY);
+			
+			String designation = "OFFGRADE ABOVE";
+			String segmentKey = "(SBAC)CAT-M3-ONON-S1-A1-MATH-3-Fall-2013-2014";
+			_Ref<String> reason = new _Ref<String>();
+			
+			String status =  loader.addOffGradeItems(_connection, oppkey,
+					designation /* poolfilterProperty */, segmentKey, reason);
+			
+			System.out.println("status = " + status + "; reason = " + ((reason.get().isEmpty())? "empty!": reason.get()));
+
+		} catch (Exception e) {
+			_logger.error("Failed to add Offgrade items: " + e.getMessage());
+			throw new ReturnStatusException(e);
+		}
+	
 	}
 
 

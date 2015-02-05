@@ -1,7 +1,6 @@
-# Welcome to the ItemSelectionShellDev Application
+# Welcome to the Item Selection Shell Application
 
-The ItemSelectionShellDev project is group of modules which can be used for item selection in the Student tests. 
-
+The ItemSelectionShell project is group of modules which can be used for item selection in the Student tests. 
 
 ## License ##
 This project is licensed under the [AIR Open Source License v1.0](http://www.smarterapp.org/documents/American_Institutes_for_Research_Open_Source_Software_License.pdf).
@@ -38,7 +37,7 @@ In general, build the code and deploy the JAR file.
 If building all components from scratch the following build order is needed:
 
 * shared-db
-* tdsdlldev
+* tdsdll
 
 
 ## Dependencies
