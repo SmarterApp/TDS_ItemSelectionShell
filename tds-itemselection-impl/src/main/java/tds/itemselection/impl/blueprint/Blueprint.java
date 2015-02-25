@@ -977,6 +977,14 @@ public class Blueprint implements IBpInfoContainer {
 	}
 	
 	public void setStartAbilityRC(double val) {
+        //For adaptive2, we'll store a value in the TestOpportunity.initialAbility field
+        //  to signal that there is no prior ability for the student.  In this case,
+        //  the default values from the IB should be used at the segment and RC levels.
+        //  These have already been set as default start values when the general blueprint was 
+        //  loaded, so nothing to do here.
+		if(val == -9999)
+			return;
+		
 		this.startAbility = val;
 		this.theta = val;
 		for (ReportingCategory rc : _reportingCategories.values()) {
@@ -1060,6 +1068,9 @@ public class Blueprint implements IBpInfoContainer {
 			terminateBasedOnReportingCategoryInformation = record.<Boolean> get("terminationRCInfo");
 			terminateBasedOnScoreTooClose = record.<Boolean> get("terminationTooClose");
 			terminateBaseOnFlagsAnd 	= record.<Boolean> get("terminationFlagsAnd");
+
+			minOpItemsTest 				= long2Integer(record, "minOpItemsTest");
+			maxOpItemsTest 				= long2Integer(record, "maxOpItemsTest");
 		}
 	}
 
@@ -1285,10 +1296,9 @@ public class Blueprint implements IBpInfoContainer {
         // assumption: proficiency cuts on segmented tests are the same for all segments
         if (this.offGradeItemsProps.proficientTheta == null)
             throw new ReturnStatusException("Cannot evaluate off-grade item trigger.  No proficiency cut score was provided.");
-        Double K = (double)this.maxOpItemsTest;
+        Double K = (double)this.maxOpItemsTest; 
         if (numAdministeredTest >= K) 
         	K = (double)numAdministeredTest + 1.0;
-        // TODO check! double
         return (K / (double)(numAdministeredTest - K)) * (((numAdministeredTest / K) * theta) - this.offGradeItemsProps.proficientTheta);
     }
 

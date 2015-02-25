@@ -66,7 +66,7 @@ public class Cset1Factory2013 {
 	  private double                              panicWeight;
 	  // blueprint and itempool for segment
 	  private TestSegment                         segment;
-	  private boolean _debug = true;
+	  private boolean _debug = false;
 	  public TestSegment getSegment() {
 		return segment;
 	}
@@ -182,10 +182,10 @@ public class Cset1Factory2013 {
  	    
         ProcessResponses();
 
-         // if there are previous responses, calculate the standard error at the BP and RC levels
-         // This can only be done after info values have been tallied for all responses so far.
-         if (responses.size() > 0)
-             bp.updateStandardError();
+		// if there are previous responses, calculate the standard error at the BP and RC levels
+		// This can only be done after info values have been tallied for all responses so far.
+		if (responses.size() > 0)
+			bp.updateStandardError();
      }
 
 

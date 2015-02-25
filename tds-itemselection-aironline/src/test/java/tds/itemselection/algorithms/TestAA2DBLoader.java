@@ -11,7 +11,9 @@ package tds.itemselection.algorithms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.After;
@@ -41,6 +43,7 @@ import tds.itemselection.debug.FileComparison;
 import tds.itemselection.debug.FilePrint;
 import tds.itemselection.impl.blueprint.BpElement;
 import tds.itemselection.impl.blueprint.Blueprint;
+import tds.itemselection.impl.blueprint.OffGradeItemsProps;
 import tds.itemselection.impl.blueprint.ReportingCategory;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.StudentHistory2013;
@@ -313,7 +316,36 @@ public class TestAA2DBLoader {
 		}
 		System.out.println("% of the coinsistent fields = " + ret + "%");		
 	}
-	
+
+	@Test
+	public void test_loadSegment_offGradeItems() {
+		String segmentKey = "(SBAC)SBAC-OP-ADAPTIVE-G5M-MATH-5-Spring-2014-2015";
+		TestSegment segment = new TestSegment(segmentKey);
+
+		// we test this function
+		try {
+			loader.loadSegment(_connection, segmentKey, segment, null); // null <==> not Simulation
+		} catch (ReturnStatusException | ItemSelectionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String path = "c:\\temp\\TEST12" ;
+
+		String path1 = path + "\\Java1Blueprint.csv";
+		String path2 = path + "\\Java2ReportingCategories.csv";			
+		String path3 = path + "\\Java3BlueprintElements.csv";		
+		String path4 = path + "\\Java4Groups.csv";			
+		String path5 = path + "\\Java5TestItems.csv";
+		String path7 = path + "\\Java1_Bp_7_OffgradeItems.csv";
+		
+		FilePrint.string2File(path1, resultBp2String(segment.segmentBlueprint));
+		FilePrint.string2File(path2, resultRC2String(segment.segmentBlueprint.getReportingCategories()));
+		FilePrint.string2File(path3, resultBpElem2String(segment.segmentBlueprint.getBPElements()));
+		FilePrint.string2File(path4, resultGroups2String(segment.segmentItemPool.getItemGroups()));
+		FilePrint.string2File(path5, resultItems2String(segment.segmentItemPool.getItems()));
+		FilePrint.string2File(path7, resultOffgradesItems2String(segment.segmentBlueprint));
+	}
+
 	//@Test
 	public void test_loadOppHistory()
 	{
@@ -544,6 +576,47 @@ public class TestAA2DBLoader {
 		return stb.toString();
 	}
 
+	// resultGroups2String
+	private String resultOffgradesItems2String(Blueprint bp) {
+		StringBuilder stb = new StringBuilder();
+		
+		OffGradeItemsProps offGradeItemsProps = bp.offGradeItemsProps;
+	    //      specific to examinee
+	    String 	offGradePoolFilter = bp.offGradePoolFilter;
+	    /**
+		public Map<String, Integer> countByDesignator = new HashMap<String, Integer>(); // ex: { { "OFFGRADE ABOVE", 50 }, { "OFFGRADE BELOW", 35 } }
+	    public Integer 	minItemsAdministered; 
+	    public Double 	proficientTheta 	= null; // the cut score representing proficient, can be null
+	    public Integer 	proficientPLevel 	= null; // the integer level associated with the previous value, can be null
+	    public Double 	probAffectProficiency = 0.0001; // default value
+	     */
+
+		stb.append("minItemsAdministered").append(FilePrint.csvDelimeter);
+		stb.append("proficientTheta").append(FilePrint.csvDelimeter);
+		stb.append("proficientPLevel").append(FilePrint.csvDelimeter);
+		stb.append("probAffectProficiency").append(FilePrint.csvDelimeter);
+		stb.append("offGradePoolFilter").append(FilePrint.ls);
+
+		stb.append(offGradeItemsProps.minItemsAdministered).append(FilePrint.csvDelimeter);
+		stb.append(offGradeItemsProps.proficientTheta).append(FilePrint.csvDelimeter);
+		stb.append(offGradeItemsProps.proficientPLevel).append(FilePrint.csvDelimeter);
+		stb.append(offGradeItemsProps.probAffectProficiency).append(FilePrint.csvDelimeter);
+		stb.append(offGradePoolFilter).append(FilePrint.ls);
+		
+		stb.append("countByDesignator").append(FilePrint.csvDelimeter);
+		stb.append("propvalue").append(FilePrint.csvDelimeter);
+		stb.append("count").append(FilePrint.ls);
+		
+		for(String offName: offGradeItemsProps.countByDesignator.keySet())
+		{
+			stb.append("").append(FilePrint.csvDelimeter);
+			stb.append(offName).append(FilePrint.csvDelimeter);
+			stb.append(offGradeItemsProps.countByDesignator.get(offName)).append(FilePrint.ls);			
+		}
+		return stb.toString();
+		
+	}
+	
 	// resultGroups2String
 	private String resultGroups2String(Collection<ItemGroup> itemGroups) {
 		List<ItemGroup> itemGrps = new ArrayList<ItemGroup>(itemGroups);

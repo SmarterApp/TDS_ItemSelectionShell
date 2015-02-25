@@ -156,7 +156,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
                 || csetFactory.getBp().offGradePoolFilter.isEmpty()))  // have not already added off-grade items to the pool !!!
             {
                 String filter = csetFactory.getBp().getOffGradeFilter();
-                if (!filter.isEmpty())
+                if (filter != null && !filter.isEmpty())
                 {
                     _Ref<String> reason = new _Ref<>();
                     String status = loader.addOffGradeItems(connection, itemCandidates.getOppkey (), 
@@ -241,10 +241,12 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        	{
 	        		index = 0;
 	        		
-		            String path = "C:\\temp\\TEST9\\" + "Java9CsetItems_Final_" + itemCandidates.getOppkey () + ".csv";
+		            String path = "C:\\temp\\TEST12\\" + "Java9CsetItems_Final_" + itemCandidates.getOppkey () + ".csv";
 		        	cset1ToCSVFile(cset1, path);
 	        	}
-	        		        	
+//		        // test 12 -- temporary
+//	            String path = "C:\\temp\\TEST12\\" + "Java9CsetItems_Final_" + itemCandidates.getOppkey () + ".csv";
+//	        	cset1ToCSVFile(cset1, path);	        		        	
 	        }
 	        
 	        cg = cset1.itemGroups.get(index);

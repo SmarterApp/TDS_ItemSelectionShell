@@ -110,7 +110,7 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 			UUID sessionKey) throws ReturnStatusException,
 			ItemSelectionException {
 		MultiDataResultSet dataSets = null;
-		Boolean controlTriples = false;
+		Boolean controlTriples = true;
 		if (sessionKey == null) { // TODO: Boolean controlTriples = false. From what we will get this parameter? 
 			dataSets = iSelDLL.AA_GetSegment2_SP(connection, segmentKey, controlTriples);
 		} else {
@@ -153,7 +153,7 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 			if (sItr.hasNext()) {
 				segment.segmentItemPool.InitializeItemDimensions(sItr.next());
 			}
-			if(controlTriples) // The same structure as in AA_GetSegment2_SP() and AA_SIM_GetSegment2_SP()
+			if(controlTriples) // Mirror: The same structure as in AA_GetSegment2_SP() and AA_SIM_GetSegment2_SP()
 			{
 				if (sItr.hasNext())
 				{
