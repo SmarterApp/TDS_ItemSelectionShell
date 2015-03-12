@@ -78,7 +78,7 @@ public class TestAIROnline2013 {
 	}
 
 	/**
-	 * <entry key="TDSSessionDBName">sessio_aa2n</entry>
+	 * <entry key="TDSSessionDBName">sessio_aa2</entry>
 	 * @throws Exception
 	 */
 	@Test
@@ -151,15 +151,19 @@ public class TestAIROnline2013 {
 			<entry key="SessionType">0</entry>
 		    <entry key="ClientName">SBAC_PT</entry>		
 			<entry key="EnableLoadData">false</entry>
-			<entry key="TDSSessionDBName">session</entry>
-			<entry key="ItembankDBName">itembank</entry>
-			<entry key="TDSArchiveDBName">archive</entry>
-			<entry key="TDSConfigsDBName">configs</entry>				
-			<entry key="jdbc.url">jdbc:mysql://tds-db.dev.opentestsystem.org:3306/session?useServerPrepStmts=false&amp;rewriteBatchedStatements=true</entry>
+			<entry key="TDSSessionDBName">offgrade_session</entry>
+			<entry key="ItembankDBName">offgrade_itembank</entry>
+			<entry key="TDSArchiveDBName">offgrade_archive</entry>
+			<entry key="TDSConfigsDBName">offgrade_configs</entry>				
+			<entry key="jdbc.url">jdbc:mysql://localhost:3306/offgrade_session?useServerPrepStmts=false&amp;rewriteBatchedStatements=true</entry>
 			<entry key="jdbc.userName">root</entry>
 			<entry key="jdbc.password">root</entry>
 			<entry key="DBDialect">MYSQL</entry>			
-		</properties>	 
+		</properties>
+		also uncomment in AdaptiveSelector2013.java
+			    selectedGroups.add("I-200-2942");
+	        	selectedGroups.add("I-200-18601");
+	 
 	 * @throws Exception
 	 */
 	@Test
