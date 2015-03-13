@@ -62,7 +62,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
       public Boolean 					segmentComplete; // have termination condition(s) been met.
       public String 					_error;
 		
-	  private static Random 			rand = new Random();
+	  private Random 			rand = new Random();
 
 	  // min/max ability are used to determine final range of ability matches
 	  // computed and normalize all ability matches to range [0,1]
@@ -103,7 +103,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	      result = selectNext (connection);
 
 	      if (result == null) {
-	        error = "Adaptive item selection failed: Unknown error.  Try to find next segment";
+	        error = "Adaptive item selection failed: Try to find next segment";
 	      }
 	      if (error != null && !error.isEmpty()) {
 	        _logger.error (String.format (messageTemplate, "AdaptiveSelector", error));
@@ -111,10 +111,10 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 
 	    } catch (ItemSelectionException ie)
 	    {
-	      _logger.error (String.format (messageTemplate, "ItemSelectionException", ie.getMessage()));	      
+	      _logger.error (String.format (messageTemplate, "ItemSelectionException", ie.getMessage()),ie);	      
 	    } catch (Exception e)
 	    {
-	      _logger.error (String.format (messageTemplate, "Exception", e.getMessage()));
+	      _logger.error (String.format (messageTemplate, "Exception", e.getMessage()),e);
 	    }
 	    return result;
 	  }
@@ -270,8 +270,8 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 		} catch (Exception e) {
 			_error = e.getMessage();
 			_logger.error("Error occurs in selectNext () method: "
-					+ e.getMessage());
-			return null;
+					+ e.getMessage(),e);
+			throw new ItemSelectionException (e);
 		}
 	}
 

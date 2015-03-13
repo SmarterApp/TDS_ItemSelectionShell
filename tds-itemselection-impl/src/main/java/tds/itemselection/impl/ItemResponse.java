@@ -228,7 +228,7 @@ public ItemResponse()
 					throw new SQLException("Score node parsing error");
 				Element element = (Element) node;
 				String dimension = element.getAttribute("scoreDimension");
-				if (dimension == null)
+				if (dimension == null || dimension.isEmpty ())
 					dimension = element.getAttribute("scoreDimensions");
 				
 				Integer score = -1;

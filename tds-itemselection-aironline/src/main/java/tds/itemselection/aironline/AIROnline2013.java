@@ -22,6 +22,7 @@ import tds.itemselection.base.ItemGroup;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import AIR.Common.DB.SQLConnection;
 import AIR.Common.Helpers._Ref;
+import AIR.Common.Utilities.SpringApplicationContext;
 import TDS.Shared.Exceptions.ReturnStatusException;
 
 public class AIROnline2013 implements IAIROnline {
@@ -37,9 +38,9 @@ public class AIROnline2013 implements IAIROnline {
 	 @Qualifier ("ftSelector")
 	 private IItemSelection ftSelector;
 	 
-	 @Autowired
+	/* @Autowired
 	 @Qualifier ("aa2013Selector")
-	 private IItemSelection aa2013Selector;
+	 private IItemSelection aa2013Selector;*/
 
 	 private static Logger  _logger  = LoggerFactory.getLogger (AIROnline2013.class);
 	  
@@ -69,7 +70,8 @@ public class AIROnline2013 implements IAIROnline {
 						.getNextItemGroup(connection, itemCandidates);
 			} else if (algorithm.equalsIgnoreCase("adaptive")
 					|| algorithm.equalsIgnoreCase("adaptive2")) {
-				selector = aa2013Selector;
+//				selector = aa2013Selector;
+			  selector = SpringApplicationContext.getBean ("aa2013Selector",IItemSelection.class);
 				if (selector == null) {
 					errorRef.set(String.format("Unsupported adaptive algorithm: %s", algorithm));
 				} else {
@@ -83,7 +85,7 @@ public class AIROnline2013 implements IAIROnline {
                            //  Eventually we'll drop down into the SATISFIED case.
 							result = getNextItemGroup(connection, oppkey, errorRef);
 						} else {
-							errorRef.set("Adaptive item selection failed: Unknown error");
+							errorRef.set("Adaptive item selection failed: Segment is not completed");
 						}
 					}
 				}
