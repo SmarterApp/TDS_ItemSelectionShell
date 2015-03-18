@@ -40,8 +40,6 @@ import tds.itemselection.impl.sets.UsedSequence;
  * 
  */
 
-// TODO: (AK) all
-// Blueprint2013 -> see line after 699
 public class Blueprint implements IBpInfoContainer {
 	private static Logger _logger = LoggerFactory.getLogger(Blueprint.class);
 
@@ -608,8 +606,6 @@ public class Blueprint implements IBpInfoContainer {
 	}
 
 	public void UpdateSatisfaction(TestItem item) {
-		// UpdateSatisfaction(item, true);
-		// TODO check
 		UpdateSatisfaction(item, false);
 	}
 
@@ -1096,7 +1092,6 @@ public class Blueprint implements IBpInfoContainer {
 				rc.initialize(record);
 				rc.setReportingCategory(true);
 				_reportingCategories.put(rc.ID, rc);
-				// TODO do I need to add to elements???
 				elements.addBpElement(rc);
 			} else { // Where Affinity Group?
 				BpElement bpElement = new BpElement();
@@ -1295,7 +1290,11 @@ public class Blueprint implements IBpInfoContainer {
     {
         // assumption: proficiency cuts on segmented tests are the same for all segments
         if (this.offGradeItemsProps.proficientTheta == null)
-            throw new ReturnStatusException("Cannot evaluate off-grade item trigger.  No proficiency cut score was provided.");
+        {
+        	String error = "Cannot evaluate off-grade item trigger.  No proficiency cut score was provided.";
+        	 _logger.error ( error);
+            throw new ReturnStatusException(error);
+        }
         Double K = (double)this.maxOpItemsTest; 
         if (numAdministeredTest >= K) 
         	K = (double)numAdministeredTest + 1.0;

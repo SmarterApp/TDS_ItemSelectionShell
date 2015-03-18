@@ -118,7 +118,7 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 		}
 
 		Iterator<SingleDataResultSet> sItr = dataSets.getResultSets();
-
+        
 		if (dataSets.getUpdateCount() < 4) {
 			String error = "loadSegment method return is corrupted: there is not any single data set";
 			_logger.error(error);
@@ -129,40 +129,48 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 			// Get the segment related info table
 			if (sItr.hasNext()) {
 				segment.initializeOverallBluePrint(sItr.next());
+				_logger.info("Overall Blueprint was initialized successfully");
 			}
 			// Get the blueprint (content level) related info table
 			if (sItr.hasNext()) {
 				segment.segmentBlueprint.initializeBluePrintConstraints(sItr
 						.next());
+				_logger.info("BlueprintConstraints were initialized successfully");
 			}
 			// Get the item group info table
 			if (sItr.hasNext()) {
 				segment.segmentItemPool.initializeItemGroups(sItr.next());
+				_logger.info("Item Groups were initialized successfully");
 			}
 			// Get the item info table
 			if (sItr.hasNext()) {
 				//segment.segmentItemPool.InitializeTestItems(sItr.next());
 				segment.segmentItemPool.InitializeTestItems(sItr.next(), segment.segmentBlueprint.segmentPosition);
+				_logger.info("TestItems were initialized successfully");
 			}
 			// Get the sibling item info table
 			if (sItr.hasNext()
 					&& !segment.segmentKey.equals(segment.parentTest)) {
 				segment.segmentItemPool.InitializeSiblingItems(sItr.next());
+				_logger.info("SiblingItems were initialized successfully");
 			}
 			// Get the dimension information for items
 			if (sItr.hasNext()) {
 				segment.segmentItemPool.InitializeItemDimensions(sItr.next());
+				_logger.info("ItemDimensions were initialized successfully");
 			}
 			if(controlTriples) // Mirror: The same structure as in AA_GetSegment2_SP() and AA_SIM_GetSegment2_SP()
 			{
 				if (sItr.hasNext())
 				{
 					segment.segmentBlueprint.initializeBluePrintOffGradeItemsProps(sItr.next());
+					_logger.info("Blueprint OffGradeItems Properties were initialized successfully");
 				}
 			}
 			if (sItr.hasNext())
 			{
 				segment.segmentBlueprint.initializeBluePrintOffGradeItemsDesignator(sItr.next());
+				_logger.info("Blueprint OffGradeItems Designator was initialized successfully");
 			}
 			
 		} catch (Exception e) {

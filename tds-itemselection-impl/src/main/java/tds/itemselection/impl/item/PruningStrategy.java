@@ -92,7 +92,7 @@ public class PruningStrategy {
 
         // Pruning may have caused some elements to be unable to satisfy minitem requirements
         // So give them the chance to unprune just enough
-        Unprune(blueprint, UnpruneOrderStrategy.OrderCollection((List<BpElement>) blueprint.elements.getValues()), currentGroup);
+        Unprune(blueprint, UnpruneOrderStrategy.OrderCollection( blueprint.elements.getValues()), currentGroup);
 
         // set the poolcount after pruning
         blueprint.poolcount = 0;

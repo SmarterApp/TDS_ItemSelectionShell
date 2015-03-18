@@ -106,8 +106,13 @@ public class TestSelector2013 {
 	}
 
 	/**
-	 * This test with localhost:3306/session_aa2 databases
+	 * main test
+	 * This test with localhost:3306/session_aa2 
+	 * databases
 	 * see opentestsystem-override-properties_aa2.xml
+	 * 
+	 * test for Jon -- 
+	 * tds-db.dev.opentestsystem.org:3306/session
 	 * @throws Exception
 	 */
 	@Test
@@ -117,7 +122,8 @@ public class TestSelector2013 {
 		System.out.println();
 
 		try {
-			String OPPKEY = "0514d9cb-1e14-4c04-ab75-5e143245861a";	// main test
+			String OPPKEY = "c50e7abe-673b-4d14-a7d0-81108de317a4";	// test for Jon
+//			String OPPKEY = "0514d9cb-1e14-4c04-ab75-5e143245861a";	// main test
 //			String OPPKEY = "a1674ef0-9042-428e-beab-9f082bdc93f8"; // This is student with 3 previous items!
 //			String OPPKEY = "24f000c7-a32f-439b-a55b-9a6e74af0649";
 			UUID oppkey = (UUID.fromString(OPPKEY));

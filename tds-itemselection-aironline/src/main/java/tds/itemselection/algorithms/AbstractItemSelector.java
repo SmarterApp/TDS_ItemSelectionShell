@@ -13,7 +13,8 @@ import tds.itemselection.api.IItemSelection;
 public abstract class AbstractItemSelector implements IItemSelection {
 
 	  protected String     _error         = null;
-	  
+
+	  // have termination condition(s) been met.
 	  protected Boolean isSegmentCompleted = false;
 	  
 	  @Override

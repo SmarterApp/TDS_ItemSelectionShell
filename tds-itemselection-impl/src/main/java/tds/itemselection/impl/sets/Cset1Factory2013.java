@@ -365,11 +365,6 @@ public class Cset1Factory2013 {
 	    else
 	      cset1Size = Math.max (bp.cSet1Size, bp.randomizerIndex);
 	    
-	    if(_debug)
-	    {
-	    	cset1Size = groups.size ();
-	    }
-
 	    maxMetric = firstGroup.selectionMetric;
 	    // find the 'last' group index
 	    last = Math.min (cset1Size, groups.size ()) - 1;

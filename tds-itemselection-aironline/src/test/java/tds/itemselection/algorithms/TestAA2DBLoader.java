@@ -138,37 +138,40 @@ public class TestAA2DBLoader {
 	
 	}
 
-
 	@Test
 	public void test_loadSegment() {
-		String segmentKey = "(SBAC)CAT-M3-ONON-S1-A1-MATH-3-Fall-2013-2014";
+		String segmentKey = "(SBAC)SBAC-OP-ADAPTIVE-G5E-ELA-5-Spring-2014-2015";
 		TestSegment segment = new TestSegment(segmentKey);
 
 		// we test this function
 		try {
 			loader.loadSegment(_connection, segmentKey, segment, null);
 		} catch (ReturnStatusException | ItemSelectionException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
-		String path = "c:\\temp\\TEST9" ;
+//		String path = "c:\\temp\\TEST9" ;
+		String path = "C:\\temp\\TEST14\\Java_Results" ;
 
 		String path1 = path + "\\Java1Blueprint.csv";
 		String path2 = path + "\\Java2ReportingCategories.csv";			
 		String path3 = path + "\\Java3BlueprintElements.csv";		
-//		String path4 = path + "\\Java4Groups.csv";			
-//		String path5 = path + "\\Java5TestItems.csv";
+		String path4 = path + "\\Java4Groups.csv";			
+		String path5 = path + "\\Java5TestItems.csv";
 		
 		FilePrint.string2File(path1, resultBp2String(segment.segmentBlueprint));
 		FilePrint.string2File(path2, resultRC2String(segment.segmentBlueprint.getReportingCategories()));
 		FilePrint.string2File(path3, resultBpElem2String(segment.segmentBlueprint.getBPElements()));
-//		FilePrint.string2File(path4, resultGroups2String(segment.segmentItemPool.getItemGroups()));
-//		FilePrint.string2File(path5, resultItems2String(segment.segmentItemPool.getItems()));
+		FilePrint.string2File(path4, resultGroups2String(segment.segmentItemPool.getItemGroups()));
+		FilePrint.string2File(path5, resultItems2String(segment.segmentItemPool.getItems()));
+		
+		System.out.println("Test was completed successfully");
 		
 	}
 	//@Test
 	public void test_loadSegment_Main()throws ReturnStatusException {
 		String segmentKey = "(SBAC)CAT-M3-ONON-S1-A1-MATH-3-Fall-2013-2014";
+
 		TestSegment segment = new TestSegment(segmentKey);
 		double percent = 0.;
 
@@ -231,7 +234,6 @@ public class TestAA2DBLoader {
 	
 	//@Test
 	public void test_loadHistory_Main() throws ReturnStatusException {
-		//TODO change oppkey
 		String OPPKEY = "a1674ef0-9042-428e-beab-9f082bdc93f8";
 //		String OPPKEY = "24f000c7-a32f-439b-a55b-9a6e74af0649";
 		UUID oppkey = (UUID.fromString(OPPKEY));
@@ -282,7 +284,6 @@ public class TestAA2DBLoader {
 
 			loader.loadSegment(_connection, segmentKey, segment, null);
 		} catch (ReturnStatusException | ItemSelectionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -299,10 +300,9 @@ public class TestAA2DBLoader {
 		try {
 			loader.loadSegment(_connection, segmentKey, segment, null);
 		} catch (ReturnStatusException | ItemSelectionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String path1 = "C:\\temp\\TEST9\\NET1Blueprint.csv";
+		String path1 = "C:\\temp\\TEST9\\JAVA1Blueprint.csv";
 		String res = FilePrint.fieldsToString(segment.getBp());
 		FilePrint.string2File(path1, res);
 		
@@ -311,7 +311,6 @@ public class TestAA2DBLoader {
 		try {
 			ret = FileComparison.compare(path1, segment.getBp())* 100.;
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("% of the coinsistent fields = " + ret + "%");		
@@ -326,10 +325,9 @@ public class TestAA2DBLoader {
 		try {
 			loader.loadSegment(_connection, segmentKey, segment, null); // null <==> not Simulation
 		} catch (ReturnStatusException | ItemSelectionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String path = "c:\\temp\\TEST12" ;
+		String path = "c:\\temp\\TEST14\\Java_Results" ;
 
 		String path1 = path + "\\Java1Blueprint.csv";
 		String path2 = path + "\\Java2ReportingCategories.csv";			
@@ -359,7 +357,6 @@ public class TestAA2DBLoader {
 		try {
 			stHistory = loader.loadOppHistory(_connection, oppkey, segmentKey);
 		} catch (ItemSelectionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String path1 = "C:\\temp\\StudentHistory.csv";
@@ -371,7 +368,6 @@ public class TestAA2DBLoader {
 		try {
 			ret = FileComparison.compare(path1, stHistory)* 100.;
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("% of the coinsistent fields = " + ret + "%");		
@@ -387,14 +383,12 @@ public class TestAA2DBLoader {
 		try {
 			loader.loadSegment(_connection, segmentKey, segment, null);
 		} catch (ReturnStatusException | ItemSelectionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String path1 = "C:\\temp\\AA_NET-Outputs\\NET1Blueprint.csv";
+		String path1 = "C:\\temp\\AA_NET-Outputs\\JAVA1Blueprint.csv";
 		try {
 			ret = FileComparison.compare(path1, segment.getBp())* 100.;
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("% of the coinsistent fields = " + ret + "%");

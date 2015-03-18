@@ -78,7 +78,7 @@ public class TestAIROnline2013 {
 	}
 
 	/**
-	 * <entry key="TDSSessionDBName">sessio_aa2</entry>
+	 * <entry key="TDSSessionDBName">session_aa2</entry>
 	 * @throws Exception
 	 */
 	@Test

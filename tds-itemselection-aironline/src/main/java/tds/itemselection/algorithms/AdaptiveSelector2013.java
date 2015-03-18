@@ -59,9 +59,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	  protected Cset1Factory2013       	csetFactory;
 	  
       public String 					terminationReason;
-      public Boolean 					segmentComplete; // have termination condition(s) been met.
-      public String 					_error;
-		
+      		
 	  private Random 			rand = new Random();
 
 	  // min/max ability are used to determine final range of ability matches
@@ -111,7 +109,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 
 	    } catch (ItemSelectionException ie)
 	    {
-	      _logger.error (String.format (messageTemplate, "ItemSelectionException", ie.getMessage()),ie);	      
+	      _logger.error (String.format (messageTemplate, "ItemSelectionException", ie.getMessage(),ie));	      
 	    } catch (Exception e)
 	    {
 	      _logger.error (String.format (messageTemplate, "Exception", e.getMessage()),e);
@@ -162,7 +160,17 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
                     String status = loader.addOffGradeItems(connection, itemCandidates.getOppkey (), 
                     		filter, null,  reason); // filter = designator = poolfilterProperty = ("OFFGRADE ABOVE"/"OFFGRADE BELOW"/null)
                     if (!status.equalsIgnoreCase("success"))
-                        throw new ReturnStatusException(String.format("Attempt to include off-grade items: %s returned a status of:  %s, reason:  %s", filter, status, reason));
+                    {
+                    	if(reason.get().equalsIgnoreCase("offgrade accommodation not exists"))
+                    	{
+                    		csetFactory.getBp().offGradePoolFilter = "No Accommodation";
+                    		_logger.info("Status = " + status + ", reason = " + reason.get());
+                    	}
+                    	else
+                    	{
+                    		throw new ReturnStatusException(String.format("Attempt to include off-grade items: %s returned a status of:  %s, reason:  %s", filter, status, reason));
+                    	}
+                    }
                     if (reason.get().isEmpty())
                     {
                         // the student's custom item pool has been updated with off-grade items; reload history to include
@@ -194,19 +202,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        }
 	        
 	        int n = Math.min(minitems, cset1.itemGroups.size());
-	        
-	        if(_debug)
-	        {
-	            // test another metrics
-	            minitems = cset1.itemGroups.size();
-	            n = minitems;
-	            cset1.getBlueprint().cset1Order = "ALL";
-	            cset1.getBlueprint().abilityWeight = 1.0;
-	            cset1.getBlueprint().rcAbilityWeight = 1.0;
-	            cset1.getBlueprint().precisionTargetMetWeight = 1.0;
-	            cset1.getBlueprint().precisionTargetNotMetWeight = 1.0;
-	        }
-	
+	        	
 	        // compute the ability match for each group in cset1
 	        ComputeAbilityMatch();
 	        	        
@@ -216,38 +212,6 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        cset1.setSelectionMetrics();
 
 	        int index = rand.nextInt(n);
-
-	        if(_debug)
-	        {
-	        	index = 0;
-	        	
-				// TEST9-3
-	        	List<String> selectedGroups = new ArrayList<String>();
-//	        	selectedGroups.add("I-200-2942");
-//	        	selectedGroups.add("I-200-18601");
-	        		        	
-	        	Integer out = null;
-	        	for(CsetGroup group: cset1.itemGroups)
-	        	{
-	        		CsetGroup outGr = getSelectedGroup(group, selectedGroups);
-	        		if(outGr != null)
-	        		{
-	        			index = cset1.itemGroups.indexOf(outGr);
-	        			out = index;
-	        			break;
-	        		}
-	        	}
-	        	if(out == null)
-	        	{
-	        		index = 0;
-	        		
-		            String path = "C:\\temp\\TEST12\\" + "Java9CsetItems_Final_" + itemCandidates.getOppkey () + ".csv";
-		        	cset1ToCSVFile(cset1, path);
-	        	}
-//		        // test 12 -- temporary
-//	            String path = "C:\\temp\\TEST12\\" + "Java9CsetItems_Final_" + itemCandidates.getOppkey () + ".csv";
-//	        	cset1ToCSVFile(cset1, path);	        		        	
-	        }
 	        
 	        cg = cset1.itemGroups.get(index);
 	        
@@ -271,6 +235,9 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 			_error = e.getMessage();
 			_logger.error("Error occurs in selectNext () method: "
 					+ e.getMessage(),e);
+			if(_debug)
+				System.out.println("Error: " +  e.getMessage());
+				
 			throw new ItemSelectionException (e);
 		}
 	}
@@ -396,7 +363,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
     {
         if (loader.setSegmentSatisfied(connection, itemCandidates.getOppkey(), segment.position, reason))
         {
-            this.segmentComplete = true;
+            this.isSegmentCompleted = true;
             this.terminationReason = reason;
         }
         else
