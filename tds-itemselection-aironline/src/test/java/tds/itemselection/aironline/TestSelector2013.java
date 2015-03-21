@@ -122,7 +122,8 @@ public class TestSelector2013 {
 		System.out.println();
 
 		try {
-			String OPPKEY = "c50e7abe-673b-4d14-a7d0-81108de317a4";	// test for Jon
+			String OPPKEY = "9e60e503-f058-4a44-b719-1969e383c94f";	// test for Jon on tds-db.dev
+//			String OPPKEY = "c50e7abe-673b-4d14-a7d0-81108de317a4";	// test for Jon on localhost
 //			String OPPKEY = "0514d9cb-1e14-4c04-ab75-5e143245861a";	// main test
 //			String OPPKEY = "a1674ef0-9042-428e-beab-9f082bdc93f8"; // This is student with 3 previous items!
 //			String OPPKEY = "24f000c7-a32f-439b-a55b-9a6e74af0649";

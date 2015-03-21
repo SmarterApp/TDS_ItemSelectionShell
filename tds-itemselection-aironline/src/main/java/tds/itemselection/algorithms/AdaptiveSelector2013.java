@@ -11,7 +11,6 @@ package tds.itemselection.algorithms;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -20,9 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import TDS.Shared.Exceptions.ReturnStatusException;
-import AIR.Common.DB.SQLConnection;
-import AIR.Common.Helpers._Ref;
 import tds.itemselection.api.IItemSelection;
 import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.ItemCandidatesData;
@@ -41,6 +37,9 @@ import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.SegmentCollection2;
 import tds.itemselection.loader.TestSegment;
 import tds.itemselection.termination.TerminationManager;
+import AIR.Common.DB.SQLConnection;
+import AIR.Common.Helpers._Ref;
+import TDS.Shared.Exceptions.ReturnStatusException;
 
 public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements IItemSelection {
 
@@ -215,17 +214,11 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        
 	        cg = cset1.itemGroups.get(index);
 	        
-	        if(_debug)
-	        {
-				System.out.println(String.format("Oppkey: %s: %s", itemCandidates.getOppkey(), cg.groupID));
-				_logger.info(String.format("Oppkey: %s: %s", itemCandidates.getOppkey(), cg.groupID));
-	        }
-	
 	        SortSelectedGroup(cg);
 	        PruneSelectedGroup(cg);
 	        ItemGroup result = new ItemGroup(cg.groupID, blueprint.segmentKey, blueprint.segmentID, blueprint.segmentPosition, 
 	        		cg.getNumberOfItemsRequired(), cg.getMaximumNumberOfItems());
-				for (TestItem item : cg.getActive()) {
+				for (TestItem item : cg.getActiveIncluded ()) {
 					result.addItem(item);
 				}
 	
@@ -235,8 +228,6 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 			_error = e.getMessage();
 			_logger.error("Error occurs in selectNext () method: "
 					+ e.getMessage(),e);
-			if(_debug)
-				System.out.println("Error: " +  e.getMessage());
 				
 			throw new ItemSelectionException (e);
 		}
@@ -247,28 +238,29 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	// / Prunes unwanted items from a group
 	// / </summary>
 	// / <param name="group"></param>
-	private void PruneItemgroup(CsetGroup group) {
-		if (group.getActiveCount() <= 1)
+	private void PruneItemgroup(CsetGroup group, boolean pruneForStrictMax) {
+		if (group.getActiveIncludedCount() <= 1)
 			return; // must have more than one item to prune
 
 		// First prune for strict maxes
 		// Then prune for items over the group max
 		// Then prune for items over the test max length
 		// In no case should the group be pruned down to zero.
-
-		PruneStrictMaxes(group);
+		if(pruneForStrictMax)
+		  PruneStrictMaxes(group);
+		
 		if (group.getActiveCount() <= 1)
 			return;
 
 		// prune for items over the max allowed for the group
-		int overage = group.getActiveCount() - group.getMaxItems();
+		int overage = group.getActiveIncludedCount () - group.getMaxItems();
 		if (overage > 0)
 			group.prune(overage);
-		if (group.getActiveCount() <= 1)
+		if (group.getActiveIncludedCount () <= 1)
 			return;
 
 		// Prune for items over max test length
-		overage = (group.getActiveCount() + blueprint.numAdministered)
+		overage = (group.getActiveIncludedCount () + blueprint.numAdministered)
 				- blueprint.maxOpItems;
 		if (overage > 0)
 			group.prune(overage);
@@ -305,29 +297,23 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	    // of updating counts on
 	    // bp elements not immediately targeted, which is desired.
 
-	    BpElement[] maxes = blueprint.getStrictmaxVector ();
-	    int[] bpCounts = group.getBpCounts (maxes); // the (initial) count of items
-	                                                // on each strict max element
+	    int[] bpCounts = group.BpCounts ( blueprint.strictMaxes, false, true); // the (initial) count of items on each strict max element
+	    
 	    boolean more = true;
-	    int n = maxes.length;
 
 	    //
 	    while (more)
 	    {
 	      more = false;
-	      for (int i = 0; i < n; ++i)
+	      for (int i = 0; i < blueprint.strictMaxes.size(); ++i)
 	      {
-	        if (group.getActiveCount() > 1 && bpCounts[i] + maxes[i].numAdministered > maxes[i].maxRequired)
-	        {
+	        if (group.getActiveIncludedCount () > 1 && bpCounts[i] + blueprint.strictMaxes.get(i).numAdministered > blueprint.strictMaxes.get(i).maxRequired)
+          {
 	          // prunes exactly one item at a time
-	          more = group.prune (maxes[i].ID); // it may not be possible to prune
-	                                            // ANY item
-	          // because an item is likely on more than one content level, refresh
-	          // the counts vector to prevent over-pruning
-	          if (more) // only need to refresh bpcounts if an item was successfully
-	                    // pruned
-	            // TODO: (AK) needed setBpCounts here!
-	            bpCounts = group.getBpCounts (maxes);
+	          more = group.prune(blueprint.strictMaxes.get(i).ID);    // it may not be possible to prune ANY item
+            // because an item is likely on more than one content level, refresh the counts vector to prevent over-pruning
+            if (more)   // only need to refresh bpcounts if an item was successfully pruned
+                group.BpCounts(blueprint.strictMaxes, false, true, bpCounts);
 	        }
 	      }
 	    }
@@ -353,7 +339,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	// / </summary>
 	// / <param name="group"></param>
 	protected void PruneSelectedGroup(CsetGroup group) {
-		PruneItemgroup(group);
+		PruneItemgroup(group,false);
 	}
     /// <summary>
     /// Terminates the current segment for the reason provided.

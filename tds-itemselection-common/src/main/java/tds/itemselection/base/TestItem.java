@@ -505,10 +505,10 @@ public class TestItem implements Comparable<Object>
 				fParamValue);
 	}
 
-	public boolean isActive() {
+	/*public boolean isActive() {
 		
 		return isActive;
-	}
+	}*/
 	
 //	private Boolean containsName(String name)
 //	{

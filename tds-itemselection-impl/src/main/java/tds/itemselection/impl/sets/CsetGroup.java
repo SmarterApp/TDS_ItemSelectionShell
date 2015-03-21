@@ -189,20 +189,25 @@ public double getBpJitter ()
       c = Double.compare (this.selectionMetric + _jitter, r.selectionMetric + r._jitter);
       return c;
     }
-    if (r.selectionMetric > this.selectionMetric)
+    /*if (r.selectionMetric > this.selectionMetric)
       return 1;
     if (r.selectionMetric < this.selectionMetric)
-      return -1;
-    return 0;
+      return -1;*/
+    return Double.compare (r.selectionMetric, this.selectionMetric);
   }
 
   public void removeInactive ()
   {
     List<TestItem> removedItems = new ArrayList<TestItem> ();
+    CSetItem csetItem = null;
     for (TestItem item : items)
     {
-      if (item != null && !item.isActive)
-        removedItems.add (item);
+      if(item instanceof CSetItem) {
+        csetItem = (CSetItem)item;
+        if (csetItem != null && !csetItem.isActive ()) {
+          removedItems.add (item);
+        }
+      }
     }
     for (TestItem item : removedItems)
     {
@@ -222,7 +227,7 @@ public double getBpJitter ()
       {
         citem = (CsetItem) item;
       }
-      if (citem != null && citem.isActive ())
+      if (citem != null && citem.isActive () && citem.Included)
       {
         sum += citem.getAverageB();
         ++cnt;
@@ -725,6 +730,22 @@ public double getBpJitter ()
     }
     return cnt;
   }
+  
+  public int getActiveIncludedCount ()
+  {
+    int cnt = 0;
+    for (TestItem item : items)
+    {
+      CsetItem citem = null;
+      if (item instanceof CsetItem)
+      {
+        citem = (CsetItem) item;
+      }
+      if (citem != null && citem.isActive () && citem.Included)
+        ++cnt;
+    }
+    return cnt;
+  }
 
   public int getMaxItems ()
   {
@@ -857,7 +878,7 @@ public double getBpJitter ()
       if (pruned >= p)
         return;
       item = (CsetItem) items.get (i);
-      if (item.isActive () && !item.isRequired)
+      if (item.isActive () && item.Included &&  !item.isRequired)
       {
         item.pruned = true;
         ++pruned;
@@ -928,7 +949,7 @@ public double getBpJitter ()
         	  if(itm instanceof CSetItem && itm.isActive)
         	  {
         		  CSetItem item = (CSetItem) itm;  
-              if (item.isActive && item.Included)
+              if (item.isActive () && item.Included)
                   result.add(item);
         	  }
           }
@@ -946,7 +967,11 @@ public double getBpJitter ()
       contentLevels = new ContentLevelCollection();
       for (TestItem item : items)
       {
-          if (item.isActive() && item.contentLevels != null)
+          boolean isActiveFlag = item.isActive;
+          if(item instanceof CSetItem) {
+            isActiveFlag = ((CSetItem)item).isActive ();
+          }
+          if (isActiveFlag && item.contentLevels != null)
           {
               for (String cl : item.contentLevels)
               {
@@ -959,4 +984,51 @@ public double getBpJitter ()
       }
    }
 
+  //==============================NEW============================================================
+  /// <summary>
+    /// Array of counts of items (not pruned) on each bp element in positional correspondence 
+    /// </summary>
+    public int[] BpCounts(List<BpElement> elems, boolean requiredOnly, boolean includedOnly)
+    {
+        int[] result = new int[elems.size()];
+        BpCounts(elems, requiredOnly, includedOnly, result);
+        return result;
+    }
+
+    /// <summary>
+    /// Array of counts of items (not pruned) on each bp element in positional correspondence 
+    /// This differs from BpCounts(BpElement[]) in that it reuses the result array.
+    /// </summary>
+    public void BpCounts(List<BpElement> elems, boolean requiredOnly, boolean includedOnly, int[] result)
+    {
+        for (int i = 0; i < elems.size(); ++i)
+        {
+            result[i] = BpCount(elems.get(i), requiredOnly, includedOnly);
+        }
+        return;
+    }
+
+    /// <summary>
+    /// Returns the count of active items in the group associated with the bp element passed in.
+    /// </summary>
+    /// <param name="elem"></param>
+    /// <param name="requiredOnly">Counts only required items</param>
+    /// <returns></returns>
+  public int BpCount(BpElement elem, boolean requiredOnly,
+      boolean includedOnly) {
+    int count = 0;
+    CSetItem csetItem = null;
+    for (TestItem item : getActive()) {
+      if(item instanceof CSetItem) {
+        csetItem = (CSetItem) item;
+        if (csetItem.hasContentlevel(elem.ID) &&
+              (!requiredOnly || csetItem.isRequired) &&
+              (!includedOnly || csetItem.Included)) {
+            count++;
+        }
+      }
+    }
+    return count;
+  }
+//==============================END NEW======================================================
 }

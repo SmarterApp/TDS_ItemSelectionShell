@@ -106,39 +106,7 @@ public class TestAA2DBLoader {
 	    }
 	}
 
-	/**
-	 * This test with localhost:3306/session databases
-	 * see opentestsystem-override-test-properties.xml
-	 * @throws Exception
-	 */
-	@Test
-	public final void test_addOffGradeItems() throws Exception {
-
-		_logger.info("Test of addOffGradeItems(SQLConnection connection, "
-				+ "UUID oppkey, String poolfilterProperty, String segmentkey, _Ref<String> reason) for AdaptiveSelector2013: ");			
-
-		try {
-			String OPPKEY = "6A587A25-F2CE-455B-BAB5-BC8B3ABC15E3";	// main test
-			UUID oppkey = (UUID.fromString(OPPKEY));
-			_logger.info("Oppkey =  " + OPPKEY);
-			
-			String designation = "OFFGRADE ABOVE";
-			String segmentKey = "(SBAC)CAT-M3-ONON-S1-A1-MATH-3-Fall-2013-2014";
-			_Ref<String> reason = new _Ref<String>();
-			
-			String status =  loader.addOffGradeItems(_connection, oppkey,
-					designation /* poolfilterProperty */, segmentKey, reason);
-			
-			System.out.println("status = " + status + "; reason = " + ((reason.get().isEmpty())? "empty!": reason.get()));
-
-		} catch (Exception e) {
-			_logger.error("Failed to add Offgrade items: " + e.getMessage());
-			throw new ReturnStatusException(e);
-		}
-	
-	}
-
-	@Test
+	@Test // Test-14
 	public void test_loadSegment() {
 		String segmentKey = "(SBAC)SBAC-OP-ADAPTIVE-G5E-ELA-5-Spring-2014-2015";
 		TestSegment segment = new TestSegment(segmentKey);
@@ -394,6 +362,37 @@ public class TestAA2DBLoader {
 		System.out.println("% of the coinsistent fields = " + ret + "%");
 	}
 	
+	/**
+	 * This test with localhost:3306/session databases
+	 * see opentestsystem-override-test-properties.xml
+	 * @throws Exception
+	 */
+	@Test
+	public final void test_addOffGradeItems() throws Exception {
+
+		_logger.info("Test of addOffGradeItems(SQLConnection connection, "
+				+ "UUID oppkey, String poolfilterProperty, String segmentkey, _Ref<String> reason) for AdaptiveSelector2013: ");			
+
+		try {
+			String OPPKEY = "6A587A25-F2CE-455B-BAB5-BC8B3ABC15E3";	// main test
+			UUID oppkey = (UUID.fromString(OPPKEY));
+			_logger.info("Oppkey =  " + OPPKEY);
+			
+			String designation = "OFFGRADE ABOVE";
+			String segmentKey = "(SBAC)CAT-M3-ONON-S1-A1-MATH-3-Fall-2013-2014";
+			_Ref<String> reason = new _Ref<String>();
+			
+			String status =  loader.addOffGradeItems(_connection, oppkey,
+					designation /* poolfilterProperty */, segmentKey, reason);
+			
+			System.out.println("status = " + status + "; reason = " + ((reason.get().isEmpty())? "empty!": reason.get()));
+
+		} catch (Exception e) {
+			_logger.error("Failed to add Offgrade items: " + e.getMessage());
+			throw new ReturnStatusException(e);
+		}
+	
+	}
 	
 	private String dumpBp2String2(Blueprint bp) {
 
@@ -658,28 +657,41 @@ public class TestAA2DBLoader {
 		stb.append("b").append(FilePrint.csvDelimeter);
 		stb.append("c").append(FilePrint.csvDelimeter);
 		stb.append("AverageB").append(FilePrint.csvDelimeter);
+		stb.append("CL1").append(FilePrint.csvDelimeter);
+		stb.append("CL2").append(FilePrint.csvDelimeter);
+		stb.append("CL3").append(FilePrint.csvDelimeter);
+		stb.append("CL4").append(FilePrint.csvDelimeter);
+		stb.append("CL5").append(FilePrint.csvDelimeter);
+		stb.append("CL6").append(FilePrint.csvDelimeter);
 		stb.append(FilePrint.ls);
 
 		for (TestItem it : items) {
-			stb.append(it.itemID).append(FilePrint.csvDelimeter);
-			stb.append(it.groupID).append(FilePrint.csvDelimeter);
-			stb.append(it.segmentPosition).append(FilePrint.csvDelimeter);
-			stb.append(it.isActive).append(FilePrint.csvDelimeter);
-			stb.append(it.position).append(FilePrint.csvDelimeter);
-			stb.append(it.groupID).append(FilePrint.csvDelimeter);
-			stb.append(it.strandName).append(FilePrint.csvDelimeter);
-			stb.append(it.isRequired).append(FilePrint.csvDelimeter);
-			stb.append(it.isFieldTest).append(FilePrint.csvDelimeter);
+			stb.append(field2String(it.itemID)).append(FilePrint.csvDelimeter);
+			stb.append(field2String(it.groupID)).append(FilePrint.csvDelimeter);
+			stb.append(field2String(it.segmentPosition)).append(FilePrint.csvDelimeter);
+			stb.append(field2String(it.isActive)).append(FilePrint.csvDelimeter);
+			stb.append(field2String(it.position)).append(FilePrint.csvDelimeter);
+			stb.append(field2String(it.groupID)).append(FilePrint.csvDelimeter);
+			stb.append(field2String(it.strandName)).append(FilePrint.csvDelimeter);
+			stb.append(field2String(it.isRequired)).append(FilePrint.csvDelimeter);
+			stb.append(field2String(it.isFieldTest)).append(FilePrint.csvDelimeter);
 
 			List<Dimension> dms = it.dimensions;
+			if(dms == null || dms.size() == 0)
+			{
+				stb.append(",,,,,,,");
+			}
+			else
+			{
 			for (Dimension dm : dms) {
-				stb.append(dm.IRTModelName).append(FilePrint.csvDelimeter);
-				stb.append(dm.isOverall).append(FilePrint.csvDelimeter);
-				stb.append(dm.getScorePoints()).append(FilePrint.csvDelimeter);
-				stb.append(dm.ParamA).append(FilePrint.csvDelimeter);
-				stb.append(dm.bVector).append(FilePrint.csvDelimeter);
-				stb.append(dm.ParamC).append(FilePrint.csvDelimeter);
-				stb.append(dm.averageB).append(FilePrint.csvDelimeter);
+				stb.append(field2String(dm.IRTModelName)).append(FilePrint.csvDelimeter);
+				stb.append(field2String(dm.isOverall)).append(FilePrint.csvDelimeter);
+				stb.append(field2String(dm.getScorePoints())).append(FilePrint.csvDelimeter);
+				stb.append(field2String(dm.ParamA)).append(FilePrint.csvDelimeter);
+				stb.append(field2String(dm.bVector)).append(FilePrint.csvDelimeter);
+				stb.append(field2String(dm.ParamC)).append(FilePrint.csvDelimeter);
+				stb.append(field2String(dm.averageB)).append(FilePrint.csvDelimeter);
+			}
 			}
 			List<String> cls = it.contentLevels;
 			for (String ctlstr : cls) {
@@ -690,6 +702,15 @@ public class TestAA2DBLoader {
 		return stb.toString();
 	}
 
+	private String field2String(Object ob)
+	{
+		StringBuilder stb = new StringBuilder();
+		String nnull = "NULL";
+		if(ob == null)
+			return nnull;
+		else
+			return stb.append(ob).toString();
+	}
 }
 
 

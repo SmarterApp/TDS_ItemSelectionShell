@@ -40,7 +40,7 @@ public class BP2  extends BlueprintMatchComputation {
 		for (TestItem itm : group.getItems()) {
 			if (itm instanceof CSetItem) {
 				CSetItem item = (CSetItem) itm;
-				if (item.isActive) {
+				if (item.isActive()) {
 					item.computeBPMetric(csetFactory.getBp());
 				}
 			}
@@ -55,7 +55,7 @@ public class BP2  extends BlueprintMatchComputation {
 		for (TestItem itm : group.getItems()) {// No matter CSetItem or CsetItem
 			if (itm instanceof CsetItem) {
 				CsetItem item = (CsetItem) itm;
-				if (itm.isActive) {
+				if (item.isActive ()) {
 					sum += item.rawBpMetric;
 					++cnt;
 					if (cnt >= maxitms)

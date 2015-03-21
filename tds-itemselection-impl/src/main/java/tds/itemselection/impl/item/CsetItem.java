@@ -142,7 +142,7 @@ public void setContentLevelCollection(
   // / </summary>
   public boolean isActive ()
   {
-    return !pruned && !_parentGroup.getUsed () && this.isActive;
+    return !pruned && !_parentGroup.getUsed () && this.isActive && !ItemUsed;
   }
 
 //  // / <summary>

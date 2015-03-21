@@ -32,7 +32,7 @@ public class BPMatchByItemWithIterativeGroupItemSelection extends BlueprintMatch
 
     // will store the initial pruned state of all items in the blueprint
     //  and will use this to reset the BP to its original state after each group.
-    private Map<String, Boolean> initialItemPrunedState = new HashMap<String, Boolean>();
+    private Map<String, Boolean> initialItemPrunedState = null;
 
 	public BPMatchByItemWithIterativeGroupItemSelection(Random rand) {
 		super(rand);
@@ -72,7 +72,7 @@ public class BPMatchByItemWithIterativeGroupItemSelection extends BlueprintMatch
 			for (TestItem itm : group.getItems()) {
 				if (itm instanceof CSetItem) {
 					CSetItem item = (CSetItem) itm;
-					if (item.isActive) {
+					if (item.isActive()) {
 						item.computeBPMetric(csetFactory.getBp());
 						tmpItems.add(item);
 
@@ -180,7 +180,7 @@ public class BPMatchByItemWithIterativeGroupItemSelection extends BlueprintMatch
 		// active so that
 		// the can factor into the ability diff calculation, if that's used.
 //		Will be call late		
-//		SetBpTieBreakForGroup(csetFactory, group);
+		SetBpTieBreakForGroup(csetFactory, group);
 
 		// now rollback the bp for the changes we may have made to the bp counts
 		// and the pruning
@@ -196,7 +196,7 @@ public class BPMatchByItemWithIterativeGroupItemSelection extends BlueprintMatch
     private void RollbackBlueprint(Blueprint bp, CsetGroup group)
     {
         // reset the bp counts for items that were selected for this group.
-        for (TestItem item : group.getActive())
+        for (TestItem item : group.getActiveIncluded ())
             bp.UpdateSatisfaction(item, true);
 
         // reset the pruned values to their original state

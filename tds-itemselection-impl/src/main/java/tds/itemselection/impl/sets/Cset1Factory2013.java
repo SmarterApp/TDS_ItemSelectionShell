@@ -20,8 +20,6 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import TDS.Shared.Exceptions.ReturnStatusException;
-import AIR.Common.DB.SQLConnection;
 import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.ItemGroup;
 import tds.itemselection.base.TestItem;
@@ -34,6 +32,8 @@ import tds.itemselection.impl.item.PruningStrategy;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.StudentHistory2013;
 import tds.itemselection.loader.TestSegment;
+import AIR.Common.DB.SQLConnection;
+import TDS.Shared.Exceptions.ReturnStatusException;
 
 public class Cset1Factory2013 {
 	  private static Logger  _logger  = LoggerFactory.getLogger (Cset1Factory2013.class);
@@ -106,7 +106,6 @@ public class Cset1Factory2013 {
 	    this.loader = loader;
 	    this.oppkey = opportunityKey;
 	    this.segment = segment;
-	    // What now?
 	  }
 	  public Cset1Factory2013 (UUID opportunityKey, IItemSelectionDBLoader loader, 
 			  BlueprintMatchComputation bpMatchComp, ActualInfoComputation actualInfoComp, PruningStrategy pruningStrategy)
@@ -116,31 +115,17 @@ public class Cset1Factory2013 {
 	    this.bpSatisfactionCalc = bpMatchComp;
 	    this.actualInfoCalc = actualInfoComp;
 	    this.pruningStrategy = pruningStrategy;
-	    // What now?
+
 	  }
 
 	 public Cset1 MakeCset1 (SQLConnection connection) throws ItemSelectionException, ReturnStatusException
 	  {
-		 // By any reason this code removed in LoadHistory(SQLConnection connection)
-//	    StudentHistory2013 oppHData =  loader.loadOppHistory (connection, oppkey, segment.getSegmentKey ());
-//	    
-//	    customPool 		= oppHData.get_itemPool();
-//	    previousGroups 	= oppHData.get_previousTestItemGroups();
-//	    excludeGroups 	= oppHData.get_previousFieldTestItemGroups();
-//	    responses 		= oppHData.get_previousResponses();
-//	    startAbility 	= oppHData.getStartAbility ();
-//	    // make a copy
-//	    bp = segment.getBp ();
-//	    bp.setStartAbilityRC( startAbility);
-//	    bp.setActualInfoComputation(actualInfoCalc);
-//	    bp.offGradeItemsProps.poolFilter = oppHData.getOffgrade();
-//	    
-//	    ProcessResponses ();
-	    // initialized Pool and created itemGroups!
+
+		// initialized Pool and created itemGroups!
 	    initializePool ();
 
-	    // Preemptively filter items over strict maxes
-	    bp.pruneStrictMaxes ();
+        // Preemptively filter items over strict maxes
+        pruningStrategy.PruneStrictMaxes(this.getBp(), false);
 
 	    // Recycle items if necessary and remove from consideration any previously
 	    // used that are not recycled
@@ -267,7 +252,8 @@ public class Cset1Factory2013 {
 	      if (item == null)
 	        continue;
 	     // If all items are notActive or FieldTest we will have empty itemGroups !
-	      if (!excludeGroups.contains (item.groupID) && item.isActive && !item.isFieldTest)
+	      if (!excludeGroups.contains (item.groupID) && item.isActive && !item.isFieldTest 
+	          && !items.containsKey (item.itemID)) // added in version from 2015-03-13
 	      {
 
 	        grp = pool.getItemGroup (item.groupID);
@@ -295,11 +281,6 @@ public class Cset1Factory2013 {
 	          }
 	        }
 	      }
-	    }
-	    if(_debug)
-	    {
-	    //
-	    	bp.cSet1Size = items.size();
 	    }
 	    // QUESTION: Should we 'index' the used items by chronology? Or just run
 	    // through them all when recycling.
@@ -349,8 +330,8 @@ public class Cset1Factory2013 {
 //	    }
 
 	    List<CsetGroup> groups = new ArrayList<CsetGroup> (itemGroups.getValues ());
+	    //Remove the groups which has not active items
 	    Collections.sort (groups);
-
 	    if(groups == null || groups.isEmpty())
 	    {
 	    	// Cannot initialize Item Pool: item groups are empty

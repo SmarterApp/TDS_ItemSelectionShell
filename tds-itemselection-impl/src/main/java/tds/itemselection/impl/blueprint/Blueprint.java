@@ -264,7 +264,7 @@ public class Blueprint implements IBpInfoContainer {
 			String adaptiveVersion,
 			OffGradeItemsProps offGradeItemsProps,
 			String offGradePoolFilter,
-			int minOpItemsTest, int maxOpItemsTest
+			int minOpItemsTest, int maxOpItemsTest, double abilityWeight
 			) {
 		this.segmentKey 			= segmentkey;
 		this.segmentID				= segmentID;
@@ -289,6 +289,7 @@ public class Blueprint implements IBpInfoContainer {
 		this.offGradePoolFilter 	= offGradePoolFilter;
         this.minOpItemsTest 		= minOpItemsTest;
         this.maxOpItemsTest 		= maxOpItemsTest;
+        this.abilityWeight = abilityWeight;
 	}
 
 	/*
@@ -366,9 +367,9 @@ public class Blueprint implements IBpInfoContainer {
 				offGradeItemsProps,
 				offGradePoolFilter,
 		        minOpItemsTest,
-		        maxOpItemsTest
+		        maxOpItemsTest,
+		        abilityWeight
 				);
-		this.abilityWeight 			= abilityWeight; 
 		this.rcAbilityWeight 		= rcAbilityWeight; 
         this.precisionTarget 		= precisionTarget; 
         this.precisionTargetMetWeight = precisionTargetMetWeight; 
@@ -425,7 +426,7 @@ public class Blueprint implements IBpInfoContainer {
 		// set the poolcount after pruning
 		poolcount = 0;
 		for (CsetItem itm : _items) {
-			if (itm.isActive)
+			if (itm.isActive())
 				++poolcount;
 		}
 		// check for adequate items to complete test
@@ -470,7 +471,7 @@ public class Blueprint implements IBpInfoContainer {
 		// Now check pool capacity to meet test-level minimum requirement
 		poolcount = 0;
 		for (CsetItem itm : _items) {
-			if (itm.isActive)
+			if (itm.isActive())
 				++poolcount;
 		}
 		if (poolcount + numAdministered >= minOpItems)
@@ -622,8 +623,12 @@ public class Blueprint implements IBpInfoContainer {
 			++numAdministered;
 		// ++numAdministered; // this item was administered on this test
 		for (String cl : item.getContentLevels()) {
-			if ((elem = elements.getElementByID(cl)) != null)
-				elem.numAdministered++;
+			if ((elem = elements.getElementByID(cl)) != null) {
+			  if (undo)
+		      --elem.numAdministered;
+		    else
+		      ++elem.numAdministered;
+			}
 			// else this may not be an error in a segmented test except for the
 			// fact
 			// that ProcessResponse is only passing items in this segment

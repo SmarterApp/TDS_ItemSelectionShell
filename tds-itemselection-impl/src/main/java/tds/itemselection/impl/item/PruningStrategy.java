@@ -9,6 +9,7 @@
 package tds.itemselection.impl.item;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -98,7 +99,7 @@ public class PruningStrategy {
         blueprint.poolcount = 0;
         for (CSetItem itm : blueprint.getItems())
         {
-            if (itm.isActive)
+            if (itm.isActive ())
                 ++blueprint.poolcount;
         }
         // check for adequate items to complete test
@@ -120,7 +121,7 @@ public class PruningStrategy {
             for (CSetItem item : elem.getItems().values())
             {
                 CsetGroup grp = item.getParentGroup();
-                if (item.isActive && !item.isRequired && 
+                if (item.isActive () && !item.isRequired && 
                     (grp.getMaxItems() == -1 || 
                         (pruneBelowGroupMaxItems || grp.getActiveCount() > grp.getMaxItems())))
                 {        // pruning can only apply to items currently in the pool
@@ -171,38 +172,45 @@ public class PruningStrategy {
 //        //  item was pruned.  So to have accurate bp match values for pruned items according to the
 //        //  current state of the bp, we'll need to recalculate it.
 //        //  Also setting the bp jitter to break ties randomly.
-//        for (TestItem item : currentGroup.getItems())
-//        {
-//            item.ComputeBPMetric(bp);
-//            item.BpJitter = rnd.nextDouble();
-//        }
-//        currentGroup.items.sort();
-//
-//        // sorts highest value to lowest; unprune from the top
-//        for(CSetItem item : currentGroup.items)
-//        {
-//            if (item.pruned)
-//            {
-//                // see if unpruning this item would help us to meet a min on 
-//                //  one or more bp elements
-//                for (string cl : item.contentLevels)
-//                {
-//                    BpElement elem = bp.elements.Get(cl);
-//                    if (elem._items == null || elem.minRequired < 1)
-//                        continue;
-//                    int pcnt = elem.Poolcount;
-//                    int itemcnt = elem._items.Count;
-//                    
-//                    if (pcnt != itemcnt && pcnt + elem.numAdministered < elem.minRequired)
-//                    {
-//                        // unpruning this item will help us to achieve a min.  Do it and move
-//                        //  on to the next item in the group
-//                        item.pruned = false;
-//                        break;
-//                    }
-//                }
-//            }
-//        }
+      CSetItem csetItem = null;
+        for (TestItem item : currentGroup.getItems())
+        {
+          if(item instanceof CSetItem) {
+            csetItem = (CSetItem)item;
+            csetItem.computeBPMetric (bp);
+            csetItem.BpJitter= rnd.nextDouble();
+          }
+        }
+        Collections.sort (currentGroup.items);
+        
+        // sorts highest value to lowest; unprune from the top
+        for (TestItem item : currentGroup.getItems())
+        {
+          if(item instanceof CSetItem) {
+            csetItem = (CSetItem)item;
+            if (csetItem.pruned)
+            {
+                // see if unpruning this item would help us to meet a min on 
+                //  one or more bp elements
+                for (String cl : csetItem.contentLevels)
+                {
+                    BpElement elem = bp.elements.getElementByID (cl);
+                    if (elem.getItems () == null || elem.minRequired < 1)
+                        continue;
+                    int pcnt = elem.getPoolCount ();
+                    int itemcnt = elem.getItems ().size ();
+                    
+                    if (pcnt != itemcnt && pcnt + elem.numAdministered < elem.minRequired)
+                    {
+                        // unpruning this item will help us to achieve a min.  Do it and move
+                        //  on to the next item in the group
+                      csetItem.pruned = false;
+                        break;
+                    }
+                }
+            }
+          }
+        }
     }
 
     protected void UnpruneBpElement(BpElement elem, boolean releaseAll, boolean unpruneGroup)
@@ -228,11 +236,11 @@ public class PruningStrategy {
                     if (unpruneGroup)
                         pcnt += item.getParentGroup().UnpruneGroup(true);
                 }
-                else
-                {
+//                else
+//                {
                     item.pruned = false;
                     ++pcnt;
-                }
+//                }
                 if (!releaseAll && (pcnt + elem.numAdministered >= elem.minRequired))
                     return;
             }
