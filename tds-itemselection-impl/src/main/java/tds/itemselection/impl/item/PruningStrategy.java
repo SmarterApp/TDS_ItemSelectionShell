@@ -32,10 +32,10 @@ public class PruningStrategy {
                 rnd = new Random();
             return rnd;
      }
-	private void setRandom( Random value)
+	/*private void setRandom( Random value)
 	{
 		rnd = value;
-	}
+	}*/
 
     /// <summary>
     /// Whether or not to use the blueprint's releaseAll flag when unpruning
@@ -236,11 +236,11 @@ public class PruningStrategy {
                     if (unpruneGroup)
                         pcnt += item.getParentGroup().UnpruneGroup(true);
                 }
-//                else
-//                {
+                if (releaseAll || (pcnt + elem.numAdministered < elem.minRequired))
+                {
                     item.pruned = false;
                     ++pcnt;
-//                }
+                }
                 if (!releaseAll && (pcnt + elem.numAdministered >= elem.minRequired))
                     return;
             }
