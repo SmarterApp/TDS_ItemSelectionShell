@@ -14,7 +14,6 @@ public class BpMetric {
 	    public double Sum = 0.;
 	    public int Count = 0;
 	    public double Metric = 0.;
-	    public boolean hasContentLevels = false;
 
 	    public double getSum() {
 			return Sum;

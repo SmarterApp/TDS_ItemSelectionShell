@@ -9,6 +9,7 @@
 package tds.itemselection.impl.bpmatchcomputation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -227,6 +228,34 @@ public class BPMatchByItemWithIterativeGroupItemSelection extends BlueprintMatch
         return maxValueCount;
     }
 
+  /// <summary>
+    /// Calculates bp-match for each item in the group and sets the tie-breaker value.  
+    /// Also will unprune all Included groups.
+    /// </summary>
+    /// <param name="csetFactory"></param>
+    /// <param name="groups"></param>
+    @Override
+    public void execute(Cset1Factory2013 csetFactory, Collection<CsetGroup> groups) throws ReturnStatusException
+    {
+        super.execute (csetFactory, groups);
+        
+        // unprune any items that were included in the group.
+        //  This can happen if an item is pruned in the initial pruning step prior to 
+        //  evaluating bp-satisfaction, and then unpruned and included in the group while 
+        //  calculating the bp-match.  When we rolled back the BP, the item would have been set
+        //  back to its original pruned value of true so that the next group would start with the
+        //  same baseline bp.  At this point we want all included items to be in the pool.
+        for (CsetGroup group : groups)
+        {
+            for(TestItem itm : group.getItems ())
+            {
+                CSetItem item = (CSetItem) itm;
+                if (item.Included && item.pruned)
+                    item.pruned = false;
+            }
+        }
+    }
+    
     // 
     public void execute(Cset1Factory2013 csetFactory, CsetGroup group) throws ReturnStatusException
     {

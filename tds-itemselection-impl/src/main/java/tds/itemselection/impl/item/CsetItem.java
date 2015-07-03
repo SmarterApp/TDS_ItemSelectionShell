@@ -11,9 +11,6 @@ package tds.itemselection.impl.item;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import tds.itemselection.base.TestItem;
 import tds.itemselection.impl.blueprint.Blueprint;
 import tds.itemselection.impl.blueprint.BpElement;
@@ -26,7 +23,6 @@ import tds.itemselection.impl.sets.CsetGroup;
  */
 public class CsetItem extends TestItem
 {
-  private static Logger  _logger  = LoggerFactory.getLogger (CsetItem.class);
   // / <summary>
   // / An item in the Cset1 class. This object is always specific to an examinee
   // / </summary>

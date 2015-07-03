@@ -110,11 +110,6 @@ public class PruningStrategySmarter extends PruningStrategy {
                                 {
                                   citem = (CsetItem) groupItem;
                                 }
-                    			if(citem.itemID.equalsIgnoreCase("200-30912")|| citem.itemID.equalsIgnoreCase("200-31213"))
-                    			{
-                    				int a = 0;
-                    			}
-
                                 citem.pruned = true;
                             }
                             // mark the group as pruned in case we need to unprune it.

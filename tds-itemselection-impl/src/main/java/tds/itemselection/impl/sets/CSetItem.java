@@ -237,7 +237,7 @@ public class CSetItem extends CsetItem
         //  For the item, it's the opposite.  Leaving as-is pending further investigation.
         rawBpMetric = metric.Metric;
 
-        if (metric.hasContentLevels)
+        if (metric.hasContentLevels ())
             selectionMetric = rawBpMetric;
         
         return rawBpMetric;

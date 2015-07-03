@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -302,7 +301,6 @@ public class Cset1Factory2013 {
 	    double minMetric = 99999.0;
 	    double maxMetric = -99999.0;
 	    int cset1Size;
-	    Random rand = new Random ();
 	    int last;
 	    int i;
 	    CsetGroup group;
@@ -381,9 +379,9 @@ public class Cset1Factory2013 {
 	        group =  groups.get (i);
 	        if (!group.metricComputed || group.selectionMetric < minMetric)
 	        {
-	          last = i;
 	          break;
 	        }
+	        last = i;
 	      }
 	    }
 

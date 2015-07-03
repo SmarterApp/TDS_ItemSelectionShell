@@ -174,7 +174,8 @@ public class AA2DBLoader extends AbstractDBLoader implements IItemSelectionDBLoa
 			}
 			
 		} catch (Exception e) {
-			throw new ItemSelectionException(
+		  _logger.error (" Error occurs in loadSegment method: ",e);
+		  throw new ItemSelectionException(
 					" Error occurs in loadSegment method: " + e.getMessage());
 		}
 	}

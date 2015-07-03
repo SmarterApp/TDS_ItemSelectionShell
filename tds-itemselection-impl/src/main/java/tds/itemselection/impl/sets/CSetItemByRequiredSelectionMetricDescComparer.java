@@ -15,12 +15,15 @@ public class CSetItemByRequiredSelectionMetricDescComparer implements Comparator
  
 	@Override
 	public int compare(CSetItem o1, CSetItem o2) {
-		int result = 1;
-		if(o1.isRequired && o2.isRequired())
+	  
+	  Boolean bO1 = new Boolean(o1.isRequired);
+	  Boolean bO2 = new Boolean(o2.isRequired);
+	  int result = bO2.compareTo(bO1);
+	  if(result == 0)
 		{
 			Double O1 = new Double(o1.selectionMetric);
 			Double O2 = new Double(o2.selectionMetric);
-			result = O1.compareTo(O2);
+			result = O2.compareTo(O1);
 		}
 		return result;
 	}

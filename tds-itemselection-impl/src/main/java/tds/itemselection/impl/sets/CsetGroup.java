@@ -10,13 +10,10 @@ package tds.itemselection.impl.sets;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Random;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import tds.itemselection.base.ItemGroup;
 import tds.itemselection.base.TestItem;
@@ -31,7 +28,6 @@ import tds.itemselection.impl.item.CsetItem;
  */
 public class CsetGroup extends ItemGroup implements Comparable<Object>
 {
-  private static Logger  _logger  = LoggerFactory.getLogger (CsetGroup.class);
 	
   // ordinal priority relative to other cset1 groups based on sort by bpmetric
   // (descending) then irtDiff (ascending)

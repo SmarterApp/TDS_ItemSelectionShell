@@ -450,12 +450,13 @@ public class TestItem implements Comparable<Object>
 		isRequired = record.<Boolean> get("isRequired");
 		isFieldTest = record.<Boolean> get("isFieldTest");
 		strandName = record.<String> get("strand");
+//		irtModel = record.<String> get("irtModel");
 		String strContentLevels = record.<String> get("clString");
 		if (strContentLevels != null)
 			contentLevels = Arrays.asList(strContentLevels.split("\\s*;\\s*"));
 		
 /*
-		irtModel = record.<String> get("irtModel");
+		
 		
 		String bVectrs = record.<String> get("bVector");
 	    String[] bv = bVectrs.split (DELIM);
@@ -640,6 +641,6 @@ public class TestItem implements Comparable<Object>
         	dm.dumpAA2();
         }        
     }
- // 
+
 }
 

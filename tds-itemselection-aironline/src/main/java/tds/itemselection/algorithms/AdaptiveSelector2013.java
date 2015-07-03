@@ -27,7 +27,6 @@ import tds.itemselection.base.TestItem;
 import tds.itemselection.expectedability.ExpectedAbilityComputationSmarter;
 import tds.itemselection.impl.blueprint.ActualInfoComputation;
 import tds.itemselection.impl.blueprint.Blueprint;
-import tds.itemselection.impl.blueprint.BpElement;
 import tds.itemselection.impl.bpmatchcomputation.BPMatchByItemWithIterativeGroupItemSelection;
 import tds.itemselection.impl.item.PruningStrategySmarter;
 import tds.itemselection.impl.sets.Cset1;
@@ -213,14 +212,14 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        int index = rand.nextInt(n);
 	        
 	        cg = cset1.itemGroups.get(index);
-	        
 	        SortSelectedGroup(cg);
 	        PruneSelectedGroup(cg);
 	        ItemGroup result = new ItemGroup(cg.groupID, blueprint.segmentKey, blueprint.segmentID, blueprint.segmentPosition, 
 	        		cg.getNumberOfItemsRequired(), cg.getMaximumNumberOfItems());
-				for (TestItem item : cg.getActiveIncluded ()) {
-					result.addItem(item);
-				}
+
+	        for (TestItem item : cg.getActiveIncluded ()) {
+  					result.addItem(item);
+  				}
 	
 				return result;
 	

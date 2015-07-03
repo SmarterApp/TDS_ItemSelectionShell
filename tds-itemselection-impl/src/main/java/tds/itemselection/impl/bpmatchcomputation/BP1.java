@@ -36,7 +36,7 @@ public class BP1 extends BlueprintMatchComputation{
         BpMetric metric = group.contentLevels.computeBpMetric(csetFactory.getBp(), true);
        
         // Use selectionMetric to store value to leverage the CompareTo method
-        if (metric.hasContentLevels)
+        if (metric.hasContentLevels ())
         {
             group.metricComputed = true;
             group.rawBpMetric = group.selectionMetric = metric.Metric;
