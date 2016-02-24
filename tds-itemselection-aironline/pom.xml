@@ -4,7 +4,7 @@
 
   <groupId>org.opentestsystem.delivery</groupId>
   <artifactId>tds-itemselection-aironline</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>TDS Item Selection AIR Online</name>
@@ -24,18 +24,18 @@
     <dependency>
     	<groupId>org.opentestsystem.delivery</groupId>
     	<artifactId>tds-itemselection-common</artifactId>
-    	<version>0.0.1</version>
+    	<version>0.0.1-SNAPSHOT</version>
     </dependency>
 		<dependency>
 			<groupId>org.opentestsystem.delivery</groupId>
 			<artifactId>tds-itemselection-impl</artifactId>
-			<version>0.0.1</version>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	<dependency>
 		<groupId>org.opentestsystem.shared</groupId>
 		<artifactId>shared-db-test</artifactId>
 		<scope>test</scope>
-		<version>1.0.1</version>
+		<version>1.0.1-BUILD-SNAPSHOT</version>
 	</dependency>
 	<dependency>
 		<groupId>org.slf4j</groupId>
@@ -61,6 +61,6 @@ Invoke from SelectionService</description>
   <parent>
   	<groupId>org.opentestsystem.delivery</groupId>
   	<artifactId>tds-itemselection-master</artifactId>
-  	<version>0.0.1</version>
+  	<version>0.0.1-SNAPSHOT</version>
   </parent>
 </project>

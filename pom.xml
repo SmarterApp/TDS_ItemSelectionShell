@@ -6,7 +6,7 @@
 	<groupId>org.opentestsystem.delivery</groupId>
 	<artifactId>tds-itemselection-master</artifactId>
 	<name>Item Selection Shell parent project</name>
-	<version>0.0.1</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -64,7 +64,7 @@
 			<dependency>
 				<groupId>org.opentestsystem.shared</groupId>
 				<artifactId>shared-db</artifactId>
-				<version>1.0.1</version>
+				<version>1.0.1-BUILD-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>

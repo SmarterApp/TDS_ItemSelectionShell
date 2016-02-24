@@ -8,8 +8,6 @@
  ******************************************************************************/
 package tds.itemselection.loader;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -126,19 +124,21 @@ public class ISDBLoader extends AbstractDBLoader implements IItemSelectionDBLoad
     {
       record = recItr.next ();
       if (record != null) {
-        itemID = record.<String> get ("itemID");
+        itemID 	= record.<String> get ("itemID");
         groupID = record.<String> get ("groupID");
-        strand = record.<String> get ("strand");
+        strand 	= record.<String> get ("strand");
         bVector = record.<String> get ("bVector");
         formPosition = record.<Integer> get ("formPosition");
-        IRT_b = Double.parseDouble (record.<String> get ("IRT_b"));
+        isFieldTest = record.<Boolean> get ("isFieldTest");
+        isRequired  = record.<Boolean> get ("isRequired");
+        // Following parameters don't needed for fixed form algorithm
+        String irt_BStr = record.<String> get ("IRT_b");
+        IRT_b = (irt_BStr != null)? Double.parseDouble (irt_BStr):  Double.NaN;
         irtA = record.<Float> get ("IRT_a");
         irtC = record.<Float> get ("IRT_c");
-        IRT_a = new Double (irtA);
-        IRT_c = new Double (irtC);
+        IRT_a = (irtA != null)? new Double (irtA): Double.NaN;
+        IRT_c = (irtC != null)? new Double (irtC): Double.NaN;
         IRT_Model = record.<String> get ("IRT_Model");
-        isFieldTest = record.<Boolean> get ("isFieldTest");
-        isRequired = record.<Boolean> get ("isRequired");
       }
       TestItem item = new TestItem (itemID, groupID, formPosition, true, isFieldTest, strand
           , isRequired, IRT_b, IRT_a, IRT_c, IRT_Model, bVector);
