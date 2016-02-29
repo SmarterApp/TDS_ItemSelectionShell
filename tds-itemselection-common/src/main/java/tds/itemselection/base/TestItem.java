@@ -210,16 +210,20 @@ public class TestItem implements Comparable<Object>
     this.position = position;
     this.strandName = strand;
     this.isRequired = isRequired;
-    this.b = irtB;
     this.a = irtA;
+    this.b = irtB;
     this.c = irtC;
-    this.irtModel = irtModel.toUpperCase ();
-    String[] bv = bVector.split (DELIM);
-    this.bVector = new double[bv.length];
+    this.irtModel = (irtModel!= null)?irtModel.toUpperCase (): null;
+    String[] bv = null;
     int i = 0;
-    for (String b : bv)
+    if(bVector != null)
     {
-      this.bVector[i++] = Double.parseDouble (b);
+        bv = bVector.split (DELIM);
+        this.bVector = new double[bv.length];
+	    for (String b : bv)
+	    {
+	      this.bVector[i++] = Double.parseDouble (b);
+	    }
     }
 	dimensions = CreateDimensions(this.irtModel, this.a, this.b, bVector, this.c, 0.0);
   }
@@ -283,6 +287,29 @@ public class TestItem implements Comparable<Object>
     }
 	dimensions = CreateDimensions(this.irtModel, this.a, this.b, bVector, this.c, 0.0);
 
+  }
+
+  // / <summary>
+  // / Use for field-test or fixedform items
+  // / </summary>
+  // / <param name="ID"></param>
+  // / <param name="group"></param>
+  // / <param name="position"></param>
+  // / <param name="isFieldTest"></param>
+  // / <param name="strand"></param>
+  // / <param name="isRequired"></param>
+ 
+  public TestItem (String ID, String group, 
+		  int position, boolean isFieldTest, String strand, 
+		  boolean isRequired)
+  {
+    this.itemID = ID;
+    this.groupID = group;
+    this.isFieldTest = isFieldTest;
+    this.position = position;
+    this.strandName = strand;
+    this.isRequired = isRequired;
+    this.isActive = true;
   }
 
   // / <summary>
@@ -550,11 +577,14 @@ public class TestItem implements Comparable<Object>
     public List<Dimension> CreateDimensions(String irtModel, double a, double b, String bVector, double c, double abilityOffset)
     {
         List<Dimension> dims = new ArrayList<Dimension>();
-        String[] tmpBV = bVector.split(DELIM);
         List<Double> bb = new ArrayList<Double>();
-        for(String dm: tmpBV)
+        if(bVector != null)
         {
-        	bb.add(Double.parseDouble(dm));
+	        String[] tmpBV = bVector.split(DELIM);
+	        for(String dm: tmpBV)
+	        {
+	        	bb.add(Double.parseDouble(dm));
+	        }
         }
         Dimension dmm = createDimension(null, irtModel, a, b, bb, c, abilityOffset);
         dims.add(dmm);
@@ -584,7 +614,7 @@ public class TestItem implements Comparable<Object>
         dim.isOverall = dim.name.equalsIgnoreCase(OVERALL_DIM_NAME);
         
         double sum = 0.0;
-        if(bVec != null)
+        if(bVec != null && !bVec.isEmpty())
         {
         	this.bVector = new double[bVec.size()];
 	

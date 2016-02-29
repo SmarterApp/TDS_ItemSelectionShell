@@ -152,21 +152,39 @@ public class ItemPool
 		_items.clear();
 		Iterator<DbResultRecord> recItr = res.getRecords();
 		DbResultRecord record;
+		if(_itemGroups == null)		{
+			_itemGroups = new HashMap<String, ItemGroup>();
+		}
+
 		while (recItr.hasNext()) {
 			record = recItr.next();
 			TestItem testItem = new TestItem();
 			testItem.initialize(record);
 			_items.put(testItem.itemID, testItem);
 			if (!_itemGroups.containsKey(testItem.groupID)) {
-				if (testItem.groupID != null && testItem.groupID.length() > 0
-						&& testItem.groupID.charAt(0) == 'I') {
+				if (testItem.groupID != null && !testItem.groupID.isEmpty()
+//						&& (testItem.groupID.charAt(0) == 'I' 
+//							|| testItem.groupID.charAt(0) == 'G')
+							) {
 					ItemGroup group = new ItemGroup(testItem.groupID, 0, 1);
 					_itemGroups.put(testItem.groupID, group);
 				}
-				// TODO - Else throw exception
+				else // testItem.groupID == null || testItem.groupID.isEmpty() || !("I-200-123" OR "G-200-91") Group contains only one item
+				{
+					String groupId = "I-".concat(testItem.getItemID());
+					testItem.setGroupID(groupId);
+					ItemGroup group = new ItemGroup(groupId, 0, 1);
+					_itemGroups.put(groupId, group);
+				}
+				// first item in the group
+				ItemGroup group = _itemGroups.get(testItem.groupID);
+				group.getItems().add(testItem);
 			}
-			ItemGroup group = _itemGroups.get(testItem.groupID);
-			group.getItems().add(testItem);
+			else {
+				ItemGroup group = _itemGroups.get(testItem.groupID);
+				group.getItems().add(testItem);
+				group.setMaximumNumberOfItems(group.getMaximumNumberOfItems() + 1);
+			}
 		}
 	}
 	/**
@@ -180,6 +198,10 @@ public class ItemPool
 		_items.clear();
 		Iterator<DbResultRecord> recItr = res.getRecords();
 		DbResultRecord record;
+		if(_itemGroups == null)		{
+			_itemGroups = new HashMap<String, ItemGroup>();
+		}
+
 		while (recItr.hasNext()) {
 			record = recItr.next();
 			TestItem testItem = new TestItem();
@@ -187,15 +209,26 @@ public class ItemPool
 			testItem.setSegmentPosition(segmentPosition);
 			_items.put(testItem.itemID, testItem);
 			if (!_itemGroups.containsKey(testItem.groupID)) {
-				if (testItem.groupID != null && testItem.groupID.length() > 0
-						&& testItem.groupID.charAt(0) == 'I') {
+				if (testItem.groupID != null && !testItem.groupID.isEmpty()) {
 					ItemGroup group = new ItemGroup(testItem.groupID, 0, 1);
 					_itemGroups.put(testItem.groupID, group);
 				}
-				// TODO - Else throw exception
+				else // testItem.groupID == null || testItem.groupID.isEmpty() // !("I-200-123" OR "G-200-91") Group contains only one item
+				{
+					String groupId = "I-".concat(testItem.getItemID());
+					testItem.setGroupID(groupId);
+					ItemGroup group = new ItemGroup(groupId, 0, 1);
+					_itemGroups.put(groupId, group);
+				}
+				// first item in the group
+				ItemGroup group = _itemGroups.get(testItem.groupID);
+				group.getItems().add(testItem);
 			}
-			ItemGroup group = _itemGroups.get(testItem.groupID);
-			group.getItems().add(testItem);
+			else {
+				ItemGroup group = _itemGroups.get(testItem.groupID);
+				group.getItems().add(testItem);
+				group.setMaximumNumberOfItems(group.getMaximumNumberOfItems() + 1);
+			}
 		}		
 	}
   /**

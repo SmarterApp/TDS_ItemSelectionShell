@@ -8,7 +8,6 @@
  ******************************************************************************/
 package tds.itemselection.base;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -249,7 +248,7 @@ public ItemGroup(String groupID2, String segmentKey, String segmentID,
 	  	groupID = record.<String> get("itemGroup"); // why itemGroup? TODO: check it
 	  	
 		numberOfItemsRequired = record.<Integer> get("itemsRequired");
-		maximumNumberOfItems = record.<Integer> get("maxItems");
+		maximumNumberOfItems = (record.<Integer> get("maxItems") != null)? record.<Integer> get("maxItems"): 0;
 		// TODO AK: what does do with bpweight?
   }
 
