@@ -16,9 +16,9 @@
 	</modules>
 	
 	<scm>
-        <connection>scm:hg:https://bitbucket.org/sbacoss/itemselectionshell_release</connection>
-        <developerConnection>scm:hg:https://bitbucket.org/sbacoss/itemselectionshell_release</developerConnection>
-        <url>https://bitbucket.org/sbacoss/itemselectionshell_release</url>
+        <connection>scm:git:https://github.com/SmarterApp/ItemSelectionShell</connection>
+        <developerConnection>scm:git:https://github.com/SmarterApp/ItemSelectionShell</developerConnection>
+        <url>https://github.com/SmarterApp/ItemSelectionShell</url>
     </scm>
 
 	<licenses>
