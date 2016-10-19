@@ -1,7 +1,15 @@
 package tds.itemselection.msb;
 
+import org.springframework.stereotype.Service;
+import tds.itemselection.base.ItemCandidatesData;
+
 /**
- * Created by fairway on 10/18/16.
+ * Some stuff about the class
  */
-public class MsbAssessmentSelectionServiceImpl {
+@Service
+public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelectionService {
+    @Override
+    public ItemCandidatesData selectFixedFormSegment() {
+        return null;
+    }
 }

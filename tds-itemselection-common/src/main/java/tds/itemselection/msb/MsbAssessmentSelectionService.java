@@ -1,7 +1,12 @@
 package tds.itemselection.msb;
 
+import tds.itemselection.base.ItemCandidatesData;
+
 /**
- * Created by fairway on 10/18/16.
+ *
  */
 public interface MsbAssessmentSelectionService {
+
+    ItemCandidatesData selectFixedFormSegment();
+
 }
