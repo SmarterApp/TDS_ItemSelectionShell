@@ -24,6 +24,7 @@ import AIR.Common.DB.SQLConnection;
 import AIR.Common.Helpers._Ref;
 import AIR.Common.Utilities.SpringApplicationContext;
 import TDS.Shared.Exceptions.ReturnStatusException;
+import tds.itemselection.msb.MsbAssessmentSelectionService;
 
 public class AIROnline2013 implements IAIROnline {
 	 @Autowired
@@ -37,6 +38,9 @@ public class AIROnline2013 implements IAIROnline {
 	 @Autowired
 	 @Qualifier ("ftSelector")
 	 private IItemSelection ftSelector;
+
+	@Autowired
+	private MsbAssessmentSelectionService msbAssessmentSelectionService;
 	 
 	/* @Autowired
 	 @Qualifier ("aa2013Selector")
@@ -45,6 +49,16 @@ public class AIROnline2013 implements IAIROnline {
 	 private static Logger  _logger  = LoggerFactory.getLogger (AIROnline2013.class);
 	  
 	 private boolean _debug = false;
+
+	private boolean isMsb;
+
+	public boolean isMsb() {
+		return isMsb;
+	}
+
+	public void setMsb(boolean msb) {
+		isMsb = msb;
+	}
 
 	public ItemGroup getNextItemGroup(SQLConnection connection, UUID oppkey, _Ref<String> errorRef)
 			throws ReturnStatusException {
@@ -57,6 +71,8 @@ public class AIROnline2013 implements IAIROnline {
 		try {
 
 			itemCandidates = loader.getItemCandidates(connection, oppkey);
+
+			if(itemCandidates.getSegmentPosition() > 1)
 
 			if (!itemCandidates.getIsSimulation())
 				itemCandidates.setSession(null);
