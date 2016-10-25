@@ -23,6 +23,7 @@ import tds.itemselection.loader.IItemSelectionDBLoader;
 import AIR.Common.DB.SQLConnection;
 import AIR.Common.Helpers._Ref;
 import TDS.Shared.Exceptions.ReturnStatusException;
+import tds.itemselection.msb.MsbAssessmentSelectionService;
 
 public class AIROnline2  implements IAIROnline {
 	
@@ -42,11 +43,14 @@ public class AIROnline2  implements IAIROnline {
 	 @Qualifier ("aa2Selector")
 	 private IItemSelection aa2Selector;
 
+	@Autowired
+	private MsbAssessmentSelectionService msbAssessmentSelectionService;
+
 	 private static Logger  _logger  = LoggerFactory.getLogger (AIROnline2.class);
 	  
 	 private boolean _debug = false;
 
-	public ItemGroup getNextItemGroup(SQLConnection connection, UUID oppkey, _Ref<String> errorRef)
+	public ItemGroup getNextItemGroup(SQLConnection connection, UUID oppkey, boolean isMsb, _Ref<String> errorRef)
 			throws ReturnStatusException {
 
 	    ItemGroup result = null;
@@ -56,7 +60,9 @@ public class AIROnline2  implements IAIROnline {
 
 		try {
 
-			itemCandidates = loader.getItemCandidates(connection, oppkey);
+			itemCandidates = isMsb ?
+					msbAssessmentSelectionService.selectFixedMsbSegment(connection, oppkey) :
+					loader.getItemCandidates(connection, oppkey);
 
 			if (!itemCandidates.getIsSimulation())
 				itemCandidates.setSession(null);
@@ -82,7 +88,7 @@ public class AIROnline2  implements IAIROnline {
                             // this segment has been terminated based on configured conditions.
                             //  Call recursively in case there are more segments to administer.
                             //  Eventually we'll drop down into the SATISFIED case.
-							result = getNextItemGroup(connection, oppkey, errorRef);
+							result = getNextItemGroup(connection, oppkey, isMsb, errorRef);
 						} else {
 							errorRef.set("Adaptive item selection failed: Unknown error");
 						}

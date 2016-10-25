@@ -24,7 +24,7 @@ import AIR.Common.DB.SQLConnection;
 import AIR.Common.Helpers._Ref;
 import AIR.Common.Utilities.SpringApplicationContext;
 import TDS.Shared.Exceptions.ReturnStatusException;
-import tds.itemselection.msb.MsbAssessmentSelectionService;
+import tds.itemselection.msb.*;
 
 public class AIROnline2013 implements IAIROnline {
 	 @Autowired
@@ -60,7 +60,7 @@ public class AIROnline2013 implements IAIROnline {
 		isMsb = msb;
 	}
 
-	public ItemGroup getNextItemGroup(SQLConnection connection, UUID oppkey, _Ref<String> errorRef)
+	public ItemGroup getNextItemGroup(SQLConnection connection, UUID oppkey, boolean isMsb, _Ref<String> errorRef)
 			throws ReturnStatusException {
 
 	    ItemGroup result = null;
@@ -70,7 +70,9 @@ public class AIROnline2013 implements IAIROnline {
 
 		try {
 
-			itemCandidates = loader.getItemCandidates(connection, oppkey);
+			itemCandidates = isMsb ?
+				msbAssessmentSelectionService.selectFixedMsbSegment(connection, oppkey) :
+				loader.getItemCandidates(connection, oppkey);
 
 			if(itemCandidates.getSegmentPosition() > 1)
 
@@ -99,7 +101,7 @@ public class AIROnline2013 implements IAIROnline {
                            // this segment has been terminated based on configured conditions.
                            //  Call recursively in case there are more segments to administer.
                            //  Eventually we'll drop down into the SATISFIED case.
-							result = getNextItemGroup(connection, oppkey, errorRef);
+							result = getNextItemGroup(connection, oppkey, isMsb, errorRef);
 						} else {
 							errorRef.set("Adaptive item selection failed: Segment is not completed");
 						}

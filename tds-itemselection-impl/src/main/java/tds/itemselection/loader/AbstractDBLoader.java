@@ -9,6 +9,8 @@
 package tds.itemselection.loader;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -35,32 +37,56 @@ public abstract class AbstractDBLoader implements IItemSelectionDBLoader {
 	@Override
 	public ItemCandidatesData getItemCandidates(SQLConnection connection, UUID oppkey)
 			throws ReturnStatusException, SQLException {
+		return getItemCandidates(connection, oppkey, false);
+	}
+
+	@Override
+	public ItemCandidatesData getItemCandidates(SQLConnection connection, UUID oppkey, boolean isMsb)
+			throws ReturnStatusException, SQLException {
 		ItemCandidatesData res = null;
 
 		SingleDataResultSet result = iSelDLL.AA_GetNextItemCandidates_SP(
-				connection, oppkey);
+				connection, oppkey, isMsb);
 		DbResultRecord record = result.getCount() > 0 ? result.getRecords()
 				.next() : null;
+		return parseData(record, oppkey);
+	}
+
+	private ItemCandidatesData parseData(DbResultRecord record, UUID oppkey) {
+		ItemCandidatesData itemCandidatesData = null;
 		if (record != null) {
 			if (DbComparator.isEqual(
 					record.<String> get(IItemSelectionDLL.ALGORITHM),
 					IItemSelectionDLL.SATISFIED)) {
 				_logger.info("This oppkey was selected previous time");
-				res = new ItemCandidatesData(oppkey,
+				itemCandidatesData = new ItemCandidatesData(oppkey,
 						IItemSelectionDLL.SATISFIED);
 			} else {
-				res = new ItemCandidatesData(
-				record.<UUID> get(IItemSelectionDLL.OPPKEY),
-				record.<String> get(IItemSelectionDLL.ALGORITHM),
-				record.<String> get(IItemSelectionDLL.SEGMENTKEY),
-				record.<String> get(IItemSelectionDLL.SEGMENTID),
-				record.<Integer> get(IItemSelectionDLL.SEGMENT),
-				record.<String> get(IItemSelectionDLL.GROUPID),
-				record.<String> get(IItemSelectionDLL.BLOCKID),
-				record.<UUID> get(IItemSelectionDLL.SESSION),
-				record.<Boolean> get(IItemSelectionDLL.ISSIMULATION));
+				itemCandidatesData = new ItemCandidatesData(
+						record.<UUID> get(IItemSelectionDLL.OPPKEY),
+						record.<String> get(IItemSelectionDLL.ALGORITHM),
+						record.<String> get(IItemSelectionDLL.SEGMENTKEY),
+						record.<String> get(IItemSelectionDLL.SEGMENTID),
+						record.<Integer> get(IItemSelectionDLL.SEGMENT),
+						record.<String> get(IItemSelectionDLL.GROUPID),
+						record.<String> get(IItemSelectionDLL.BLOCKID),
+						record.<UUID> get(IItemSelectionDLL.SESSION),
+						record.<Boolean> get(IItemSelectionDLL.ISSIMULATION));
 			}
 		}
-		return res;
+		return itemCandidatesData;
+	}
+
+	@Override
+	public ArrayList<ItemCandidatesData> getAllItemCandidates(SQLConnection connection, UUID oppkey, boolean isMsb)
+			throws ReturnStatusException {
+		ArrayList<ItemCandidatesData> itemCandidates = new ArrayList<>();
+		SingleDataResultSet result = iSelDLL.AA_GetNextItemCandidates_SP(
+				connection, oppkey, isMsb);
+		Iterator<DbResultRecord> recordIterator = result.getRecords();
+		while(recordIterator.hasNext()) {
+			itemCandidates.add(parseData(recordIterator.next(), oppkey));
+		}
+		return itemCandidates;
 	}
 }

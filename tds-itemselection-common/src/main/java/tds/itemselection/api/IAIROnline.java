@@ -21,10 +21,11 @@ public interface IAIROnline {
 	 * 
 	 * @param connection
 	 * @param oppkey
-	 * @param error
-	 * @return
+	 * @param isMsb
+	 * @param errorRef
+	 * @return ItemGroup
 	 * @throws ReturnStatusException
 	 */
-	public ItemGroup getNextItemGroup (SQLConnection connection, UUID oppkey, _Ref<String> errorRef)  throws ReturnStatusException;
+	public ItemGroup getNextItemGroup (SQLConnection connection, UUID oppkey, boolean isMsb, _Ref<String> errorRef)  throws ReturnStatusException;
 
 }

@@ -9,6 +9,7 @@
 package tds.itemselection.loader;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import tds.itemselection.api.ItemSelectionException;
@@ -33,6 +34,30 @@ public interface IItemSelectionDBLoader
    * @throws SQLException
    */
   public ItemCandidatesData getItemCandidates (SQLConnection connection, UUID oppkey) throws ReturnStatusException, SQLException;
+
+  /**
+   *
+   * @param oppkey
+   * @param connection
+   * @param isMsb
+   * @return
+   * @throws ReturnStatusException
+   * @throws SQLException
+   */
+  ItemCandidatesData getItemCandidates (SQLConnection connection, UUID oppkey, boolean isMsb) throws ReturnStatusException, SQLException;
+
+
+  /**
+   *
+   * @param oppkey
+   * @param connection
+   * @param isMsb
+   * @return
+   * @throws ReturnStatusException
+   * @throws SQLException
+   */
+  ArrayList<ItemCandidatesData> getAllItemCandidates(SQLConnection connection, UUID oppkey, boolean isMsb)
+          throws ReturnStatusException, SQLException;
   
   /**
    * 
