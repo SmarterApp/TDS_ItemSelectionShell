@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.impl.sets.Cset1Factory;
+import tds.itemselection.impl.sets.Cset1Factory2013;
 import tds.itemselection.impl.sets.CsetGroup;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.SegmentCollection2;
@@ -34,16 +35,24 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
         if(itemCandidates.get(0).getSegmentPosition() == 1) return itemCandidates.get(0);
         ArrayList<ItemCandidatesData> fixedFormItemCandidates = new ArrayList<>();
         for(int i = 0; i < itemCandidates.size(); i++) {
-            if(itemCandidates.get(i).getAlgorithm().contains("fixedform")) { // We only want to include fixed form tests as second segment options
+            if(itemCandidates.get(i).getAlgorithm().toLowerCase().contains("fixedform")) { // We only want to include fixed form tests as second segment options
                 fixedFormItemCandidates.add(itemCandidates.get(i));
             }
         }
 
         SegmentCollection2 segmentCollection = SegmentCollection2.getInstance ();
+        ArrayList<TestSegment> testSegments = new ArrayList<>();
         for(int i = 0; i < fixedFormItemCandidates.size(); i++) {
-            segmentCollection.getSegment(connection, itemCandidates.get(i).getSession(),
+            TestSegment segment = segmentCollection.getSegment(connection, null,
                     itemCandidates.get(i).getSegmentKey(), itemSelectionDbLoader);
+            testSegments.add(segment);
         }
+
+        for(int i = 0; i < testSegments.size(); i++) {
+            Cset1Factory2013 csetFactory = new Cset1Factory2013(oppkey, itemSelectionDbLoader, testSegments.get(i));
+            csetFactory.MakeCset1(connection);
+        }
+
         return null;
     }
 

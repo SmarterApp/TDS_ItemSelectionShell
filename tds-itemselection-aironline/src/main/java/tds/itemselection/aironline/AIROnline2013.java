@@ -73,8 +73,7 @@ public class AIROnline2013 implements IAIROnline {
 			itemCandidates = isMsb ?
 				msbAssessmentSelectionService.selectFixedMsbSegment(connection, oppkey) :
 				loader.getItemCandidates(connection, oppkey);
-
-			if(itemCandidates.getSegmentPosition() > 1)
+			itemCandidates = loader.getItemCandidates(connection, oppkey);
 
 			if (!itemCandidates.getIsSimulation())
 				itemCandidates.setSession(null);
