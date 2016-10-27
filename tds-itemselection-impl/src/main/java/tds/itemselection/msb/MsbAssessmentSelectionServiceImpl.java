@@ -41,25 +41,14 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
         ArrayList<ItemCandidatesData> itemCandidates = itemSelectionDbLoader.getAllItemCandidates(connection, oppkey, true);
         if(itemCandidates.isEmpty()) return null;
         if(itemCandidates.get(0).getSegmentPosition() == 1) return itemCandidates.get(0);
-        ArrayList<ItemCandidatesData> fixedFormItemCandidates = new ArrayList<>();
-        for(int i = 0; i < itemCandidates.size(); i++) {
-            // Filter out all the remaining non-fixed segments
-            if(itemCandidates.get(i).getAlgorithm().toLowerCase().contains("fixedform")) {
-                fixedFormItemCandidates.add(itemCandidates.get(i));
-            }
-        }
 
-        // SegmentCollection2 is a static singleton containing segment information/methods to go get it
-        SegmentCollection2 segmentCollection = SegmentCollection2.getInstance ();
-        ArrayList<TestSegment> testSegments = new ArrayList<>();
+        // This applies a case-insensitive filter on the itemcandidates and returns only those that contain the filter sequence
+        List<ItemCandidatesData> filteredItemCandidates = filterItemCandidates(itemCandidates, "fixedform");
+
         // Here we're getting the fully actualized Segment objects from the previously obtained metadata
-        for(int i = 0; i < fixedFormItemCandidates.size(); i++) {
-            TestSegment segment = segmentCollection.getSegment(connection, null,
-                    itemCandidates.get(i).getSegmentKey(), itemSelectionDbLoader);
-            testSegments.add(segment);
-        }
+        List<TestSegment> testSegments = getTestSegmentsForItemCandidates(filteredItemCandidates, connection);
 
-        ArrayList<Cset1> fixedFormItemGroups = new ArrayList<>();
+        Cset1 fixedItemGroup = new Cset1(testSegments.get(1).getBp());
         int numberOfItemsRequired = 0;
         int maximumItems = 0;
         // This is where the construction of the artificial item groups happens. Each fixed form segment's item pool will become
@@ -68,7 +57,6 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
         for(int i = 0; i < testSegments.size(); i++) {
             Cset1Factory2013 csetFactory = new Cset1Factory2013(oppkey, itemSelectionDbLoader, testSegments.get(i));
             Collection<ItemGroup> itemGroupConstructor = testSegments.get(i).getPool().getItemGroups();
-            Cset1 fixedItemGroup = new Cset1(testSegments.get(1).getBp());
             ItemGroup artificialItemGroup = new ItemGroup();
             for(ItemGroup itemGroup : itemGroupConstructor) {
                 for(TestItem testItem : itemGroup.getItems()) {
@@ -78,6 +66,7 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
                 maximumItems += itemGroup.getMaximumNumberOfItems();
             }
             CsetGroup itemGroup = new CsetGroup(testSegments.get(1).getSegmentKey(), numberOfItemsRequired, maximumItems);
+            fixedItemGroup.addItemgroup(itemGroup);
         }
 
         // We need a cleanup method here. All of the segments in the opportunity that were NOT selected need to be disqualified from
@@ -85,5 +74,28 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
         // on downstream systems and ensure that the functionality has not changed.
 
         return null;
+    }
+
+    public List<ItemCandidatesData> filterItemCandidates(List<ItemCandidatesData> itemCandidates, String filter) {
+        ArrayList<ItemCandidatesData> fixedFormItemCandidates = new ArrayList<>();
+        for(int i = 0; i < itemCandidates.size(); i++) {
+            if(itemCandidates.get(i).getAlgorithm().toLowerCase().contains(filter.toLowerCase())) {
+                fixedFormItemCandidates.add(itemCandidates.get(i));
+            }
+        }
+        return fixedFormItemCandidates;
+    }
+
+    public List<TestSegment> getTestSegmentsForItemCandidates(List<ItemCandidatesData> itemCandidates, SQLConnection connection) throws Exception {
+        // SegmentCollection2 is a static singleton containing segment information/methods to go get it
+        SegmentCollection2 segmentCollection = SegmentCollection2.getInstance ();
+        ArrayList<TestSegment> testSegments = new ArrayList<>();
+        // Here we're getting the fully actualized Segment objects from the previously obtained metadata
+        for(int i = 0; i < itemCandidates.size(); i++) {
+            TestSegment segment = segmentCollection.getSegment(connection, null,
+                    itemCandidates.get(i).getSegmentKey(), itemSelectionDbLoader);
+            testSegments.add(segment);
+        }
+        return testSegments;
     }
 }
