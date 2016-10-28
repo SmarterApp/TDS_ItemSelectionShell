@@ -1,5 +1,8 @@
 package msb;
 
+import AIR.Common.DB.SQLConnection;
+import builders.ItemCandidatesDataBuilder;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,68 +26,44 @@ public class MsbAssessmentSelectionServiceTest {
     private MsbAssessmentSelectionServiceImpl msbAssessmentSelectionService;
     private IItemSelectionDBLoader itemSelectionDbLoader;
 
-    private final UUID opportunityKey = UUID.fromString("86b0ee41-01d9-4a95-bd56-0544c2d5e8cd");
-    private final UUID sessionKey = UUID.fromString("ad1350c7-0747-45d2-8879-7289dee2566f");
-
     @Before
     public void setup() {
-        msbAssessmentSelectionService = new MsbAssessmentSelectionServiceImpl();
         itemSelectionDbLoader = mock(IItemSelectionDBLoader.class);
+        msbAssessmentSelectionService = new MsbAssessmentSelectionServiceImpl(itemSelectionDbLoader);
     }
+
+    @After
+    public void tearDown() {}
 
     private List<ItemCandidatesData> retrieveItemCandidatesData() {
         ArrayList<ItemCandidatesData> itemCandidatesData = new ArrayList<>();
+        ItemCandidatesDataBuilder itemCandidateDataBuilder = new ItemCandidatesDataBuilder();
 
-        ItemCandidatesData candidate1 = new ItemCandidatesData(
-                opportunityKey                                              // oppkey
-                , "adaptive2"                                               // algorithm
-                , "(SBAC_PT)SBAC-MSB-IRP-CAT-Calc-MATH-7-Summer-2015-2016"  // segmentKey
-                , "SBAC-MSB-IRP-CAT-Calc-MATH-7"                            // segmentID
-                , 1                                                         // segmentPosition
-                , ""                                                        // groupID
-                , ""                                                        // blockID
-                , sessionKey                                                // session
-                , false                                                     // isSimulation
-        );
+        ItemCandidatesData candidate1 = itemCandidateDataBuilder
+                .build();
         itemCandidatesData.add(candidate1);
 
-        ItemCandidatesData candidate2 = new ItemCandidatesData(
-                opportunityKey
-                , "adaptive2"
-                , "(SBAC_PT)SBAC-MSB-IRP-CAT-NoCalc-MATH-7-Summer-2015-2016"
-                , "SBAC-MSB-IRP-CAT-NoCalc-MATH-7"
-                , 2
-                , ""
-                , ""
-                , sessionKey
-                , false
-        );
+        ItemCandidatesData candidate2 = itemCandidateDataBuilder
+                .withSegmentKey("(SBAC_PT)SBAC-MSB-IRP-CAT-NoCalc-MATH-7-Summer-2015-2016")
+                .withSegmentID("SBAC-MSB-IRP-CAT-NoCalc-MATH-7")
+                .withSegmentPosition(2)
+                .build();
         itemCandidatesData.add(candidate2);
 
-        ItemCandidatesData candidate3 = new ItemCandidatesData(
-                opportunityKey
-                , "fixedform"
-                , "(SBAC_PT)SBAC-MSB-IRP-Perf-MATH-7-Summer-2015-2016"
-                , "SBAC-MSB-IRP-Perf-MATH-7"
-                , 3
-                , ""
-                , ""
-                , sessionKey
-                , false
-        );
+        ItemCandidatesData candidate3 = itemCandidateDataBuilder
+                .withAlgorithm("fixedform")
+                .withSegmentKey("(SBAC_PT)SBAC-MSB-IRP-Perf-MATH-7-Summer-2015-2016")
+                .withSegmentID("SBAC-MSB-IRP-Perf-MATH-7")
+                .withSegmentPosition(3)
+                .build();
         itemCandidatesData.add(candidate3);
 
-        ItemCandidatesData candidate4 = new ItemCandidatesData(
-                opportunityKey
-                , "fixedform"
-                , "(SBAC_PT)SBAC-MSB-IRP-Perf-MATH-11-Summer-2015-2016"
-                , "SBAC-MSB-IRP-Perf-MATH-11"
-                , 4
-                , ""
-                , ""
-                , sessionKey
-                , false
-        );
+        ItemCandidatesData candidate4 = itemCandidateDataBuilder
+                .withAlgorithm("fixedform")
+                .withSegmentKey("(SBAC_PT)SBAC-MSB-IRP-Perf-MATH-11-Summer-2015-2016")
+                .withSegmentID("SBAC-MSB-IRP-Perf-MATH-11")
+                .withSegmentPosition(4)
+                .build();
         itemCandidatesData.add(candidate4);
 
         return itemCandidatesData;
@@ -187,7 +166,18 @@ public class MsbAssessmentSelectionServiceTest {
     // public List<TestSegment> getTestSegmentsForItemCandidates(
     //      List<ItemCandidatesData> itemCandidates, SQLConnection connection) throws Exception tests
 
+    @Test
+    public void getTestSegmentsForItemCandidatesTwoCandidatesReturnsTwoSegments() throws Exception {
+        // Arrange
+        List<ItemCandidatesData> itemCandidatesData = retrieveItemCandidatesData();
+        SQLConnection connection = mock(SQLConnection.class);
 
+        // Act
+        List<TestSegment> testSegments = msbAssessmentSelectionService.getTestSegmentsForItemCandidates(itemCandidatesData, connection);
+
+        // Assert
+        Assert.assertNotNull(testSegments);
+    }
 
     //END getTestSegmentsForItemCandidatesTests
 }

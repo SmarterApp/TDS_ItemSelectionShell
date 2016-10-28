@@ -30,6 +30,12 @@ import java.util.UUID;
 @Service
 public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelectionService {
 
+    public MsbAssessmentSelectionServiceImpl() {}
+
+    public MsbAssessmentSelectionServiceImpl(IItemSelectionDBLoader itemSelectionDbLoader) {
+        this.itemSelectionDbLoader = itemSelectionDbLoader;
+    }
+
     @Autowired
     @Qualifier("itemDBLoader")
     private IItemSelectionDBLoader itemSelectionDbLoader;
