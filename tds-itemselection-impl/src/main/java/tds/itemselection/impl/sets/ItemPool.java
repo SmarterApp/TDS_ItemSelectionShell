@@ -334,6 +334,7 @@ public class ItemPool
     {
     	return this._items.values();
     }
+    public Collection<TestItem> getSiblingItems() { return this._siblingItems.values(); }
 
 
 }

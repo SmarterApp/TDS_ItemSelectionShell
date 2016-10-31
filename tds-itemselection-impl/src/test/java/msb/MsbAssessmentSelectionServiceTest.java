@@ -167,7 +167,7 @@ public class MsbAssessmentSelectionServiceTest {
     //      List<ItemCandidatesData> itemCandidates, SQLConnection connection) throws Exception tests
 
     @Test
-    public void getTestSegmentsForItemCandidatesTwoCandidatesReturnsTwoSegments() throws Exception {
+    public void getTestSegmentsForItemCandidatesFourCandidatesReturnsFourSegments() throws Exception {
         // Arrange
         List<ItemCandidatesData> itemCandidatesData = retrieveItemCandidatesData();
         SQLConnection connection = mock(SQLConnection.class);
@@ -177,7 +177,24 @@ public class MsbAssessmentSelectionServiceTest {
 
         // Assert
         Assert.assertNotNull(testSegments);
+        Assert.assertTrue(testSegments.size() == itemCandidatesData.size());
+        for(ItemCandidatesData itemCandidate : itemCandidatesData) {
+            boolean segmentMatch = false;
+            for(TestSegment testSegment : testSegments) {
+                if(testSegment.getSegmentKey().compareToIgnoreCase(itemCandidate.getSegmentKey()) == 0) {
+                    segmentMatch = true;
+                    break;
+                }
+            }
+            Assert.assertTrue(segmentMatch);
+        }
     }
 
-    //END getTestSegmentsForItemCandidatesTests
+    // END getTestSegmentsForItemCandidates Tests
+
+    // public Blueprint buildCombinedBlueprint(List<TestSegment> testSegments) tests
+
+
+
+    // END buildCombinedBlueprint Tests
 }
