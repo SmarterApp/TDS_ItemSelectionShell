@@ -16,7 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by fairway on 10/27/16.
@@ -194,7 +196,24 @@ public class MsbAssessmentSelectionServiceTest {
 
     // public Blueprint buildCombinedBlueprint(List<TestSegment> testSegments) tests
 
+    @Test
+    public void selectFixedMsbSegmentTest() throws Exception {
+        List<ItemCandidatesData> itemCandidatesData = retrieveItemCandidatesData();
 
+        // Arrange
+        when(itemSelectionDbLoader.getAllItemCandidates(any(SQLConnection.class), any(UUID.class), any(boolean.class))).thenReturn((ArrayList<ItemCandidatesData>) itemCandidatesData);
+
+        // Act
+        msbAssessmentSelectionService.selectFixedMsbSegment(mock(SQLConnection.class), UUID.fromString("86b0ee41-01d9-4a95-bd56-0544c2d5e8cd"));
+
+        itemCandidatesData = new ArrayList(itemCandidatesData.subList(1, 3));
+        when(itemSelectionDbLoader.getAllItemCandidates(any(SQLConnection.class), any(UUID.class), any(boolean.class))).thenReturn((ArrayList<ItemCandidatesData>) itemCandidatesData);
+
+        msbAssessmentSelectionService.selectFixedMsbSegment(mock(SQLConnection.class), UUID.fromString("86b0ee41-01d9-4a95-bd56-0544c2d5e8cd"));
+
+        // Assert
+
+    }
 
     // END buildCombinedBlueprint Tests
 }

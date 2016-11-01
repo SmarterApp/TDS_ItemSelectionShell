@@ -11,6 +11,7 @@ package tds.itemselection.algorithms;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -28,10 +29,9 @@ import tds.itemselection.expectedability.ExpectedAbilityComputationSmarter;
 import tds.itemselection.impl.blueprint.ActualInfoComputation;
 import tds.itemselection.impl.blueprint.Blueprint;
 import tds.itemselection.impl.bpmatchcomputation.BPMatchByItemWithIterativeGroupItemSelection;
+import tds.itemselection.impl.item.CsetItem;
 import tds.itemselection.impl.item.PruningStrategySmarter;
-import tds.itemselection.impl.sets.Cset1;
-import tds.itemselection.impl.sets.Cset1Factory2013;
-import tds.itemselection.impl.sets.CsetGroup;
+import tds.itemselection.impl.sets.*;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.SegmentCollection2;
 import tds.itemselection.loader.TestSegment;
@@ -73,8 +73,13 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	  
 	  private static Logger  _logger  = LoggerFactory.getLogger (AdaptiveSelector2013.class);
 
+	@Override
+	public ItemGroup getNextItemGroup(SQLConnection connection, ItemCandidatesData itemData) throws ItemSelectionException {
+		return getNextItemGroup(connection, itemData, null);
+	}
+
 	  public ItemGroup getNextItemGroup (SQLConnection connection,
-				ItemCandidatesData itemData) throws ItemSelectionException {
+				ItemCandidatesData itemData, List<ItemGroup> itemGroups) throws ItemSelectionException {
 		  
 	    final String messageTemplate = "Exception %1$s executing adaptive algorithm. Exception error: %2$s.";
 
@@ -96,7 +101,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        throw new ItemSelectionException (error);
 	      } 
 
-	      result = selectNext (connection);
+	      result = selectNext (connection, itemGroups);
 
 	      if (result == null) {
 	        error = "Adaptive item selection failed: Try to find next segment";
@@ -115,6 +120,10 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	    return result;
 	  }
 
+	  public ItemGroup selectNext (SQLConnection connection) throws ItemSelectionException, ReturnStatusException {
+		  return selectNext(connection, null);
+	  }
+
 
 	  /* *
 	   *  1. Compute initial candidate itemgroup set (Cset1)
@@ -122,7 +131,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	   *  2. Compute second candidate itemgroup set Cset2
 	   *  3. Return best itemgroup within Cset2
 	   */
-	  public ItemGroup selectNext (SQLConnection connection) throws ItemSelectionException, ReturnStatusException {
+	  public ItemGroup selectNext (SQLConnection connection, List<ItemGroup> itemGroups) throws ItemSelectionException, ReturnStatusException {
 
 		this._error = null;  
 		this.csetFactory = new Cset1Factory2013( itemCandidates.getOppkey (), loader, 
@@ -200,7 +209,23 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        }
 	        
 	        int n = Math.min(minitems, cset1.itemGroups.size());
-	        	
+
+			if(itemGroups != null) {
+				CsetGroupCollection collection = new CsetGroupCollection();
+				ArrayList<CsetGroup> csetGroups = new ArrayList<>();
+				for(int i = 0; i < itemGroups.size(); i++) {
+					CsetGroup group = collection.setAndGet(itemGroups.get(i));
+					for(int j = 0; j < itemGroups.get(i).getItems().size(); j++) {
+						CSetItem item = new CSetItem(itemGroups.get(i).getItems().get(j), group);
+						group.addItem(item);
+					}
+					csetGroups.add(group);
+				}
+
+				cset1.itemGroups.clear();
+				cset1.itemGroups.addAll(csetGroups);
+			}
+
 	        // compute the ability match for each group in cset1
 	        ComputeAbilityMatch();
 	        	        

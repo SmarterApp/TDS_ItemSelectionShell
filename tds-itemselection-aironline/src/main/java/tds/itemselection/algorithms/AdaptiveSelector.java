@@ -8,6 +8,7 @@
  ******************************************************************************/
 package tds.itemselection.algorithms;
 
+import java.util.List;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -65,6 +66,8 @@ public class AdaptiveSelector  extends AbstractAdaptiveSelector implements IItem
   private boolean 	_debug = false;
   
   private static Logger  _logger  = LoggerFactory.getLogger (AdaptiveSelector.class);
+
+
   
   public ItemGroup getNextItemGroup (SQLConnection connection,
 			ItemCandidatesData itemData) throws ItemSelectionException {
@@ -106,6 +109,11 @@ public class AdaptiveSelector  extends AbstractAdaptiveSelector implements IItem
       throw new ItemSelectionException (error);
     }
     return result;
+  }
+
+  @Override
+  public ItemGroup getNextItemGroup(SQLConnection connection, ItemCandidatesData itemData, List<ItemGroup> itemGroups) throws ItemSelectionException {
+    return getNextItemGroup(connection, itemData);
   }
 
 

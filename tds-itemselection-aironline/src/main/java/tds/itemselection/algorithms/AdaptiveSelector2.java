@@ -20,9 +20,11 @@
 package tds.itemselection.algorithms;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Collections;
 
+import TDS.Shared.Exceptions.ReturnStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +85,7 @@ public class AdaptiveSelector2   extends AbstractAdaptiveSelector  implements II
      * Past test history of the student 
      */
     private StudentHistory2013 _studentHistory = new StudentHistory2013();
+
 
     /**
      * Select the next item group to be administered
@@ -176,7 +179,12 @@ public class AdaptiveSelector2   extends AbstractAdaptiveSelector  implements II
         }
         return candidateItemGroup; 
     }
- 
+
+    @Override
+    public ItemGroup getNextItemGroup(SQLConnection connection, ItemCandidatesData itemData, List<ItemGroup> itemGroups) throws ItemSelectionException {
+        return getNextItemGroup(connection, itemData);
+    }
+
     /**
      * Normalize the measures of the candidate groups in the set 
      * @param candidateGroups

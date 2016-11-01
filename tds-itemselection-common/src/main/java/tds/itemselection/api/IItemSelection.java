@@ -9,8 +9,11 @@
 package tds.itemselection.api;
 
 import AIR.Common.DB.SQLConnection;
+import TDS.Shared.Exceptions.ReturnStatusException;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
+
+import java.util.List;
 
 /**
  * @author akulakov
@@ -27,6 +30,8 @@ public interface IItemSelection
    * @return ItemGroup
    */
   public ItemGroup getNextItemGroup (SQLConnection connection, ItemCandidatesData itemData)  throws ItemSelectionException;
+
+  ItemGroup getNextItemGroup (SQLConnection connection, ItemCandidatesData itemData, List<ItemGroup> itemGroups)  throws ItemSelectionException;
   /**
    * 
    * @return

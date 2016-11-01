@@ -1,9 +1,11 @@
 package tds.itemselection.msb;
 
 import AIR.Common.DB.SQLConnection;
+import AIR.Common.Utilities.SpringApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import tds.itemselection.api.IItemSelection;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
 import tds.itemselection.base.TestItem;
@@ -40,15 +42,15 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
     @Qualifier("itemDBLoader")
     private IItemSelectionDBLoader itemSelectionDbLoader;
 
-    public String getAdaptiveSegmentKey() {
-        return adaptiveSegmentKey;
+    public ItemCandidatesData getAdaptiveSegmentKey() {
+        return adaptiveSegmentData;
     }
 
-    public void setAdaptiveSegmentKey(String adaptiveSegmentKey) {
-        this.adaptiveSegmentKey = adaptiveSegmentKey;
+    public void setAdaptiveSegmentKey(ItemCandidatesData adaptiveSegmentKey) {
+        this.adaptiveSegmentData = adaptiveSegmentKey;
     }
 
-    private String adaptiveSegmentKey;
+    private ItemCandidatesData adaptiveSegmentData;
 
     @Override
     public ItemCandidatesData selectFixedMsbSegment(SQLConnection connection, UUID opportunityKey) throws Exception {
@@ -56,21 +58,30 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
         // This section returns segment metadata for all unsatisfied segments in the exam
         ArrayList<ItemCandidatesData> itemCandidates = itemSelectionDbLoader.getAllItemCandidates(connection, opportunityKey, true);
         if(itemCandidates.isEmpty()) return null;
-        if(itemCandidates.get(0).getSegmentPosition() == 1) return itemCandidates.get(0);
+        if(itemCandidates.get(0).getSegmentPosition() == 1) {
+            setAdaptiveSegmentKey(itemCandidates.get(0));
+            return itemCandidates.get(0);
+        }
 
-        // This applies a case-insensitive filter on the itemcandidates and returns only those that contain the filter sequence
         List<ItemCandidatesData> filteredItemCandidates = filterItemCandidates(itemCandidates, "fixedform");
-
-        // Here we're getting the fully actualized Segment objects from the previously obtained metadata
         List<TestSegment> testSegments = getTestSegmentsForItemCandidates(filteredItemCandidates, connection);
+        ItemPool itemPool = buildCombinedItemPool(testSegments);
+        IItemSelection selector = SpringApplicationContext.getBean ("aa2013Selector",IItemSelection.class);
+        ItemGroup itemGroup = selector.getNextItemGroup(connection, adaptiveSegmentData, buildCombinedItemGroups(testSegments, itemPool));
 
-//        Cset1 fixedItemGroup = buildCsetFromEligibleSegments(testSegments, buildCombinedBlueprint(testSegments), opportunityKey);
+        String segmentId = itemGroup.getGroupID();
+
+        for(int i = 0; i < filteredItemCandidates.size(); i++) {
+            if(segmentId.compareTo(filteredItemCandidates.get(i).getSegmentKey()) == 0) {
+                return filteredItemCandidates.get(i);
+            }
+        }
 
         // We need a cleanup method here. All of the segments in the opportunity that were NOT selected need to be disqualified from
         // being presented to the student. The effect of this segregation needs to be tested downstream to determine the effects
         // on downstream systems and ensure that the functionality has not changed.
 
-        return null;
+        return itemSelectionDbLoader.getItemCandidates(connection, opportunityKey);
     }
 
     @Override
@@ -99,46 +110,6 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
     }
 
     @Override
-    public Cset1 buildCombinedCset(TestSegment testSegment, Blueprint blueprint, UUID opportunityKey) {
-        Cset1 fixedItemGroup = new Cset1(blueprint);
-        int numberOfItemsRequired = 0;
-        int maximumItems = 0;
-        // This is where the construction of the artificial item groups happens. Each fixed form segment's item pool will become
-        // its own item group. These item groups will become the basis for a newly created item pool that will be passed into
-        // the existing adaptive selection algorithm. The "winner" will become segment #2.
-
-        Cset1Factory2013 cset1Factory2013 = new Cset1Factory2013(opportunityKey, itemSelectionDbLoader, testSegment);
-
-//        for(int i = 0; i < testSegments.size(); i++) {
-//            Cset1Factory2013 csetFactory = new Cset1Factory2013(opportunityKey, itemSelectionDbLoader, testSegments.get(i));
-//            Collection<ItemGroup> itemGroupConstructor = testSegments.get(i).getPool().getItemGroups();
-//            ItemGroup artificialItemGroup = new ItemGroup();
-//            for(ItemGroup itemGroup : itemGroupConstructor) {
-//                for(TestItem testItem : itemGroup.getItems()) {
-//                    artificialItemGroup.addItem(testItem);
-//                }
-//                numberOfItemsRequired += itemGroup.getNumberOfItemsRequired();
-//                maximumItems += itemGroup.getMaximumNumberOfItems();
-//            }
-//            CsetGroup itemGroup = new CsetGroup(testSegments.get(1).getSegmentKey(), numberOfItemsRequired, maximumItems);
-//            fixedItemGroup.addItemgroup(itemGroup);
-//        }
-//        return fixedItemGroup;
-        return fixedItemGroup;
-    }
-
-    @Override
-    public TestSegment buildCombinedTestSegment(List<TestSegment> testSegments, Blueprint blueprint, ItemPool itemPool) {
-        TestSegment combinedTestSegment = new TestSegment("Artificial Adaptive Segment");
-        if(testSegments.isEmpty()) return combinedTestSegment;
-        combinedTestSegment.setBp(blueprint);
-        combinedTestSegment.parentTest = testSegments.get(0).parentTest;
-        combinedTestSegment.refreshMinutes = testSegments.get(0).refreshMinutes;
-        combinedTestSegment.setPool(itemPool);
-        return combinedTestSegment;
-    }
-
-    @Override
     public ItemPool buildCombinedItemPool(List<TestSegment> testSegments) {
         ItemPool itemPool = new ItemPool();
         for(int i = 0; i < testSegments.size(); i++) {
@@ -160,29 +131,17 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
     }
 
     @Override
-    public Blueprint buildCombinedBlueprint(List<TestSegment> testSegments) {
-        List<Blueprint> blueprints = extractBlueprints(testSegments);
-        if(blueprints.isEmpty()) return new Blueprint();
-        Blueprint combinedBlueprint = blueprints.get(0).copy(true);
-        combinedBlueprint.segmentKey = "Artificial Adaptive Segment";
-        combinedBlueprint.segmentID = "Fixed Form";
-        combinedBlueprint.segmentPosition = 2;
-
-        for (int i = 1; i < blueprints.size(); i++) {
-            combinedBlueprint.minOpItems += blueprints.get(i).minOpItems;
-            combinedBlueprint.maxOpItems += blueprints.get(i).maxOpItems;
-            for(BpElement bpElement : blueprints.get(i).elements.getValues()) {
-                combinedBlueprint.elements.addBpElement(bpElement);
-            }
-        }
-        return combinedBlueprint;
-    }
-
-    private List<Blueprint> extractBlueprints(List<TestSegment> testSegments) {
-        List<Blueprint> blueprints = new ArrayList<>();
+    public List<ItemGroup> buildCombinedItemGroups(List<TestSegment> testSegments, ItemPool itemPool) {
+        ArrayList<ItemGroup> itemGroups = new ArrayList<>();
         for(int i = 0; i < testSegments.size(); i++) {
-            blueprints.add(testSegments.get(i).getBp());
+            ItemGroup itemGroup = new ItemGroup();
+            itemGroup.setGroupID(testSegments.get(i).getSegmentKey());
+            itemGroup.setItems(new ArrayList<> (itemPool.getItems()));
+            itemGroup.setMaximumNumberOfItems(itemPool.getItems().size());
+            itemGroup.setNumberOfItemsRequired(itemPool.getItems().size());
+            itemGroup.setNumRequired(itemPool.getItems().size());
+            itemGroups.add(itemGroup);
         }
-        return blueprints;
+        return itemGroups;
     }
 }

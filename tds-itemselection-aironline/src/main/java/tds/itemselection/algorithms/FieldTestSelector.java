@@ -8,6 +8,7 @@
  ******************************************************************************/
 package tds.itemselection.algorithms;
 
+import TDS.Shared.Exceptions.ReturnStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
 import tds.itemselection.loader.IItemSelectionDBLoader;
+
+import java.util.List;
 
 /**
  * @author akulakov
@@ -47,6 +50,11 @@ public class FieldTestSelector  extends AbstractItemSelector  implements IItemSe
       throw new ItemSelectionException(error);
     }
     return result;
+  }
+
+  @Override
+  public ItemGroup getNextItemGroup(SQLConnection connection, ItemCandidatesData itemData, List<ItemGroup> itemGroups) throws ItemSelectionException {
+    return getNextItemGroup(connection, itemData);
   }
 
 }
