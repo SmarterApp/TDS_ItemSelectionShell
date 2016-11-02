@@ -39,24 +39,11 @@ public interface IItemSelectionDBLoader
    *
    * @param oppkey
    * @param connection
-   * @param isMsb
    * @return
    * @throws ReturnStatusException
    * @throws SQLException
    */
-  ItemCandidatesData getItemCandidates (SQLConnection connection, UUID oppkey, boolean isMsb) throws ReturnStatusException, SQLException;
-
-
-  /**
-   *
-   * @param oppkey
-   * @param connection
-   * @param isMsb
-   * @return
-   * @throws ReturnStatusException
-   * @throws SQLException
-   */
-  ArrayList<ItemCandidatesData> getAllItemCandidates(SQLConnection connection, UUID oppkey, boolean isMsb)
+  ArrayList<ItemCandidatesData> getAllItemCandidates(SQLConnection connection, UUID oppkey)
           throws ReturnStatusException, SQLException;
   
   /**

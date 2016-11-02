@@ -8,6 +8,7 @@
  ******************************************************************************/
 package tds.itemselection.algorithms;
 import TDS.Shared.Exceptions.ReturnStatusException;
+import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,6 @@ public class FixedFormSelector  extends AbstractItemSelector  implements IItemSe
 
 	@Override
 	public ItemGroup getNextItemGroup(SQLConnection connection, ItemCandidatesData itemData, List<ItemGroup> itemGroups) throws ItemSelectionException {
-		return getNextItemGroup(connection, itemData);
+		throw new NotImplementedException();
 	}
 }

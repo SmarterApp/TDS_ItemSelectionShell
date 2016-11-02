@@ -28,4 +28,8 @@ public interface MsbAssessmentSelectionService {
 
     List<ItemGroup> buildCombinedItemGroups(List<TestSegment> testSegments, ItemPool itemPool);
 
+    void cleanupUnusedSegments(List<ItemCandidatesData> testSegments);
+
+    // TODO: Write repository method to go to the db and query for opportunity test segment open and position 2.
+
 }

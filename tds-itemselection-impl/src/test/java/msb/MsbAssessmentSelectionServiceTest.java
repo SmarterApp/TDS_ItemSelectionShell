@@ -201,13 +201,13 @@ public class MsbAssessmentSelectionServiceTest {
         List<ItemCandidatesData> itemCandidatesData = retrieveItemCandidatesData();
 
         // Arrange
-        when(itemSelectionDbLoader.getAllItemCandidates(any(SQLConnection.class), any(UUID.class), any(boolean.class))).thenReturn((ArrayList<ItemCandidatesData>) itemCandidatesData);
+        when(itemSelectionDbLoader.getAllItemCandidates(any(SQLConnection.class), any(UUID.class))).thenReturn((ArrayList<ItemCandidatesData>) itemCandidatesData);
 
         // Act
         msbAssessmentSelectionService.selectFixedMsbSegment(mock(SQLConnection.class), UUID.fromString("86b0ee41-01d9-4a95-bd56-0544c2d5e8cd"));
 
         itemCandidatesData = new ArrayList(itemCandidatesData.subList(1, 3));
-        when(itemSelectionDbLoader.getAllItemCandidates(any(SQLConnection.class), any(UUID.class), any(boolean.class))).thenReturn((ArrayList<ItemCandidatesData>) itemCandidatesData);
+        when(itemSelectionDbLoader.getAllItemCandidates(any(SQLConnection.class), any(UUID.class))).thenReturn((ArrayList<ItemCandidatesData>) itemCandidatesData);
 
         msbAssessmentSelectionService.selectFixedMsbSegment(mock(SQLConnection.class), UUID.fromString("86b0ee41-01d9-4a95-bd56-0544c2d5e8cd"));
 

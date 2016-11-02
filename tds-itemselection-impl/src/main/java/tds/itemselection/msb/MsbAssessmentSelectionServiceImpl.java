@@ -56,7 +56,8 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
     public ItemCandidatesData selectFixedMsbSegment(SQLConnection connection, UUID opportunityKey) throws Exception {
 
         // This section returns segment metadata for all unsatisfied segments in the exam
-        ArrayList<ItemCandidatesData> itemCandidates = itemSelectionDbLoader.getAllItemCandidates(connection, opportunityKey, true);
+        // TODO:
+        ArrayList<ItemCandidatesData> itemCandidates = itemSelectionDbLoader.getAllItemCandidates(connection, opportunityKey);
         if(itemCandidates.isEmpty()) return null;
         if(itemCandidates.get(0).getSegmentPosition() == 1) {
             setAdaptiveSegmentKey(itemCandidates.get(0));
@@ -73,7 +74,9 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
 
         for(int i = 0; i < filteredItemCandidates.size(); i++) {
             if(segmentId.compareTo(filteredItemCandidates.get(i).getSegmentKey()) == 0) {
-                return filteredItemCandidates.get(i);
+                ItemCandidatesData calculatedFixedForm =  filteredItemCandidates.get(i);
+                calculatedFixedForm.setSegmentPosition((long) 2);
+                return calculatedFixedForm;
             }
         }
 
@@ -95,6 +98,7 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
         return fixedFormItemCandidates;
     }
 
+    //TODO: Pull out the segmentCollection and pass it into this method
     @Override
     public List<TestSegment> getTestSegmentsForItemCandidates(List<ItemCandidatesData> itemCandidates, SQLConnection connection) throws Exception {
         // SegmentCollection2 is a static singleton containing segment information/methods to go get it
@@ -135,6 +139,7 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
         ArrayList<ItemGroup> itemGroups = new ArrayList<>();
         for(int i = 0; i < testSegments.size(); i++) {
             ItemGroup itemGroup = new ItemGroup();
+            // This is the segment key because we need to know what segment was selected
             itemGroup.setGroupID(testSegments.get(i).getSegmentKey());
             itemGroup.setItems(new ArrayList<> (itemPool.getItems()));
             itemGroup.setMaximumNumberOfItems(itemPool.getItems().size());
@@ -143,5 +148,10 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
             itemGroups.add(itemGroup);
         }
         return itemGroups;
+    }
+
+    @Override
+    public void cleanupUnusedSegments(List<ItemCandidatesData> testSegments) {
+
     }
 }

@@ -37,16 +37,8 @@ public abstract class AbstractDBLoader implements IItemSelectionDBLoader {
 	@Override
 	public ItemCandidatesData getItemCandidates(SQLConnection connection, UUID oppkey)
 			throws ReturnStatusException, SQLException {
-		return getItemCandidates(connection, oppkey, false);
-	}
-
-	@Override
-	public ItemCandidatesData getItemCandidates(SQLConnection connection, UUID oppkey, boolean isMsb)
-			throws ReturnStatusException, SQLException {
-		ItemCandidatesData res = null;
-
 		SingleDataResultSet result = iSelDLL.AA_GetNextItemCandidates_SP(
-				connection, oppkey, isMsb);
+				connection, oppkey, false);
 		DbResultRecord record = result.getCount() > 0 ? result.getRecords()
 				.next() : null;
 		return parseData(record, oppkey);
@@ -78,11 +70,11 @@ public abstract class AbstractDBLoader implements IItemSelectionDBLoader {
 	}
 
 	@Override
-	public ArrayList<ItemCandidatesData> getAllItemCandidates(SQLConnection connection, UUID oppkey, boolean isMsb)
+	public ArrayList<ItemCandidatesData> getAllItemCandidates(SQLConnection connection, UUID oppkey)
 			throws ReturnStatusException {
 		ArrayList<ItemCandidatesData> itemCandidates = new ArrayList<>();
 		SingleDataResultSet result = iSelDLL.AA_GetNextItemCandidates_SP(
-				connection, oppkey, isMsb);
+				connection, oppkey, true);
 		Iterator<DbResultRecord> recordIterator = result.getRecords();
 		while(recordIterator.hasNext()) {
 			itemCandidates.add(parseData(recordIterator.next(), oppkey));

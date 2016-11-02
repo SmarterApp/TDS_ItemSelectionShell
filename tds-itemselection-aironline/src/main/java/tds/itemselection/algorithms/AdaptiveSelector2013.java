@@ -210,6 +210,15 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        
 	        int n = Math.min(minitems, cset1.itemGroups.size());
 
+			/*
+			 *   This section of code that occupies the following IF block was written to support Multi-Stage Braille
+			 *   assessments. The code in the MsbAssessmentSelectionService calls the adaptive algorithm and passes it a
+			 *   list of ItemGroup objects. Each of these item groups represents the entire contents of a fixed form
+			 *   segment (one segment per group). The groups replace the item pool remaining to the initial adaptive
+			 *   segment and force the algorithm to select a next "question" from the remaining item groups - in this
+			 *   case, the fixed form segment that best matches the student's current ability at the end of their
+			 *   adaptive section.
+			 */
 			if(itemGroups != null) {
 				CsetGroupCollection collection = new CsetGroupCollection();
 				ArrayList<CsetGroup> csetGroups = new ArrayList<>();
