@@ -16,7 +16,6 @@ package tds.itemselection.msb;
 import AIR.Common.DB.SQLConnection;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
-import tds.itemselection.impl.sets.ItemPool;
 import tds.itemselection.loader.SegmentCollection2;
 import tds.itemselection.loader.TestSegment;
 
@@ -72,28 +71,19 @@ public interface MsbAssessmentSelectionService {
                                                        SQLConnection connection) throws Exception;
 
     /**
-     * //TODO: GREG - determine if we need a full test pool object, or only a subset of this functionality
-     *
-     * @param testSegments
-     * @return A full test item pool for msb segments
-     */
-    ItemPool buildCombinedItemPool(List<TestSegment> testSegments);
-
-    /**
      * Produces a list of item groups representing each of the distinct segment candidates. Each group will contain all
      * questions belonging to the segment.
      *
      * @param testSegments
-     * @param itemPool
      * @return A list of item groups
      */
-    List<ItemGroup> buildCombinedItemGroups(List<TestSegment> testSegments, ItemPool itemPool);
+    List<ItemGroup> buildCombinedItemGroups(List<TestSegment> testSegments);
 
     /**
      * Puts test into a state where it will end after the selected fixed form completes
      * @param testSegments
      */
-    void cleanupUnusedSegments(List<ItemCandidatesData> testSegments);
+    void cleanupUnusedSegments(List<ItemCandidatesData> testSegments, UUID opportunityKey);
 
     // TODO: GREG - Write repository method to go to the db and query for opportunity test segment open and position 2.
 

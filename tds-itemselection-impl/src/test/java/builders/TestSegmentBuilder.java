@@ -17,9 +17,6 @@ import tds.itemselection.impl.blueprint.Blueprint;
 import tds.itemselection.impl.sets.ItemPool;
 import tds.itemselection.loader.TestSegment;
 
-/**
- * Created by fairway on 10/28/16.
- */
 public class TestSegmentBuilder {
 
     private String segmentKey = "(SBAC_PT)SBAC-MSB-IRP-CAT-Calc-MATH-7-Summer-2015-2016";

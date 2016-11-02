@@ -23,6 +23,7 @@ import tds.itemselection.loader.IItemSelectionDBLoader;
 import AIR.Common.DB.SQLConnection;
 import AIR.Common.Helpers._Ref;
 import TDS.Shared.Exceptions.ReturnStatusException;
+import tds.itemselection.loader.SegmentCollection2;
 import tds.itemselection.msb.MsbAssessmentSelectionService;
 
 public class AIROnline2  implements IAIROnline {
@@ -60,9 +61,12 @@ public class AIROnline2  implements IAIROnline {
 
 		try {
 
-			itemCandidates = isMsb ?
-					msbAssessmentSelectionService.selectFixedMsbSegment(connection, oppkey) :
-					loader.getItemCandidates(connection, oppkey);
+			if(isMsb) {
+				SegmentCollection2 segmentCollection = SegmentCollection2.getInstance();
+				itemCandidates = msbAssessmentSelectionService.selectFixedMsbSegment(connection, oppkey, segmentCollection);
+			} else {
+				itemCandidates = loader.getItemCandidates(connection, oppkey);
+			}
 
 			if (!itemCandidates.getIsSimulation())
 				itemCandidates.setSession(null);

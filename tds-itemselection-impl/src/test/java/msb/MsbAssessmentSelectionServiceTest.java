@@ -31,9 +31,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by fairway on 10/27/16.
- */
 public class MsbAssessmentSelectionServiceTest {
 
     private MsbAssessmentSelectionServiceImpl msbAssessmentSelectionService;
@@ -203,28 +200,41 @@ public class MsbAssessmentSelectionServiceTest {
 
     // END getTestSegmentsForItemCandidates Tests
 
-    // public Blueprint buildCombinedBlueprint(List<TestSegment> testSegments) tests
+    // public selectFixedMsbSegment(SQLConnection connection, UUID opportunityKey,
+    // SegmentCollection2 segmentCollection) throws Exception Tests
 
     @Test
-    @Ignore
-    public void selectFixedMsbSegmentTest() throws Exception {
+    public void selectFixedMsbSegmentFirstSegmentPresentReturnsFirstSegmentAndSetsDataTest() throws Exception {
+        // Arrange
         List<ItemCandidatesData> itemCandidatesData = retrieveItemCandidatesData();
         SegmentCollection2 segmentCollection = SegmentCollection2.getInstance();
-
-        // Arrange
         when(itemSelectionDbLoader.getAllItemCandidates(any(SQLConnection.class), any(UUID.class))).thenReturn((ArrayList<ItemCandidatesData>) itemCandidatesData);
+        UUID opportunityKey = UUID.fromString("86b0ee41-01d9-4a95-bd56-0544c2d5e8cd");
 
         // Act
-        msbAssessmentSelectionService.selectFixedMsbSegment(mock(SQLConnection.class), UUID.fromString("86b0ee41-01d9-4a95-bd56-0544c2d5e8cd"), segmentCollection);
-
-        itemCandidatesData = new ArrayList(itemCandidatesData.subList(1, 3));
-        when(itemSelectionDbLoader.getAllItemCandidates(any(SQLConnection.class), any(UUID.class))).thenReturn((ArrayList<ItemCandidatesData>) itemCandidatesData);
-
-        msbAssessmentSelectionService.selectFixedMsbSegment(mock(SQLConnection.class), UUID.fromString("86b0ee41-01d9-4a95-bd56-0544c2d5e8cd"), segmentCollection);
+        ItemCandidatesData result = msbAssessmentSelectionService.selectFixedMsbSegment(mock(SQLConnection.class), opportunityKey, segmentCollection);
 
         // Assert
-
+        Assert.assertTrue(msbAssessmentSelectionService.getAdaptiveSegmentData().getSegmentKey().equals(itemCandidatesData.get(0).getSegmentKey()));
+        Assert.assertTrue(result.getSegmentKey().equals(itemCandidatesData.get(0).getSegmentKey()));
     }
 
-    // END buildCombinedBlueprint Tests
+    @Test
+    public void selectFixedMsbSegmentSecondSegmentPerformsAdaptiveSelection() throws Exception {
+        // Arrange
+        List<ItemCandidatesData> itemCandidatesData = retrieveItemCandidatesData();
+        itemCandidatesData.remove(0);
+        SegmentCollection2 segmentCollection = SegmentCollection2.getInstance();
+        when(itemSelectionDbLoader.getAllItemCandidates(any(SQLConnection.class), any(UUID.class))).thenReturn((ArrayList<ItemCandidatesData>) itemCandidatesData);
+        UUID opportunityKey = UUID.fromString("86b0ee41-01d9-4a95-bd56-0544c2d5e8cd");
+
+        // Act
+        ItemCandidatesData result = msbAssessmentSelectionService.selectFixedMsbSegment(mock(SQLConnection.class), opportunityKey, segmentCollection);
+
+        // Assert
+        Assert.assertTrue(msbAssessmentSelectionService.getAdaptiveSegmentData().getSegmentKey().equals(itemCandidatesData.get(0).getSegmentKey()));
+        Assert.assertTrue(result.getSegmentKey().equals(itemCandidatesData.get(0).getSegmentKey()));
+    }
+
+    // END selectFixedMsbSegment Tests
 }

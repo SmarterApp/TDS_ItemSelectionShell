@@ -17,9 +17,6 @@ import tds.itemselection.base.ItemCandidatesData;
 
 import java.util.UUID;
 
-/**
- * Created by fairway on 10/28/16.
- */
 public class ItemCandidatesDataBuilder {
 
     private UUID opportunityKey = UUID.fromString("86b0ee41-01d9-4a95-bd56-0544c2d5e8cd");

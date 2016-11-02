@@ -21,7 +21,6 @@ import tds.itemselection.api.IItemSelection;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
 import tds.itemselection.base.TestItem;
-import tds.itemselection.impl.sets.ItemPool;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.SegmentCollection2;
 import tds.itemselection.loader.TestSegment;
@@ -47,12 +46,12 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
     @Qualifier ("aa2013Selector")
     private IItemSelection adaptiveSelector;
 
-    public ItemCandidatesData getAdaptiveSegmentKey() {
+    public ItemCandidatesData getAdaptiveSegmentData() {
         return adaptiveSegmentData;
     }
 
-    public void setAdaptiveSegmentKey(ItemCandidatesData adaptiveSegmentKey) {
-        this.adaptiveSegmentData = adaptiveSegmentKey;
+    public void setAdaptiveSegmentData(ItemCandidatesData adaptiveSegmentData) {
+        this.adaptiveSegmentData = adaptiveSegmentData;
     }
 
     private ItemCandidatesData adaptiveSegmentData;
@@ -63,31 +62,29 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
         ArrayList<ItemCandidatesData> itemCandidates = itemSelectionDbLoader.getAllItemCandidates(connection, opportunityKey);
         if(itemCandidates.isEmpty()) return null;
         if(itemCandidates.get(0).getSegmentPosition() == 1) {
-            setAdaptiveSegmentKey(itemCandidates.get(0));
+            setAdaptiveSegmentData(itemCandidates.get(0));
             return itemCandidates.get(0);
         }
 
         List<ItemCandidatesData> filteredItemCandidates = filterItemCandidatesByAlgorithm(itemCandidates, "fixedform");
         List<TestSegment> testSegments = getTestSegmentsForItemCandidates(filteredItemCandidates,
                 segmentCollection, connection);
-        ItemPool itemPool = buildCombinedItemPool(testSegments);
         ItemGroup itemGroup = adaptiveSelector.getNextItemGroup(connection,
-                adaptiveSegmentData, buildCombinedItemGroups(testSegments, itemPool));
+                adaptiveSegmentData, buildCombinedItemGroups(testSegments));
 
         String segmentId = itemGroup.getGroupID();
 
-        ItemCandidatesData calculatedFixedForm = null;
-        ArrayList<ItemCandidatesData> rejectedFixedForms = new ArrayList<>();
+        int index = 0;
         for(int i = 0; i < filteredItemCandidates.size(); i++) {
             if(segmentId.compareTo(filteredItemCandidates.get(i).getSegmentKey()) == 0) {
-                calculatedFixedForm =  filteredItemCandidates.get(i);
-                calculatedFixedForm.setSegmentPosition((long) 2);
-            } else {
-                rejectedFixedForms.add(filteredItemCandidates.get(i));
+                index = i;
+                break;
             }
         }
+        // The selected segment's metadata is removed leaving the rejected segments for the cleanup method.
+        ItemCandidatesData calculatedFixedForm = filteredItemCandidates.remove(index);
 
-        cleanupUnusedSegments(rejectedFixedForms);
+        cleanupUnusedSegments(filteredItemCandidates, opportunityKey);
 
         return calculatedFixedForm;
     }
@@ -117,44 +114,30 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
     }
 
     @Override
-    public ItemPool buildCombinedItemPool(List<TestSegment> testSegments) {
-        ItemPool itemPool = new ItemPool();
-        for(int i = 0; i < testSegments.size(); i++) {
-            itemPool.addItemgroup(new ItemGroup(testSegments.get(i).getSegmentKey(), -1, -1));
-            ArrayList<TestItem> testItems = new ArrayList(testSegments.get(i).getPool().getItems());
-            for(int j = 0; j < testItems.size(); j++) {
-                TestItem testItem = testItems.get(j);
-                testItem.setGroupID(testSegments.get(i).getSegmentKey());
-                itemPool.addItem(testItem);
-            }
-            ArrayList<TestItem> siblingItems = new ArrayList(testSegments.get(i).getPool().getSiblingItems());
-            for(int k = 0; k < siblingItems.size(); k++) {
-                TestItem siblingItem = siblingItems.get(k);
-                siblingItem.setGroupID(testSegments.get(i).getSegmentKey());
-                itemPool.addSiblingItem(siblingItem);
-            }
-        }
-        return itemPool;
-    }
-
-    @Override
-    public List<ItemGroup> buildCombinedItemGroups(List<TestSegment> testSegments, ItemPool itemPool) {
-        ArrayList<ItemGroup> itemGroups = new ArrayList<>();
+    public List<ItemGroup> buildCombinedItemGroups(List<TestSegment> testSegments) {
+        List<ItemGroup> itemGroups = new ArrayList<>();
         for(int i = 0; i < testSegments.size(); i++) {
             ItemGroup itemGroup = new ItemGroup();
-            // This is the segment key because we need to know what segment was selected
+            // The group ID is being set to the segment key because we need to know what segment was selected later
             itemGroup.setGroupID(testSegments.get(i).getSegmentKey());
-            itemGroup.setItems(new ArrayList<> (itemPool.getItems()));
-            itemGroup.setMaximumNumberOfItems(itemPool.getItems().size());
-            itemGroup.setNumberOfItemsRequired(itemPool.getItems().size());
-            itemGroup.setNumRequired(itemPool.getItems().size());
+            ArrayList<TestItem> groupItems = new ArrayList<>();
+            ArrayList<TestItem> segmentItems = new ArrayList(testSegments.get(i).getPool().getItems());
+            for(int j = 0; j < segmentItems.size(); j++) {
+                TestItem testItem = segmentItems.get(j);
+                testItem.setGroupID(testSegments.get(i).getSegmentKey());
+                groupItems.add(testItem);
+            }
+            itemGroup.setItems(groupItems);
+            itemGroup.setMaximumNumberOfItems(groupItems.size());
+            itemGroup.setNumberOfItemsRequired(groupItems.size());
+            itemGroup.setNumRequired(groupItems.size());
             itemGroups.add(itemGroup);
         }
         return itemGroups;
     }
 
     @Override
-    public void cleanupUnusedSegments(List<ItemCandidatesData> testSegments) {
+    public void cleanupUnusedSegments(List<ItemCandidatesData> testSegments, UUID opportunityKey) {
 
     }
 }
