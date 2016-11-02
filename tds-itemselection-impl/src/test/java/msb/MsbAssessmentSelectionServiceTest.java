@@ -17,6 +17,7 @@ import AIR.Common.DB.SQLConnection;
 import builders.ItemCandidatesDataBuilder;
 import org.junit.*;
 import tds.itemselection.base.ItemCandidatesData;
+import tds.itemselection.base.ItemGroup;
 import tds.itemselection.impl.blueprint.Blueprint;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.SegmentCollection2;
@@ -98,7 +99,7 @@ public class MsbAssessmentSelectionServiceTest {
         return testSegments;
     }
 
-    // public List<ItemCandidatesData> filterItemCandidates(List<ItemCandidatesData> itemCandidates, String filter) tests
+    //region filterItemCandidates tests
 
     @Test
     public void filterItemCandidatesWithFixedFormFilterShouldReturnTwoResults() {
@@ -168,10 +169,9 @@ public class MsbAssessmentSelectionServiceTest {
         Assert.assertTrue(filterredItemCandidates.isEmpty());
     }
 
-    // END filterItemCandidates tests
+    //endregion
 
-    // public List<TestSegment> getTestSegmentsForItemCandidates(
-    //      List<ItemCandidatesData> itemCandidates, SQLConnection connection) throws Exception tests
+    //region getTestSegmentsForItemCandidates Tests
 
     @Test
     public void getTestSegmentsForItemCandidatesFourCandidatesReturnsFourSegments() throws Exception {
@@ -198,10 +198,25 @@ public class MsbAssessmentSelectionServiceTest {
         }
     }
 
-    // END getTestSegmentsForItemCandidates Tests
+    // endregion
 
-    // public selectFixedMsbSegment(SQLConnection connection, UUID opportunityKey,
-    // SegmentCollection2 segmentCollection) throws Exception Tests
+    // region buildCombinedItemGroups tests
+
+    @Test
+    @Ignore
+    public void buildCombinedItemGroupsValidTestSegmentsProducesOneGroupPerSegmentContainingAllSegmentQuestions() {
+        // Arrange
+        List<TestSegment> testSegments = retrieveTestSegmentData();
+
+        // Act
+        List<ItemGroup> result = msbAssessmentSelectionService.buildCombinedItemGroups(testSegments);
+
+        // Assert
+    }
+
+    // endregion
+
+    // region selectFixedMsbSegment tests
 
     @Test
     public void selectFixedMsbSegmentFirstSegmentPresentReturnsFirstSegmentAndSetsDataTest() throws Exception {
@@ -220,6 +235,7 @@ public class MsbAssessmentSelectionServiceTest {
     }
 
     @Test
+    @Ignore
     public void selectFixedMsbSegmentSecondSegmentPerformsAdaptiveSelection() throws Exception {
         // Arrange
         List<ItemCandidatesData> itemCandidatesData = retrieveItemCandidatesData();
@@ -236,5 +252,5 @@ public class MsbAssessmentSelectionServiceTest {
         Assert.assertTrue(result.getSegmentKey().equals(itemCandidatesData.get(0).getSegmentKey()));
     }
 
-    // END selectFixedMsbSegment Tests
+    // endregion
 }

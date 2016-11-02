@@ -85,6 +85,4 @@ public interface MsbAssessmentSelectionService {
      */
     void cleanupUnusedSegments(List<ItemCandidatesData> testSegments, UUID opportunityKey);
 
-    // TODO: GREG - Write repository method to go to the db and query for opportunity test segment open and position 2.
-
 }

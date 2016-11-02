@@ -13,12 +13,47 @@
 
 package builders;
 
+import tds.itemselection.base.ItemGroup;
+import tds.itemselection.base.TestItem;
 import tds.itemselection.impl.sets.ItemPool;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemPoolBuilder {
 
+    public List<TestItem> items = new ArrayList<>();
+
+    public List<ItemGroup> itemGroups = new ArrayList<>();
+
+    public List<TestItem> siblingItems = new ArrayList<>();
+
     public ItemPool build() {
-        return null;
+        ItemPool itemPool = new ItemPool();
+        for(int i = 0; i < items.size(); i++) {
+            itemPool.addItem(items.get(i));
+        }
+        for(int i = 0; i < itemGroups.size(); i++) {
+            itemPool.addItemgroup(itemGroups.get(i));
+        }
+        for(int i = 0; i < siblingItems.size(); i++) {
+            itemPool.addSiblingItem(siblingItems.get(i));
+        }
+        return itemPool;
     }
 
+    public ItemPoolBuilder withItems(List<TestItem> items) {
+        this.items = items;
+        return this;
+    }
+
+    public ItemPoolBuilder withItemGroups(List<ItemGroup> itemGroups) {
+        this.itemGroups = itemGroups;
+        return this;
+    }
+
+    public ItemPoolBuilder withSiblingItems(List<TestItem> siblingItems) {
+        this.siblingItems = siblingItems;
+        return this;
+    }
 }

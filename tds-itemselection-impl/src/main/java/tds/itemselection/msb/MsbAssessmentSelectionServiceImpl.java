@@ -32,18 +32,21 @@ import java.util.UUID;
 @Service
 public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelectionService {
 
-    public MsbAssessmentSelectionServiceImpl() {}
+    public MsbAssessmentSelectionServiceImpl() {
+    }
 
     public MsbAssessmentSelectionServiceImpl(IItemSelectionDBLoader itemSelectionDbLoader) {
         this.itemSelectionDbLoader = itemSelectionDbLoader;
     }
+
+    private final String FIXED_ALGORITHM = "fixedform";
 
     @Autowired
     @Qualifier("itemDBLoader")
     private IItemSelectionDBLoader itemSelectionDbLoader;
 
     @Autowired
-    @Qualifier ("aa2013Selector")
+    @Qualifier("aa2013Selector")
     private IItemSelection adaptiveSelector;
 
     public ItemCandidatesData getAdaptiveSegmentData() {
@@ -60,13 +63,13 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
     public ItemCandidatesData selectFixedMsbSegment(SQLConnection connection, UUID opportunityKey,
                                                     SegmentCollection2 segmentCollection) throws Exception {
         ArrayList<ItemCandidatesData> itemCandidates = itemSelectionDbLoader.getAllItemCandidates(connection, opportunityKey);
-        if(itemCandidates.isEmpty()) return null;
-        if(itemCandidates.get(0).getSegmentPosition() == 1) {
+        if (itemCandidates.isEmpty()) return null;
+        if (itemCandidates.get(0).getSegmentPosition() == 1) {
             setAdaptiveSegmentData(itemCandidates.get(0));
             return itemCandidates.get(0);
         }
 
-        List<ItemCandidatesData> filteredItemCandidates = filterItemCandidatesByAlgorithm(itemCandidates, "fixedform");
+        List<ItemCandidatesData> filteredItemCandidates = filterItemCandidatesByAlgorithm(itemCandidates, FIXED_ALGORITHM);
         List<TestSegment> testSegments = getTestSegmentsForItemCandidates(filteredItemCandidates,
                 segmentCollection, connection);
         ItemGroup itemGroup = adaptiveSelector.getNextItemGroup(connection,
@@ -75,8 +78,8 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
         String segmentId = itemGroup.getGroupID();
 
         int index = 0;
-        for(int i = 0; i < filteredItemCandidates.size(); i++) {
-            if(segmentId.compareTo(filteredItemCandidates.get(i).getSegmentKey()) == 0) {
+        for (int i = 0; i < filteredItemCandidates.size(); i++) {
+            if (segmentId.compareTo(filteredItemCandidates.get(i).getSegmentKey()) == 0) {
                 index = i;
                 break;
             }
@@ -92,8 +95,8 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
     @Override
     public List<ItemCandidatesData> filterItemCandidatesByAlgorithm(List<ItemCandidatesData> itemCandidates, String filter) {
         ArrayList<ItemCandidatesData> itemCandidatesData = new ArrayList<>();
-        for(int i = 0; i < itemCandidates.size(); i++) {
-            if(itemCandidates.get(i).getAlgorithm().compareToIgnoreCase(filter) == 0) {
+        for (int i = 0; i < itemCandidates.size(); i++) {
+            if (itemCandidates.get(i).getAlgorithm().compareToIgnoreCase(filter) == 0) {
                 itemCandidatesData.add(itemCandidates.get(i));
             }
         }
@@ -105,7 +108,7 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
                                                               SegmentCollection2 segmentCollection,
                                                               SQLConnection connection) throws Exception {
         ArrayList<TestSegment> testSegments = new ArrayList<>();
-        for(int i = 0; i < itemCandidates.size(); i++) {
+        for (int i = 0; i < itemCandidates.size(); i++) {
             TestSegment segment = segmentCollection.getSegment(connection, null,
                     itemCandidates.get(i).getSegmentKey(), itemSelectionDbLoader);
             testSegments.add(segment);
@@ -116,13 +119,13 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
     @Override
     public List<ItemGroup> buildCombinedItemGroups(List<TestSegment> testSegments) {
         List<ItemGroup> itemGroups = new ArrayList<>();
-        for(int i = 0; i < testSegments.size(); i++) {
+        for (int i = 0; i < testSegments.size(); i++) {
             ItemGroup itemGroup = new ItemGroup();
             // The group ID is being set to the segment key because we need to know what segment was selected later
             itemGroup.setGroupID(testSegments.get(i).getSegmentKey());
             ArrayList<TestItem> groupItems = new ArrayList<>();
             ArrayList<TestItem> segmentItems = new ArrayList(testSegments.get(i).getPool().getItems());
-            for(int j = 0; j < segmentItems.size(); j++) {
+            for (int j = 0; j < segmentItems.size(); j++) {
                 TestItem testItem = segmentItems.get(j);
                 testItem.setGroupID(testSegments.get(i).getSegmentKey());
                 groupItems.add(testItem);
