@@ -21,14 +21,6 @@ import tds.itemselection.loader.TestSegment;
 
 import java.util.*;
 
-/**
- * This class handles the logic behind the selection of Multi-Stage Braille (MSB) assessments. MSB assessments
- * (currently) consist of an adaptive segment followed by a fixed form segment. The fixed segment is not known at
- * the start of the assessment - it must be calculated based on the student's performance in the initial adaptive
- * section. This class accomplishes this selection by creating an artificial segment made up of item groups representing
- * the entire pool of each of the segments. It passes these item groups into the existing adaptive selection algorithm
- * and uses the result to determine which fixed form test is appropriate for the MSB student being assessed.
- */
 @Service
 public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelectionService {
 
@@ -42,6 +34,10 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
     @Qualifier("itemDBLoader")
     private IItemSelectionDBLoader itemSelectionDbLoader;
 
+    @Autowired
+    @Qualifier ("aa2013Selector")
+    private IItemSelection adaptiveSelector;
+
     public ItemCandidatesData getAdaptiveSegmentKey() {
         return adaptiveSegmentData;
     }
@@ -53,10 +49,8 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
     private ItemCandidatesData adaptiveSegmentData;
 
     @Override
-    public ItemCandidatesData selectFixedMsbSegment(SQLConnection connection, UUID opportunityKey) throws Exception {
-
-        // This section returns segment metadata for all unsatisfied segments in the exam
-        // TODO:
+    public ItemCandidatesData selectFixedMsbSegment(SQLConnection connection, UUID opportunityKey,
+                                                    SegmentCollection2 segmentCollection) throws Exception {
         ArrayList<ItemCandidatesData> itemCandidates = itemSelectionDbLoader.getAllItemCandidates(connection, opportunityKey);
         if(itemCandidates.isEmpty()) return null;
         if(itemCandidates.get(0).getSegmentPosition() == 1) {
@@ -64,47 +58,47 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
             return itemCandidates.get(0);
         }
 
-        List<ItemCandidatesData> filteredItemCandidates = filterItemCandidates(itemCandidates, "fixedform");
-        List<TestSegment> testSegments = getTestSegmentsForItemCandidates(filteredItemCandidates, connection);
+        List<ItemCandidatesData> filteredItemCandidates = filterItemCandidatesByAlgorithm(itemCandidates, "fixedform");
+        List<TestSegment> testSegments = getTestSegmentsForItemCandidates(filteredItemCandidates,
+                segmentCollection, connection);
         ItemPool itemPool = buildCombinedItemPool(testSegments);
-        IItemSelection selector = SpringApplicationContext.getBean ("aa2013Selector",IItemSelection.class);
-        ItemGroup itemGroup = selector.getNextItemGroup(connection, adaptiveSegmentData, buildCombinedItemGroups(testSegments, itemPool));
+        ItemGroup itemGroup = adaptiveSelector.getNextItemGroup(connection,
+                adaptiveSegmentData, buildCombinedItemGroups(testSegments, itemPool));
 
         String segmentId = itemGroup.getGroupID();
 
+        ItemCandidatesData calculatedFixedForm = null;
+        ArrayList<ItemCandidatesData> rejectedFixedForms = new ArrayList<>();
         for(int i = 0; i < filteredItemCandidates.size(); i++) {
             if(segmentId.compareTo(filteredItemCandidates.get(i).getSegmentKey()) == 0) {
-                ItemCandidatesData calculatedFixedForm =  filteredItemCandidates.get(i);
+                calculatedFixedForm =  filteredItemCandidates.get(i);
                 calculatedFixedForm.setSegmentPosition((long) 2);
-                return calculatedFixedForm;
+            } else {
+                rejectedFixedForms.add(filteredItemCandidates.get(i));
             }
         }
 
-        // We need a cleanup method here. All of the segments in the opportunity that were NOT selected need to be disqualified from
-        // being presented to the student. The effect of this segregation needs to be tested downstream to determine the effects
-        // on downstream systems and ensure that the functionality has not changed.
+        cleanupUnusedSegments(rejectedFixedForms);
 
-        return itemSelectionDbLoader.getItemCandidates(connection, opportunityKey);
+        return calculatedFixedForm;
     }
 
     @Override
-    public List<ItemCandidatesData> filterItemCandidates(List<ItemCandidatesData> itemCandidates, String filter) {
-        ArrayList<ItemCandidatesData> fixedFormItemCandidates = new ArrayList<>();
+    public List<ItemCandidatesData> filterItemCandidatesByAlgorithm(List<ItemCandidatesData> itemCandidates, String filter) {
+        ArrayList<ItemCandidatesData> itemCandidatesData = new ArrayList<>();
         for(int i = 0; i < itemCandidates.size(); i++) {
-            if(itemCandidates.get(i).getAlgorithm().toLowerCase().contains(filter.toLowerCase())) {
-                fixedFormItemCandidates.add(itemCandidates.get(i));
+            if(itemCandidates.get(i).getAlgorithm().compareToIgnoreCase(filter) == 0) {
+                itemCandidatesData.add(itemCandidates.get(i));
             }
         }
-        return fixedFormItemCandidates;
+        return itemCandidatesData;
     }
 
-    //TODO: Pull out the segmentCollection and pass it into this method
     @Override
-    public List<TestSegment> getTestSegmentsForItemCandidates(List<ItemCandidatesData> itemCandidates, SQLConnection connection) throws Exception {
-        // SegmentCollection2 is a static singleton containing segment information/methods to go get it
-        SegmentCollection2 segmentCollection = SegmentCollection2.getInstance ();
+    public List<TestSegment> getTestSegmentsForItemCandidates(List<ItemCandidatesData> itemCandidates,
+                                                              SegmentCollection2 segmentCollection,
+                                                              SQLConnection connection) throws Exception {
         ArrayList<TestSegment> testSegments = new ArrayList<>();
-        // Here we're getting the fully actualized Segment objects from the previously obtained metadata
         for(int i = 0; i < itemCandidates.size(); i++) {
             TestSegment segment = segmentCollection.getSegment(connection, null,
                     itemCandidates.get(i).getSegmentKey(), itemSelectionDbLoader);

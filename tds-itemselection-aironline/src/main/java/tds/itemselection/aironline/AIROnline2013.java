@@ -24,6 +24,7 @@ import AIR.Common.DB.SQLConnection;
 import AIR.Common.Helpers._Ref;
 import AIR.Common.Utilities.SpringApplicationContext;
 import TDS.Shared.Exceptions.ReturnStatusException;
+import tds.itemselection.loader.SegmentCollection2;
 import tds.itemselection.msb.*;
 
 public class AIROnline2013 implements IAIROnline {
@@ -41,10 +42,6 @@ public class AIROnline2013 implements IAIROnline {
 
 	@Autowired
 	private MsbAssessmentSelectionService msbAssessmentSelectionService;
-	 
-	/* @Autowired
-	 @Qualifier ("aa2013Selector")
-	 private IItemSelection aa2013Selector;*/
 
 	 private static Logger  _logger  = LoggerFactory.getLogger (AIROnline2013.class);
 	  
@@ -70,9 +67,12 @@ public class AIROnline2013 implements IAIROnline {
 
 		try {
 
-			itemCandidates = isMsb ?
-				msbAssessmentSelectionService.selectFixedMsbSegment(connection, oppkey) :
-				loader.getItemCandidates(connection, oppkey);
+			if(isMsb) {
+				SegmentCollection2 segmentCollection = SegmentCollection2.getInstance();
+				itemCandidates = msbAssessmentSelectionService.selectFixedMsbSegment(connection, oppkey, segmentCollection);
+			} else {
+				itemCandidates = loader.getItemCandidates(connection, oppkey);
+			}
 
 			if (!itemCandidates.getIsSimulation())
 				itemCandidates.setSession(null);

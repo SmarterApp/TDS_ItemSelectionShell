@@ -2,13 +2,11 @@ package msb;
 
 import AIR.Common.DB.SQLConnection;
 import builders.ItemCandidatesDataBuilder;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.impl.blueprint.Blueprint;
 import tds.itemselection.loader.IItemSelectionDBLoader;
+import tds.itemselection.loader.SegmentCollection2;
 import tds.itemselection.loader.TestSegment;
 import tds.itemselection.msb.MsbAssessmentSelectionServiceImpl;
 
@@ -98,7 +96,7 @@ public class MsbAssessmentSelectionServiceTest {
         List<ItemCandidatesData> itemCandidatesData = retrieveItemCandidatesData();
 
         // Act
-        List<ItemCandidatesData> filterredItemCandidates = msbAssessmentSelectionService.filterItemCandidates(itemCandidatesData, "fixedform");
+        List<ItemCandidatesData> filterredItemCandidates = msbAssessmentSelectionService.filterItemCandidatesByAlgorithm(itemCandidatesData, "fixedform");
 
         // Assert
         Assert.assertTrue(filterredItemCandidates.size() == 2);
@@ -109,27 +107,24 @@ public class MsbAssessmentSelectionServiceTest {
     }
 
     @Test
-    public void filterItemCandidatesWithFixedFilterShouldReturnTwoResults() {
+    public void filterItemCandidatesWithFixedFilterShouldReturnNoResults() {
         // Arrange
         List<ItemCandidatesData> itemCandidatesData = retrieveItemCandidatesData();
 
         // Act
-        List<ItemCandidatesData> filterredItemCandidates = msbAssessmentSelectionService.filterItemCandidates(itemCandidatesData, "fixed");
+        List<ItemCandidatesData> filterredItemCandidates = msbAssessmentSelectionService.filterItemCandidatesByAlgorithm(itemCandidatesData, "fixed");
 
         // Assert
-        Assert.assertTrue(filterredItemCandidates.size() == 2);
-        Assert.assertTrue(filterredItemCandidates.get(0).getAlgorithm() == "fixedform");
-        Assert.assertTrue(filterredItemCandidates.get(1).getAlgorithm() == "fixedform");
-        Assert.assertTrue(filterredItemCandidates.get(0).getSegmentKey() == "(SBAC_PT)SBAC-MSB-IRP-Perf-MATH-7-Summer-2015-2016");
-        Assert.assertTrue(filterredItemCandidates.get(1).getSegmentKey() == "(SBAC_PT)SBAC-MSB-IRP-Perf-MATH-11-Summer-2015-2016");
+        Assert.assertTrue(filterredItemCandidates.isEmpty());
     }
+
     @Test
     public void filterItemCandidatesWithFixedFormUpperCaseFilterShouldReturnTwoResults() {
         // Arrange
         List<ItemCandidatesData> itemCandidatesData = retrieveItemCandidatesData();
 
         // Act
-        List<ItemCandidatesData> filterredItemCandidates = msbAssessmentSelectionService.filterItemCandidates(itemCandidatesData, "FiXedFoRM");
+        List<ItemCandidatesData> filterredItemCandidates = msbAssessmentSelectionService.filterItemCandidatesByAlgorithm(itemCandidatesData, "FiXedFoRM");
 
         // Assert
         Assert.assertTrue(filterredItemCandidates.size() == 2);
@@ -145,7 +140,7 @@ public class MsbAssessmentSelectionServiceTest {
         List<ItemCandidatesData> itemCandidatesData = retrieveItemCandidatesData();
 
         // Act
-        List<ItemCandidatesData> filterredItemCandidates = msbAssessmentSelectionService.filterItemCandidates(itemCandidatesData, "nonsense");
+        List<ItemCandidatesData> filterredItemCandidates = msbAssessmentSelectionService.filterItemCandidatesByAlgorithm(itemCandidatesData, "nonsense");
 
         // Assert
         Assert.assertTrue(filterredItemCandidates.isEmpty());
@@ -157,7 +152,7 @@ public class MsbAssessmentSelectionServiceTest {
         List<ItemCandidatesData> itemCandidatesData = new ArrayList<>();
 
         // Act
-        List<ItemCandidatesData> filterredItemCandidates = msbAssessmentSelectionService.filterItemCandidates(itemCandidatesData, "nonsense");
+        List<ItemCandidatesData> filterredItemCandidates = msbAssessmentSelectionService.filterItemCandidatesByAlgorithm(itemCandidatesData, "nonsense");
 
         // Assert
         Assert.assertTrue(filterredItemCandidates.isEmpty());
@@ -173,9 +168,10 @@ public class MsbAssessmentSelectionServiceTest {
         // Arrange
         List<ItemCandidatesData> itemCandidatesData = retrieveItemCandidatesData();
         SQLConnection connection = mock(SQLConnection.class);
+        SegmentCollection2 segmentCollection = SegmentCollection2.getInstance();
 
         // Act
-        List<TestSegment> testSegments = msbAssessmentSelectionService.getTestSegmentsForItemCandidates(itemCandidatesData, connection);
+        List<TestSegment> testSegments = msbAssessmentSelectionService.getTestSegmentsForItemCandidates(itemCandidatesData, segmentCollection, connection);
 
         // Assert
         Assert.assertNotNull(testSegments);
@@ -197,19 +193,21 @@ public class MsbAssessmentSelectionServiceTest {
     // public Blueprint buildCombinedBlueprint(List<TestSegment> testSegments) tests
 
     @Test
+    @Ignore
     public void selectFixedMsbSegmentTest() throws Exception {
         List<ItemCandidatesData> itemCandidatesData = retrieveItemCandidatesData();
+        SegmentCollection2 segmentCollection = SegmentCollection2.getInstance();
 
         // Arrange
         when(itemSelectionDbLoader.getAllItemCandidates(any(SQLConnection.class), any(UUID.class))).thenReturn((ArrayList<ItemCandidatesData>) itemCandidatesData);
 
         // Act
-        msbAssessmentSelectionService.selectFixedMsbSegment(mock(SQLConnection.class), UUID.fromString("86b0ee41-01d9-4a95-bd56-0544c2d5e8cd"));
+        msbAssessmentSelectionService.selectFixedMsbSegment(mock(SQLConnection.class), UUID.fromString("86b0ee41-01d9-4a95-bd56-0544c2d5e8cd"), segmentCollection);
 
         itemCandidatesData = new ArrayList(itemCandidatesData.subList(1, 3));
         when(itemSelectionDbLoader.getAllItemCandidates(any(SQLConnection.class), any(UUID.class))).thenReturn((ArrayList<ItemCandidatesData>) itemCandidatesData);
 
-        msbAssessmentSelectionService.selectFixedMsbSegment(mock(SQLConnection.class), UUID.fromString("86b0ee41-01d9-4a95-bd56-0544c2d5e8cd"));
+        msbAssessmentSelectionService.selectFixedMsbSegment(mock(SQLConnection.class), UUID.fromString("86b0ee41-01d9-4a95-bd56-0544c2d5e8cd"), segmentCollection);
 
         // Assert
 
