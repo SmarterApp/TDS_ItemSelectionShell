@@ -84,10 +84,9 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
                 break;
             }
         }
-        // The selected segment's metadata is removed leaving the rejected segments for the cleanup method.
-        ItemCandidatesData calculatedFixedForm = filteredItemCandidates.remove(index);
+        ItemCandidatesData calculatedFixedForm = filteredItemCandidates.get(index);
 
-        cleanupUnusedSegments(filteredItemCandidates, opportunityKey);
+        cleanupUnusedSegments(connection, calculatedFixedForm.getSegmentPosition(), opportunityKey);
 
         return calculatedFixedForm;
     }
@@ -140,7 +139,7 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
     }
 
     @Override
-    public void cleanupUnusedSegments(List<ItemCandidatesData> testSegments, UUID opportunityKey) {
-
+    public void cleanupUnusedSegments(SQLConnection connection, Long selectedSegmentPosition, UUID opportunityKey) {
+        itemSelectionDbLoader.cleanupDismissedItemCandidates(connection, selectedSegmentPosition, opportunityKey);
     }
 }

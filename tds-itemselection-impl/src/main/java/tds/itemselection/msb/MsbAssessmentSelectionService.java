@@ -81,8 +81,11 @@ public interface MsbAssessmentSelectionService {
 
     /**
      * Puts test into a state where it will end after the selected fixed form completes
-     * @param testSegments
+     *
+     * @param connection
+     * @param selectedSegmentPosition
+     * @param opportunityKey
      */
-    void cleanupUnusedSegments(List<ItemCandidatesData> testSegments, UUID opportunityKey);
+    void cleanupUnusedSegments(SQLConnection connection, Long selectedSegmentPosition, UUID opportunityKey);
 
 }

@@ -45,6 +45,14 @@ public interface IItemSelectionDBLoader
    */
   ArrayList<ItemCandidatesData> getAllItemCandidates(SQLConnection connection, UUID oppkey)
           throws ReturnStatusException, SQLException;
+
+  /**
+   *
+   * @param connection
+   * @param selectedSegmentPosition
+   * @param oppKey
+   */
+  void cleanupDismissedItemCandidates(SQLConnection connection, Long selectedSegmentPosition, UUID oppKey);
   
   /**
    * 

@@ -20,6 +20,7 @@ import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
 import tds.itemselection.base.TestItem;
 import tds.itemselection.impl.blueprint.Blueprint;
+import tds.itemselection.impl.sets.ItemPool;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.SegmentCollection2;
 import tds.itemselection.loader.TestSegment;
@@ -94,8 +95,16 @@ public class MsbAssessmentSelectionServiceTest {
         for(int i = 0; i < 3; i++) {
             testItems1.add(testItemBuilder.build());
         }
-
-
+        ItemGroup itemGroup1 = itemGroupBuilder
+                .withItems(testItems1)
+                .build();
+        List<ItemGroup> itemGroups1 = new ArrayList<>();
+        itemGroups1.add(itemGroup1);
+        ItemPool itemPool1 = itemPoolBuilder
+                .withItemGroups(itemGroups1)
+                .withItems(testItems1)
+                .withSiblingItems(testItems1)
+                .build();
 
         TestSegment testSegment1 = testSegmentBuilder.build();
 
