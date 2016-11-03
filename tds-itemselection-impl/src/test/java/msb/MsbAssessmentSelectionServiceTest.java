@@ -14,10 +14,11 @@
 package msb;
 
 import AIR.Common.DB.SQLConnection;
-import builders.ItemCandidatesDataBuilder;
+import builders.*;
 import org.junit.*;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
+import tds.itemselection.base.TestItem;
 import tds.itemselection.impl.blueprint.Blueprint;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.SegmentCollection2;
@@ -83,18 +84,20 @@ public class MsbAssessmentSelectionServiceTest {
     private List<TestSegment> retrieveTestSegmentData () {
         ArrayList<TestSegment> testSegments = new ArrayList<>();
 
-        TestSegment testSegment1 = new TestSegment(
-                "(SBAC_PT)SBAC-MSB-IRP-CAT-NoCalc-MATH-7-Summer-2015-2016"      //segmentKey
-        );
-        testSegment1.refreshMinutes = 33;
-        testSegment1.parentTest =  "(SBAC_PT)SBAC-MSB-Mathematics-7-Summer-2015-2016";
-        testSegment1.position = 2;
-        testSegment1.loaded = false;
-        testSegment1.error = null;
+        TestSegmentBuilder testSegmentBuilder = new TestSegmentBuilder();
+        BlueprintBuilder blueprintBuilder = new BlueprintBuilder();
+        ItemPoolBuilder itemPoolBuilder = new ItemPoolBuilder();
+        ItemGroupBuilder itemGroupBuilder = new ItemGroupBuilder();
+        TestItemBuilder testItemBuilder = new TestItemBuilder();
 
-        Blueprint blueprint1 = new Blueprint();
-        // Excluded properties: refresh, loading, _lastLoadTime - These properties are accessible via constructor
-        // and there are no setters for them in the TestSegment class
+        ArrayList<TestItem> testItems1 = new ArrayList<>();
+        for(int i = 0; i < 3; i++) {
+            testItems1.add(testItemBuilder.build());
+        }
+
+
+
+        TestSegment testSegment1 = testSegmentBuilder.build();
 
         return testSegments;
     }

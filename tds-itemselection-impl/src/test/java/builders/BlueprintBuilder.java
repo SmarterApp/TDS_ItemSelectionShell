@@ -18,7 +18,8 @@ import tds.itemselection.impl.blueprint.Blueprint;
 public class BlueprintBuilder {
 
     public Blueprint build() {
-        return null;
+        Blueprint blueprint = new Blueprint();
+        return blueprint;
     }
 
 }

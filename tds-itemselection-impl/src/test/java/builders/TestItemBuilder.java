@@ -13,5 +13,13 @@
 
 package builders;
 
+import tds.itemselection.base.TestItem;
+
 public class TestItemBuilder {
+
+    public TestItem build() {
+        TestItem testItem = new TestItem();
+        return testItem;
+    }
+
 }
