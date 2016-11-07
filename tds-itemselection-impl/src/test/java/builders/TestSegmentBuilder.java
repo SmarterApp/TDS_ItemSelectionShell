@@ -55,27 +55,27 @@ public class TestSegmentBuilder {
         return this;
     }
 
-    private TestSegmentBuilder withPosition(int position) {
+    public TestSegmentBuilder withPosition(int position) {
         this.position = position;
         return this;
     }
 
-    private TestSegmentBuilder withLoaded(boolean loaded) {
+    public TestSegmentBuilder withLoaded(boolean loaded) {
         this.loaded = loaded;
         return this;
     }
 
-    private TestSegmentBuilder withError(String error) {
+    public TestSegmentBuilder withError(String error) {
         this.error = error;
         return this;
     }
 
-    private TestSegmentBuilder withBlueprint(Blueprint blueprint) {
+    public TestSegmentBuilder withBlueprint(Blueprint blueprint) {
         this.blueprint = blueprint;
         return this;
     }
 
-    private TestSegmentBuilder withItemPool(ItemPool itemPool) {
+    public TestSegmentBuilder withItemPool(ItemPool itemPool) {
         this.itemPool = itemPool;
         return this;
     }

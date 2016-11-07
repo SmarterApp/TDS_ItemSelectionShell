@@ -8,22 +8,22 @@
  ******************************************************************************/
 package tds.itemselection.loader;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.UUID;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import tds.dll.api.IItemSelectionDLL;
-import tds.itemselection.base.ItemCandidatesData;
 import AIR.Common.DB.DbComparator;
 import AIR.Common.DB.SQLConnection;
 import AIR.Common.DB.results.DbResultRecord;
 import AIR.Common.DB.results.SingleDataResultSet;
 import TDS.Shared.Exceptions.ReturnStatusException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import tds.dll.api.IItemSelectionDLL;
+import tds.itemselection.base.ItemCandidatesData;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 
 public abstract class AbstractDBLoader implements IItemSelectionDBLoader {
 
@@ -70,9 +70,9 @@ public abstract class AbstractDBLoader implements IItemSelectionDBLoader {
 	}
 
 	@Override
-	public ArrayList<ItemCandidatesData> getAllItemCandidates(SQLConnection connection, UUID oppkey)
+	public List<ItemCandidatesData> getAllItemCandidates(SQLConnection connection, UUID oppkey)
 			throws ReturnStatusException {
-		ArrayList<ItemCandidatesData> itemCandidates = new ArrayList<>();
+		List<ItemCandidatesData> itemCandidates = new ArrayList<>();
 		SingleDataResultSet result = iSelDLL.AA_GetNextItemCandidates_SP(
 				connection, oppkey, true);
 		Iterator<DbResultRecord> recordIterator = result.getRecords();

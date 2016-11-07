@@ -8,16 +8,16 @@
  ******************************************************************************/
 package tds.itemselection.loader;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.UUID;
-
-import tds.itemselection.api.ItemSelectionException;
-import tds.itemselection.base.ItemCandidatesData;
-import tds.itemselection.base.ItemGroup;
 import AIR.Common.DB.SQLConnection;
 import AIR.Common.Helpers._Ref;
 import TDS.Shared.Exceptions.ReturnStatusException;
+import tds.itemselection.api.ItemSelectionException;
+import tds.itemselection.base.ItemCandidatesData;
+import tds.itemselection.base.ItemGroup;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author akulakov
@@ -37,13 +37,13 @@ public interface IItemSelectionDBLoader
 
   /**
    *
-   * @param oppkey
+   * @param oppkey The opportunity key for the call
    * @param connection
-   * @return
+   * @return The metadata for all remaining active segments in the assessment
    * @throws ReturnStatusException
    * @throws SQLException
    */
-  ArrayList<ItemCandidatesData> getAllItemCandidates(SQLConnection connection, UUID oppkey)
+  List<ItemCandidatesData> getAllItemCandidates(SQLConnection connection, UUID oppkey)
           throws ReturnStatusException, SQLException;
 
   /**

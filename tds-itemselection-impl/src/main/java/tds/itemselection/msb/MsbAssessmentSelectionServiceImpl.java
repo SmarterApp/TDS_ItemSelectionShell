@@ -49,25 +49,21 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
     @Qualifier("aa2013Selector")
     private IItemSelection adaptiveSelector;
 
-    public ItemCandidatesData getAdaptiveSegmentData() {
-        return adaptiveSegmentData;
-    }
-
-    public void setAdaptiveSegmentData(ItemCandidatesData adaptiveSegmentData) {
-        this.adaptiveSegmentData = adaptiveSegmentData;
-    }
-
-    private ItemCandidatesData adaptiveSegmentData;
-
+    /* TODO: Pass in all of the segments (including inactive ones) and execute the second portion based on whether or
+     * not the first segment is active, not whether or not it is present
+     */
     @Override
     public ItemCandidatesData selectFixedMsbSegment(SQLConnection connection, UUID opportunityKey,
                                                     SegmentCollection2 segmentCollection) throws Exception {
-        ArrayList<ItemCandidatesData> itemCandidates = itemSelectionDbLoader.getAllItemCandidates(connection, opportunityKey);
+        List<ItemCandidatesData> itemCandidates =
+                itemSelectionDbLoader.getAllItemCandidates(connection, opportunityKey);
         if (itemCandidates.isEmpty()) return null;
-        if (itemCandidates.get(0).getSegmentPosition() == 1) {
-            setAdaptiveSegmentData(itemCandidates.get(0));
+        if (itemCandidates.get(0).getSegmentPosition() == 1) { //TODO: replace this logical statement to check whether it is active
             return itemCandidates.get(0);
         }
+
+        // TODO REMOVE
+        ItemCandidatesData adaptiveSegmentData = new ItemCandidatesData();
 
         List<ItemCandidatesData> filteredItemCandidates = filterItemCandidatesByAlgorithm(itemCandidates, FIXED_ALGORITHM);
         List<TestSegment> testSegments = getTestSegmentsForItemCandidates(filteredItemCandidates,

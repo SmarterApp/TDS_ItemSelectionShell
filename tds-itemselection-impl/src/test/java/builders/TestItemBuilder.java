@@ -17,9 +17,23 @@ import tds.itemselection.base.TestItem;
 
 public class TestItemBuilder {
 
+    private String groupId = "group";
+    private String itemId = "item";
+
     public TestItem build() {
         TestItem testItem = new TestItem();
+        testItem.setGroupID(groupId);
+        testItem.setItemID(itemId);
         return testItem;
     }
 
+    public TestItemBuilder withGroupId(String groupId) {
+        this.groupId = groupId;
+        return this;
+    }
+
+    public TestItemBuilder withItemId(String itemId) {
+        this.itemId = itemId;
+        return this;
+    }
 }

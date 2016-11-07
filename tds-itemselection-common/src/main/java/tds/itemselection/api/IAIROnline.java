@@ -8,24 +8,24 @@
  ******************************************************************************/
 package tds.itemselection.api;
 
-import java.util.UUID;
-
 import AIR.Common.DB.SQLConnection;
 import AIR.Common.Helpers._Ref;
 import TDS.Shared.Exceptions.ReturnStatusException;
 import tds.itemselection.base.ItemGroup;
+
+import java.util.UUID;
 
 public interface IAIROnline {
 
 	/**
 	 * 
 	 * @param connection
-	 * @param oppkey
-	 * @param isMsb
+	 * @param oppkey The opportunity key
+	 * @param isMsb Is this item group for a Multi-Stage Braille test?
 	 * @param errorRef
 	 * @return ItemGroup
 	 * @throws ReturnStatusException
 	 */
-	public ItemGroup getNextItemGroup (SQLConnection connection, UUID oppkey, boolean isMsb, _Ref<String> errorRef)  throws ReturnStatusException;
+	ItemGroup getNextItemGroup (SQLConnection connection, UUID oppkey, boolean isMsb, _Ref<String> errorRef)  throws ReturnStatusException;
 
 }

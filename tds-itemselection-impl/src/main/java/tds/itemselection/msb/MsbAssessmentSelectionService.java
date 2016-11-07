@@ -42,7 +42,7 @@ public interface MsbAssessmentSelectionService {
      *
      * @param connection
      * @param opportunityKey
-     * @param segmentCollection
+     * @param segmentCollection The cached test segments
      * @return Returns the ItemCandidatesData object that represents the fixed form selected
      * @throws Exception
      */
@@ -52,16 +52,16 @@ public interface MsbAssessmentSelectionService {
     /**
      * Generally this filter parameter will be "fixedform"
      *
-     * @param itemCandidates
-     * @param filter
+     * @param itemCandidates Metadata about all active remaining segments in the assessment
+     * @param filter The algorithm type to filter on
      * @return Filtered segment metadata (ItemCandidatesData) based on algorithm type
      */
     List<ItemCandidatesData> filterItemCandidatesByAlgorithm(List<ItemCandidatesData> itemCandidates, String filter);
 
     /**
      *
-     * @param itemCandidates
-     * @param segmentCollection
+     * @param itemCandidates Metadata about all active remaining segments in the assessment
+     * @param segmentCollection The cached test segments
      * @param connection
      * @return Retrieves the fully actualized test segment objects from their metadata
      * @throws Exception
@@ -83,7 +83,7 @@ public interface MsbAssessmentSelectionService {
      * Puts test into a state where it will end after the selected fixed form completes
      *
      * @param connection
-     * @param selectedSegmentPosition
+     * @param selectedSegmentPosition The next (and final) fixed form segment's position
      * @param opportunityKey
      */
     void cleanupUnusedSegments(SQLConnection connection, Long selectedSegmentPosition, UUID opportunityKey);

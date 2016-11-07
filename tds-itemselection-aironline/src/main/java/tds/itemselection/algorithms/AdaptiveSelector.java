@@ -8,17 +8,12 @@
  ******************************************************************************/
 package tds.itemselection.algorithms;
 
-import java.util.List;
-import java.util.Random;
-
-import org.apache.commons.lang.NotImplementedException;
+import AIR.Common.DB.SQLConnection;
+import TDS.Shared.Exceptions.ReturnStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import TDS.Shared.Exceptions.ReturnStatusException;
-import AIR.Common.DB.SQLConnection;
 import tds.itemselection.api.IItemSelection;
 import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.ItemCandidatesData;
@@ -37,6 +32,8 @@ import tds.itemselection.impl.sets.CsetGroup;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.SegmentCollection;
 import tds.itemselection.loader.TestSegment;
+
+import java.util.Random;
 
 /**
  * @author akulakov
@@ -67,8 +64,6 @@ public class AdaptiveSelector  extends AbstractAdaptiveSelector implements IItem
   private boolean 	_debug = false;
   
   private static Logger  _logger  = LoggerFactory.getLogger (AdaptiveSelector.class);
-
-
   
   public ItemGroup getNextItemGroup (SQLConnection connection,
 			ItemCandidatesData itemData) throws ItemSelectionException {
@@ -111,12 +106,6 @@ public class AdaptiveSelector  extends AbstractAdaptiveSelector implements IItem
     }
     return result;
   }
-
-  @Override
-  public ItemGroup getNextItemGroup(SQLConnection connection, ItemCandidatesData itemData, List<ItemGroup> itemGroups) throws ItemSelectionException {
-    throw new NotImplementedException();
-  }
-
 
   /* *
    *  1. Compute initial candidate itemgroup set (CSET1)

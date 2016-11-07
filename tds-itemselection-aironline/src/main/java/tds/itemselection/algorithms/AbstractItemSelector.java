@@ -8,7 +8,14 @@
  ******************************************************************************/
 package tds.itemselection.algorithms;
 
+import AIR.Common.DB.SQLConnection;
+import org.apache.commons.lang.NotImplementedException;
 import tds.itemselection.api.IItemSelection;
+import tds.itemselection.api.ItemSelectionException;
+import tds.itemselection.base.ItemCandidatesData;
+import tds.itemselection.base.ItemGroup;
+
+import java.util.List;
 
 public abstract class AbstractItemSelector implements IItemSelection {
 
@@ -26,5 +33,10 @@ public abstract class AbstractItemSelector implements IItemSelection {
 	  {
 		  return isSegmentCompleted;
 	  }
+
+	@Override
+	public ItemGroup getNextItemGroup(SQLConnection connection, ItemCandidatesData itemData, List<ItemGroup> itemGroups) throws ItemSelectionException {
+		throw new NotImplementedException("This method is for Multi-Stage Braille use only");
+	}
 
 }

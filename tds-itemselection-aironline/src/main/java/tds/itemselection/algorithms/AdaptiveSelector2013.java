@@ -8,18 +8,13 @@
  ******************************************************************************/
 package tds.itemselection.algorithms;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
+import AIR.Common.DB.SQLConnection;
+import AIR.Common.Helpers._Ref;
+import TDS.Shared.Exceptions.ReturnStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
 import tds.itemselection.api.IItemSelection;
 import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.ItemCandidatesData;
@@ -29,16 +24,23 @@ import tds.itemselection.expectedability.ExpectedAbilityComputationSmarter;
 import tds.itemselection.impl.blueprint.ActualInfoComputation;
 import tds.itemselection.impl.blueprint.Blueprint;
 import tds.itemselection.impl.bpmatchcomputation.BPMatchByItemWithIterativeGroupItemSelection;
-import tds.itemselection.impl.item.CsetItem;
 import tds.itemselection.impl.item.PruningStrategySmarter;
-import tds.itemselection.impl.sets.*;
+import tds.itemselection.impl.sets.CSetItem;
+import tds.itemselection.impl.sets.Cset1;
+import tds.itemselection.impl.sets.Cset1Factory2013;
+import tds.itemselection.impl.sets.CsetGroup;
+import tds.itemselection.impl.sets.CsetGroupCollection;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.SegmentCollection2;
 import tds.itemselection.loader.TestSegment;
 import tds.itemselection.termination.TerminationManager;
-import AIR.Common.DB.SQLConnection;
-import AIR.Common.Helpers._Ref;
-import TDS.Shared.Exceptions.ReturnStatusException;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements IItemSelection {
 
@@ -49,12 +51,12 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	  // a combination of test-constant and examinee-variable data
 	  protected Blueprint          		blueprint;
 
-	  protected Cset1              		cset1;
+	  protected Cset1 cset1;
 
 	  protected ItemCandidatesData 		itemCandidates;
 	  // itemCandidates contains oppkey, segmentKey, itempool;
 	  protected TestSegment        		segment;
-	  protected Cset1Factory2013       	csetFactory;
+	  protected Cset1Factory2013 csetFactory;
 	  
       public String 					terminationReason;
       		
@@ -221,7 +223,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 			 */
 			if(itemGroups != null) {
 				CsetGroupCollection collection = new CsetGroupCollection();
-				ArrayList<CsetGroup> csetGroups = new ArrayList<>();
+				List<CsetGroup> csetGroups = new ArrayList<>();
 				for(int i = 0; i < itemGroups.size(); i++) {
 					CsetGroup group = collection.setAndGet(itemGroups.get(i));
 					for(int j = 0; j < itemGroups.get(i).getItems().size(); j++) {
@@ -230,9 +232,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 					}
 					csetGroups.add(group);
 				}
-
-				cset1.itemGroups.clear();
-				cset1.itemGroups.addAll(csetGroups);
+				cset1.itemGroups = csetGroups;
 			}
 
 	        // compute the ability match for each group in cset1
