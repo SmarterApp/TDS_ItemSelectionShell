@@ -28,6 +28,7 @@ public class ItemCandidatesDataBuilder {
     private String groupID = "";
     private String blockID = "";
     private boolean isSimulation;
+    private boolean isActive;
 
     public ItemCandidatesData build() {
         return new ItemCandidatesData(
@@ -40,6 +41,7 @@ public class ItemCandidatesDataBuilder {
                 , blockID
                 , sessionKey
                 , isSimulation
+                , isActive
         );
     }
 

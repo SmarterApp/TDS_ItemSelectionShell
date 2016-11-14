@@ -63,7 +63,8 @@ public abstract class AbstractDBLoader implements IItemSelectionDBLoader {
 						record.<String> get(IItemSelectionDLL.GROUPID),
 						record.<String> get(IItemSelectionDLL.BLOCKID),
 						record.<UUID> get(IItemSelectionDLL.SESSION),
-						record.<Boolean> get(IItemSelectionDLL.ISSIMULATION));
+						record.<Boolean> get(IItemSelectionDLL.ISSIMULATION),
+						record.<Boolean> get(IItemSelectionDLL.ISACTIVE));
 			}
 		}
 		return itemCandidatesData;

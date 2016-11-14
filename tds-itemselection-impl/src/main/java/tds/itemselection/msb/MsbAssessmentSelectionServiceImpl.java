@@ -58,12 +58,12 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
         List<ItemCandidatesData> itemCandidates =
                 itemSelectionDbLoader.getAllItemCandidates(connection, opportunityKey);
         if (itemCandidates.isEmpty()) return null;
-        if (itemCandidates.get(0).getSegmentPosition() == 1) { //TODO: replace this logical statement to check whether it is active
+        ItemCandidatesData adaptiveSegmentData = itemCandidates.get(0);
+        if (itemCandidates.get(0).getSegmentPosition() == 1 && itemCandidates.get(0).isActive()) {
             return itemCandidates.get(0);
-        }
+        } else {
 
-        // TODO REMOVE
-        ItemCandidatesData adaptiveSegmentData = new ItemCandidatesData();
+        }
 
         List<ItemCandidatesData> filteredItemCandidates = filterItemCandidatesByAlgorithm(itemCandidates, FIXED_ALGORITHM);
         List<TestSegment> testSegments = getTestSegmentsForItemCandidates(filteredItemCandidates,
