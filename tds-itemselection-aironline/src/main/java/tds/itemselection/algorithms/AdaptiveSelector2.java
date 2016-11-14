@@ -19,33 +19,29 @@
 
 package tds.itemselection.algorithms;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Collections;
-
+import AIR.Common.DB.SQLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import AIR.Common.DB.SQLConnection;
 import tds.itemselection.api.IItemSelection;
 import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.IRTMeasures;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
-import tds.itemselection.base.TestItem;
 import tds.itemselection.impl.blueprint.Blueprint;
 import tds.itemselection.impl.blueprint.BpElement;
 import tds.itemselection.impl.blueprint.ReportingCategory;
-import tds.itemselection.impl.item.CsetItem;
 import tds.itemselection.impl.sets.CSetItemGroup;
-import tds.itemselection.impl.sets.CsetGroup;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.SegmentCollection2;
 import tds.itemselection.loader.StudentAbility;
 import tds.itemselection.loader.StudentHistory2013;
 import tds.itemselection.loader.TestSegment;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 
 /**
  * Class to adaptively select next set of items to administer for the given
@@ -83,6 +79,7 @@ public class AdaptiveSelector2   extends AbstractAdaptiveSelector  implements II
      * Past test history of the student 
      */
     private StudentHistory2013 _studentHistory = new StudentHistory2013();
+
 
     /**
      * Select the next item group to be administered
@@ -176,7 +173,7 @@ public class AdaptiveSelector2   extends AbstractAdaptiveSelector  implements II
         }
         return candidateItemGroup; 
     }
- 
+
     /**
      * Normalize the measures of the candidate groups in the set 
      * @param candidateGroups

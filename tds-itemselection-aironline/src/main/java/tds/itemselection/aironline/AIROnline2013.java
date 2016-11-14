@@ -24,6 +24,8 @@ import AIR.Common.DB.SQLConnection;
 import AIR.Common.Helpers._Ref;
 import AIR.Common.Utilities.SpringApplicationContext;
 import TDS.Shared.Exceptions.ReturnStatusException;
+import tds.itemselection.loader.SegmentCollection2;
+import tds.itemselection.msb.*;
 
 public class AIROnline2013 implements IAIROnline {
 	 @Autowired
@@ -37,16 +39,25 @@ public class AIROnline2013 implements IAIROnline {
 	 @Autowired
 	 @Qualifier ("ftSelector")
 	 private IItemSelection ftSelector;
-	 
-	/* @Autowired
-	 @Qualifier ("aa2013Selector")
-	 private IItemSelection aa2013Selector;*/
+
+	@Autowired
+	private MsbAssessmentSelectionService msbAssessmentSelectionService;
 
 	 private static Logger  _logger  = LoggerFactory.getLogger (AIROnline2013.class);
 	  
 	 private boolean _debug = false;
 
-	public ItemGroup getNextItemGroup(SQLConnection connection, UUID oppkey, _Ref<String> errorRef)
+	private boolean isMsb;
+
+	public boolean isMsb() {
+		return isMsb;
+	}
+
+	public void setMsb(boolean msb) {
+		isMsb = msb;
+	}
+
+	public ItemGroup getNextItemGroup(SQLConnection connection, UUID oppkey, boolean isMsb, _Ref<String> errorRef)
 			throws ReturnStatusException {
 
 	    ItemGroup result = null;
@@ -56,10 +67,16 @@ public class AIROnline2013 implements IAIROnline {
 
 		try {
 
-			itemCandidates = loader.getItemCandidates(connection, oppkey);
+			if(isMsb) {
+				SegmentCollection2 segmentCollection = SegmentCollection2.getInstance();
+				itemCandidates = msbAssessmentSelectionService.selectFixedMsbSegment(connection, oppkey, segmentCollection);
+			} else {
+				itemCandidates = loader.getItemCandidates(connection, oppkey);
+			}
 
-			if (!itemCandidates.getIsSimulation())
+			if (!itemCandidates.getIsSimulation()) {
 				itemCandidates.setSession(null);
+			}
 			algorithm = itemCandidates.getAlgorithm();
 
 			if (algorithm.equalsIgnoreCase("fixedform")) {
@@ -83,7 +100,7 @@ public class AIROnline2013 implements IAIROnline {
                            // this segment has been terminated based on configured conditions.
                            //  Call recursively in case there are more segments to administer.
                            //  Eventually we'll drop down into the SATISFIED case.
-							result = getNextItemGroup(connection, oppkey, errorRef);
+							result = getNextItemGroup(connection, oppkey, isMsb, errorRef);
 						} else {
 							errorRef.set("Adaptive item selection failed: Segment is not completed");
 						}
