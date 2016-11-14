@@ -14,6 +14,7 @@
 package tds.itemselection.msb;
 
 import AIR.Common.DB.SQLConnection;
+import TDS.Shared.Exceptions.ReturnStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -49,9 +50,6 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
     @Qualifier("aa2013Selector")
     private IItemSelection adaptiveSelector;
 
-    /* TODO: Pass in all of the segments (including inactive ones) and execute the second portion based on whether or
-     * not the first segment is active, not whether or not it is present
-     */
     @Override
     public ItemCandidatesData selectFixedMsbSegment(SQLConnection connection, UUID opportunityKey,
                                                     SegmentCollection2 segmentCollection) throws Exception {
@@ -61,11 +59,11 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
         ItemCandidatesData adaptiveSegmentData = itemCandidates.get(0);
         if (itemCandidates.get(0).getSegmentPosition() == 1 && itemCandidates.get(0).isActive()) {
             return itemCandidates.get(0);
-        } else {
-
         }
 
-        List<ItemCandidatesData> filteredItemCandidates = filterItemCandidatesByAlgorithm(itemCandidates, FIXED_ALGORITHM);
+
+        List<ItemCandidatesData> filteredItemCandidates = filterItemCandidatesByAlgorithm(
+                filterItemCandidatesByActive(itemCandidates, true), FIXED_ALGORITHM);
         List<TestSegment> testSegments = getTestSegmentsForItemCandidates(filteredItemCandidates,
                 segmentCollection, connection);
         ItemGroup itemGroup = adaptiveSelector.getNextItemGroup(connection,
@@ -92,6 +90,17 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
         ArrayList<ItemCandidatesData> itemCandidatesData = new ArrayList<>();
         for (int i = 0; i < itemCandidates.size(); i++) {
             if (itemCandidates.get(i).getAlgorithm().compareToIgnoreCase(filter) == 0) {
+                itemCandidatesData.add(itemCandidates.get(i));
+            }
+        }
+        return itemCandidatesData;
+    }
+
+    @Override
+    public List<ItemCandidatesData> filterItemCandidatesByActive(List<ItemCandidatesData> itemCandidates, boolean isActive) {
+        ArrayList<ItemCandidatesData> itemCandidatesData = new ArrayList<>();
+        for (int i = 0; i < itemCandidates.size(); i++) {
+            if (itemCandidates.get(i).isActive() == isActive) {
                 itemCandidatesData.add(itemCandidates.get(i));
             }
         }
@@ -134,8 +143,7 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
         return itemGroups;
     }
 
-    @Override
-    public void cleanupUnusedSegments(SQLConnection connection, Long selectedSegmentPosition, UUID opportunityKey) {
+    private void cleanupUnusedSegments(SQLConnection connection, Long selectedSegmentPosition, UUID opportunityKey) throws ReturnStatusException {
         itemSelectionDbLoader.cleanupDismissedItemCandidates(connection, selectedSegmentPosition, opportunityKey);
     }
 }

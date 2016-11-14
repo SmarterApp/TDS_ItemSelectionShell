@@ -84,7 +84,7 @@ public abstract class AbstractDBLoader implements IItemSelectionDBLoader {
 	}
 
 	@Override
-	public void cleanupDismissedItemCandidates(SQLConnection connection, Long selectedSegmentPosition, UUID oppKey) {
+	public void cleanupDismissedItemCandidates(SQLConnection connection, Long selectedSegmentPosition, UUID oppKey) throws ReturnStatusException {
 		iSelDLL.cleanupDismissedMsbItemCandidates(connection, selectedSegmentPosition, oppKey);
 	}
 }

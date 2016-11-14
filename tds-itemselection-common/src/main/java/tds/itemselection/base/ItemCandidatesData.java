@@ -167,9 +167,9 @@ public void setIsSimulation(Boolean isSimulation) {
    * @param segmentPosition
    * @param groupID
    * @param blockID
-   * @param itempool
    * @param session
    * @param isSimulation
+   * @param isActive
    */
   public ItemCandidatesData (UUID oppkey,
       String algorithm,

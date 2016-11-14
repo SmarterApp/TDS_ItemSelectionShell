@@ -95,7 +95,9 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	      // We have a collection of segments for our use
 	      SegmentCollection2 segs = SegmentCollection2.getInstance ();
 	      // Get the segment for this opportunity
-	      segment = segs.getSegment (connection, itemCandidates.getSession (), itemCandidates.getSegmentKey (), loader);
+	      segment = itemData.getIsSimulation() ?
+				  segs.getSegment (connection, itemCandidates.getSession (), itemCandidates.getSegmentKey (), loader) :
+				  segs.getSegment (connection, null, itemCandidates.getSegmentKey (), loader);
 	      if (segment == null)
 	      {
 	        error = "Unable to load blueprint";
@@ -233,6 +235,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 					csetGroups.add(group);
 				}
 				cset1.itemGroups = csetGroups;
+				n = Math.min(minitems, cset1.itemGroups.size());
 			}
 
 	        // compute the ability match for each group in cset1
@@ -258,6 +261,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 				return result;
 	
 		} catch (Exception e) {
+
 			_error = e.getMessage();
 			_logger.error("Error occurs in selectNext () method: "
 					+ e.getMessage(),e);

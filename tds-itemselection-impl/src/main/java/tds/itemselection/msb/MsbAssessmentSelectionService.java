@@ -52,11 +52,20 @@ public interface MsbAssessmentSelectionService {
     /**
      * Generally this filter parameter will be "fixedform"
      *
-     * @param itemCandidates Metadata about all active remaining segments in the assessment
+     * @param itemCandidates Metadata about all remaining segments in the assessment
      * @param filter The algorithm type to filter on
      * @return Filtered segment metadata (ItemCandidatesData) based on algorithm type
      */
     List<ItemCandidatesData> filterItemCandidatesByAlgorithm(List<ItemCandidatesData> itemCandidates, String filter);
+
+    /**
+     * This will weed out any inactive segments
+     *
+     * @param itemCandidates Metadata about all remaining segments in the assessment
+     * @param isActive Whether we want the active segments, or the inactive ones
+     * @return Filtered segment metadata (ItemCandidatesData) based on isActive
+     */
+    List<ItemCandidatesData> filterItemCandidatesByActive(List<ItemCandidatesData> itemCandidates, boolean isActive);
 
     /**
      *
@@ -78,14 +87,5 @@ public interface MsbAssessmentSelectionService {
      * @return A list of item groups
      */
     List<ItemGroup> buildCombinedItemGroups(List<TestSegment> testSegments);
-
-    /**
-     * Puts test into a state where it will end after the selected fixed form completes
-     *
-     * @param connection
-     * @param selectedSegmentPosition The next (and final) fixed form segment's position
-     * @param opportunityKey
-     */
-    void cleanupUnusedSegments(SQLConnection connection, Long selectedSegmentPosition, UUID opportunityKey);
 
 }

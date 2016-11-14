@@ -52,7 +52,7 @@ public interface IItemSelectionDBLoader
    * @param selectedSegmentPosition
    * @param oppKey
    */
-  void cleanupDismissedItemCandidates(SQLConnection connection, Long selectedSegmentPosition, UUID oppKey);
+  void cleanupDismissedItemCandidates(SQLConnection connection, Long selectedSegmentPosition, UUID oppKey) throws ReturnStatusException;
   
   /**
    * 

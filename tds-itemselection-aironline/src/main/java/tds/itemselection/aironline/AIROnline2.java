@@ -68,8 +68,9 @@ public class AIROnline2  implements IAIROnline {
 				itemCandidates = loader.getItemCandidates(connection, oppkey);
 			}
 
-			if (!itemCandidates.getIsSimulation())
+			if (!itemCandidates.getIsSimulation()) {
 				itemCandidates.setSession(null);
+			}
 			algorithm = itemCandidates.getAlgorithm();
 
 			if (algorithm.equalsIgnoreCase("fixedform")) {
