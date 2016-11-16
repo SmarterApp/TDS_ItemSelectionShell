@@ -60,7 +60,21 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
         if (itemCandidates.get(0).getSegmentPosition() == 1 && itemCandidates.get(0).isActive()) {
             return itemCandidates.get(0);
         }
-
+        int activeCount = 0;
+        int indexLastSeen = -1;
+        for(int i = 0; i < itemCandidates.size(); i++) {
+            if(itemCandidates.get(i).isActive()) {
+                activeCount ++;
+                indexLastSeen = i;
+            }
+        }
+        if(activeCount == 1) {
+            return itemCandidates.get(indexLastSeen);
+        } else if(activeCount == 0) {
+            ItemCandidatesData itemCandidatesData = new ItemCandidatesData();
+            itemCandidatesData.setAlgorithm("SATISFIED");
+            return itemCandidatesData;
+        }
 
         List<ItemCandidatesData> filteredItemCandidates = filterItemCandidatesByAlgorithm(
                 filterItemCandidatesByActive(itemCandidates, true), FIXED_ALGORITHM);

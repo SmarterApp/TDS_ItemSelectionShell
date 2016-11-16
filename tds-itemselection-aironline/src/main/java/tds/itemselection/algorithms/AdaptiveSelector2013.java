@@ -151,7 +151,7 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
 	        // check that we haven't satisfied configured termination conditions.
             // now check to see if we've satisfied configured termination conditions for this segment.
 	        TerminationManager termMgr = new TerminationManager(csetFactory.getBp());
-	        if (termMgr.IsSegmentComplete())
+	        if (termMgr.IsSegmentComplete() && (itemGroups == null || itemGroups.isEmpty()))
 	        {
 	            String reason = termMgr.SegmentCompleteReason;
 	            terminateSegment(connection, itemCandidates, reason);
