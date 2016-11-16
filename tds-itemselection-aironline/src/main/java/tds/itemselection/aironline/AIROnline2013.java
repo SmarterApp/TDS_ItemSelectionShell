@@ -114,9 +114,20 @@ public class AIROnline2013 implements IAIROnline {
 
 	      if(result != null)
 	      {
-		      result.setSegmentID(itemCandidates.getSegmentID());
-		      result.setSegmentKey(itemCandidates.getSegmentKey());
-		      result.setSegmentPosition(new Long(itemCandidates.getSegmentPosition()));
+			  /**
+			   * These null checks are required due to the recursive call in selector.isSegmentCompleted and was added
+			   * after the addition of support for Multi-Stage Braille Assessments.
+			   * Without these checks, the values returned from the Braille selector will be overriden.
+			   */
+			  if(result.getSegmentID() == null) {
+				  result.setSegmentID(itemCandidates.getSegmentID());
+			  }
+			  if(result.getSegmentKey() == null) {
+				  result.setSegmentKey(itemCandidates.getSegmentKey());
+			  }
+			  if(result.getSegmentPosition() == 0) {
+				  result.setSegmentPosition(new Long(itemCandidates.getSegmentPosition()));
+			  }
 
 	      }
 	      else if (errorRef.get() == null) 
