@@ -117,7 +117,12 @@ public class Cset1Factory2013 {
 
 	  }
 
-	 public Cset1 MakeCset1 (SQLConnection connection) throws ItemSelectionException, ReturnStatusException
+	  public Cset1 MakeCset1() throws ItemSelectionException, ReturnStatusException
+	  {
+		  return MakeCset1(false);
+	  }
+
+	 public Cset1 MakeCset1 (boolean ignoreParent) throws ItemSelectionException, ReturnStatusException
 	  {
 
 		// initialized Pool and created itemGroups!
@@ -136,7 +141,7 @@ public class Cset1Factory2013 {
 	    }
 	    // remove all item groups that are completely pruned or remain in 'used'
 	    // status
-	    itemGroups.removeUsed ();
+	    itemGroups.removeUsed (ignoreParent);
 
 	    ComputeSatisfaction ();
 

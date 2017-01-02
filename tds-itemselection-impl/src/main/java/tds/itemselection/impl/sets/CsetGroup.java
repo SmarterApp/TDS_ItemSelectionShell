@@ -713,6 +713,11 @@ public double getBpJitter ()
   // / </summary>
   public int getActiveCount ()
   {
+    return getActiveCount(false);
+  }
+
+  public int getActiveCount (boolean ignoreParent)
+  {
     int cnt = 0;
     for (TestItem item : items)
     {
@@ -721,7 +726,7 @@ public double getBpJitter ()
       {
         citem = (CsetItem) item;
       }
-      if (citem != null && citem.isActive ())
+      if (citem != null && citem.isActive (ignoreParent))
         ++cnt;
     }
     return cnt;

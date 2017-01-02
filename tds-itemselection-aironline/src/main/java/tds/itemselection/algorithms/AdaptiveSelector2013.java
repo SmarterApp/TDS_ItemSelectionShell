@@ -190,7 +190,8 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
                     }
                 }
             }
-		    cset1 = csetFactory.MakeCset1 (connection);
+            // Allow pauses along segment barriers
+		    cset1 = csetFactory.MakeCset1 (itemGroups != null);
 			this.blueprint = cset1.getBlueprint ();	
 			
             // Record current ability and information approximations (if there is a AdaptiveThetas listener)

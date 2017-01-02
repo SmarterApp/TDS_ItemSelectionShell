@@ -77,10 +77,14 @@ public class CsetGroupCollection
   // / </summary>
   public void removeUsed ()
   {
+    removeUsed(false);
+  }
+
+  public void removeUsed(boolean ignoreParent) {
     List<CsetGroup> remove = new ArrayList<CsetGroup> ();
     for (CsetGroup grp : _groups.values ())
     {
-      if (grp.getActiveCount() == 0)
+      if (grp.getActiveCount(ignoreParent) == 0)
         remove.add (grp);
     }
     for (CsetGroup grp : (Collection<CsetGroup>) remove)
