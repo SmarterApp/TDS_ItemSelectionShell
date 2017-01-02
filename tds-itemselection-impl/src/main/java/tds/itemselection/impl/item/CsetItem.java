@@ -138,8 +138,8 @@ public void setContentLevelCollection(
   // / </summary>
   public boolean isActive (boolean ignoreParent)
   {
-  return !pruned && this.isActive && !ItemUsed &&
-          (ignoreParent ? true : !_parentGroup.getUsed ());
+    return !pruned && this.isActive && !ItemUsed &&
+          (ignoreParent || !_parentGroup.getUsed ());
   }
 
   public boolean isActive ()

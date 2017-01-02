@@ -190,7 +190,12 @@ public class AdaptiveSelector2013 extends AbstractAdaptiveSelector implements II
                     }
                 }
             }
-            // Allow pauses along segment barriers
+            /*
+             *	If item groups are passed into this method, the method is being leveraged as a selector for
+             *	Multi-Stage Braille (MSB) assessments. Parent group exclusions for adaptive selection are not
+             *	a valid criteria for excluding retrieved item groups. Ignoring exclusion allows tests paused along
+             *	segment barriers to be restarted properly.
+             */
 		    cset1 = csetFactory.MakeCset1 (itemGroups != null);
 			this.blueprint = cset1.getBlueprint ();	
 			
