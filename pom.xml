@@ -58,6 +58,9 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<file.encoding>UTF-8</file.encoding>
 		<mockito.version>1.9.5</mockito.version>
+
+		<shared-master.version>3.0.1</shared-master.version>
+		<tds-dll.version>3.0.0</tds-dll.version>
 	</properties>
 
 	<dependencyManagement>
@@ -65,7 +68,13 @@
 			<dependency>
 				<groupId>org.opentestsystem.shared</groupId>
 				<artifactId>shared-db</artifactId>
-				<version>1.0.1-BUILD-SNAPSHOT</version>
+				<version>${shared-master.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opentestsystem.shared</groupId>
+				<artifactId>shared-db-test</artifactId>
+				<version>${shared-master.version}</version>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -90,6 +99,22 @@
 				<artifactId>c3p0</artifactId>
 				<version>${c3p0-version}</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.opentestsystem.delivery</groupId>
+				<artifactId>tds-dll-api</artifactId>
+				<version>${tds-dll.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opentestsystem.delivery</groupId>
+				<artifactId>tds-dll-mysql</artifactId>
+				<version>${tds-dll.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
