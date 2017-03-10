@@ -6,20 +6,20 @@
 	<groupId>org.opentestsystem.delivery</groupId>
 	<artifactId>tds-itemselection-master</artifactId>
 	<name>Item Selection Shell parent project</name>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>org.opentestsystem.shared</groupId>
+		<artifactId>shared-master</artifactId>
+		<version>3.0.1</version>
+	</parent>
 
 	<modules>
 		<module>tds-itemselection-common</module>
 		<module>tds-itemselection-impl</module>
    		<module>tds-itemselection-aironline</module>
 	</modules>
-	
-	<scm>
-        <connection>scm:git:https://github.com/SmarterApp/ItemSelectionShell</connection>
-        <developerConnection>scm:git:https://github.com/SmarterApp/ItemSelectionShell</developerConnection>
-        <url>https://github.com/SmarterApp/ItemSelectionShell</url>
-    </scm>
 
 	<licenses>
 		<license>
@@ -31,81 +31,11 @@
 	</licenses>
 
 	<properties>
-		<java-version>1.7</java-version>
-		<org.springframework-version>3.1.1.RELEASE</org.springframework-version>
-		<org.springframework-webflow-version>2.3.2.RELEASE</org.springframework-webflow-version>
-		<org.aspectj-version>1.6.10</org.aspectj-version>
-		<org.slf4j-version>1.7.5</org.slf4j-version>
-		<org.log4j-version>1.2.17</org.log4j-version>
-		<jackson.mapper.asl-version>1.9.12</jackson.mapper.asl-version>
-		<commons-lang-version>2.6</commons-lang-version>
-		<commons-configuration-version>1.6</commons-configuration-version>
-		<cobertura.version>2.6</cobertura.version>
-		<c3p0-version>0.9.2.1</c3p0-version>
-		<javax.faces-version>2.2.0</javax.faces-version>
-		<myfaces-version>2.1.12</myfaces-version>
-		<javax.el-version>3.0-b07</javax.el-version>
-		<jsp-api-version>2.1</jsp-api-version>
-		<jstl-version>1.2</jstl-version>
-		<junit-version>4.11</junit-version>
-		<maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
-		<maven-jxr-plugin-version>2.3</maven-jxr-plugin-version>
-		<maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
-		<exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
-		<maven-javadoc-plugin-version>2.9</maven-javadoc-plugin-version>
-		<maven-project-info-plugin-version>2.7</maven-project-info-plugin-version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<file.encoding>UTF-8</file.encoding>
-		<mockito.version>1.9.5</mockito.version>
-
-		<shared-master.version>3.0.1</shared-master.version>
 		<tds-dll.version>3.0.0</tds-dll.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>org.opentestsystem.shared</groupId>
-				<artifactId>shared-db</artifactId>
-				<version>${shared-master.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.opentestsystem.shared</groupId>
-				<artifactId>shared-db-test</artifactId>
-				<version>${shared-master.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>jcl-over-slf4j</artifactId>
-				<scope>test</scope>
-				<version>${org.slf4j-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<scope>test</scope>
-				<version>${org.slf4j-version}</version>
-			</dependency>
-			<dependency>
-				<groupId> log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>${org.log4j-version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.mchange</groupId>
-				<artifactId>c3p0</artifactId>
-				<version>${c3p0-version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>${junit-version}</version>
-				<scope>test</scope>
-			</dependency>
 			<dependency>
 				<groupId>org.opentestsystem.delivery</groupId>
 				<artifactId>tds-dll-api</artifactId>
@@ -123,7 +53,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>${maven-eclipse-plugin-version}</version>
+				<version>${maven-eclipse-plugin.version}</version>
 				<configuration>
 					<additionalProjectnatures>
 						<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
@@ -139,20 +69,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin-version}</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-					<compilerArgument>-Xlint:all</compilerArgument>
-					<showWarnings>true</showWarnings>
-					<showDeprecation>true</showDeprecation>
-					<skipTests>true</skipTests>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-				<version>${exec-maven-plugin-version}</version>
+				<version>${exec-maven-plugin.version}</version>
 				<configuration>
 					<mainClass>org.test.int1.Main</mainClass>
 				</configuration>
@@ -177,17 +98,17 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
-				<version>${maven-jxr-plugin-version}</version>
+				<version>${maven-jxr-plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${maven-javadoc-plugin-version}</version>
+				<version>${maven-javadoc-plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>${maven-project-info-plugin-version}</version>
+				<version>${maven-project-info-plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -196,5 +117,20 @@
 			</plugin>
 		</plugins>
 	</reporting>
+
+	<scm>
+		<connection>scm:git:https://github.com/SmarterApp/TDS_ItemSelectionShell.git</connection>
+		<developerConnection>scm:git:git://github.com/SmarterApp/TDS_ItemSelectionShell.git</developerConnection>
+		<url>https://github.com/SmarterApp/TDS_ItemSelectionShell</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>central</id>
+			<name>airdev-releases</name>
+			<url>https://airdev.jfrog.io/airdev/libs-releases-local</url>
+		</repository>
+	</distributionManagement>
 
 </project>
