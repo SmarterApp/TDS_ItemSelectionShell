@@ -18,6 +18,7 @@
 		<module>tds-itemselection-common</module>
 		<module>tds-itemselection-impl</module>
    		<module>tds-itemselection-aironline</module>
+		<module>tds-item-selection-components</module>
 	</modules>
 
 	<licenses>

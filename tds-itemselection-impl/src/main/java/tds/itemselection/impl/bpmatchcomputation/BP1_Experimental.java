@@ -11,8 +11,8 @@ package tds.itemselection.impl.bpmatchcomputation;
 import java.util.Random;
 
 import tds.itemselection.impl.blueprint.BpMetric;
-import tds.itemselection.impl.sets.Cset1Factory2013;
 import tds.itemselection.impl.sets.CsetGroup;
+import tds.itemselection.impl.sets.BlueprintEnabledCsetFactory;
 
 public class BP1_Experimental extends BlueprintMatchComputation {
 
@@ -21,7 +21,7 @@ public class BP1_Experimental extends BlueprintMatchComputation {
 	}
 
 	@Override
-	protected void CalculateBpMatchForGroup(Cset1Factory2013 csetFactory,
+	protected void CalculateBpMatchForGroup(BlueprintEnabledCsetFactory csetFactory,
 			CsetGroup group) {
 		// populate content levels
         group.populateContentLevels();

@@ -34,7 +34,7 @@ import tds.itemselection.loader.TestSegment;
 import AIR.Common.DB.SQLConnection;
 import TDS.Shared.Exceptions.ReturnStatusException;
 
-public class Cset1Factory2013 {
+public class Cset1Factory2013 extends BlueprintEnabledCsetFactory {
 	  private static Logger  _logger  = LoggerFactory.getLogger (Cset1Factory2013.class);
 	  /*
 	   * What can we expect the db to provide? The items in the student's customized
@@ -94,12 +94,6 @@ public class Cset1Factory2013 {
 	  private PruningStrategy pruningStrategy;
 
 
-	  public Blueprint getBp() {
-		return bp;
-	}
-	public void setBp(Blueprint bp) {
-		this.bp = bp;
-	}
 	public Cset1Factory2013 (UUID opportunityKey, IItemSelectionDBLoader loader, TestSegment segment)
 	  {
 	    this.loader = loader;

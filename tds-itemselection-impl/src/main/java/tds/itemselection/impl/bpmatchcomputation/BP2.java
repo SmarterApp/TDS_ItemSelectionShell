@@ -15,8 +15,8 @@ import tds.itemselection.base.TestItem;
 import tds.itemselection.impl.blueprint.ContentLevelCollection;
 import tds.itemselection.impl.item.CsetItem;
 import tds.itemselection.impl.sets.CSetItem;
-import tds.itemselection.impl.sets.Cset1Factory2013;
 import tds.itemselection.impl.sets.CsetGroup;
+import tds.itemselection.impl.sets.BlueprintEnabledCsetFactory;
 
 public class BP2  extends BlueprintMatchComputation {
 
@@ -25,7 +25,7 @@ public class BP2  extends BlueprintMatchComputation {
 		}
 
 	@Override
-	protected void CalculateBpMatchForGroup(Cset1Factory2013 csetFactory,
+	protected void CalculateBpMatchForGroup(BlueprintEnabledCsetFactory csetFactory,
 			CsetGroup group) {
 		
         double sum = 0;
