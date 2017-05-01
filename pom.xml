@@ -5,7 +5,7 @@
 	<groupId>org.opentestsystem.delivery</groupId>
 	<artifactId>tds-itemselection-master</artifactId>
 	<name>Item Selection Shell parent project</name>
-	<version>3.0.2-SNAPSHOT</version>
+	<version>3.0.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<parent>
