@@ -20,6 +20,8 @@ import tds.itemselection.model.OffGradeResponse;
 public interface ItemCandidatesService {
   /**
    * Retrieves the next {@link tds.itemselection.base.ItemCandidatesData} for an exam
+   * If an exam is complete, an ItemCandidatesData with algorithm {@link tds.dll.api.IItemSelectionDLL#SATISFIED}
+   * is returned.
    *
    * @param examId the examId
    * @return {@link tds.itemselection.base.ItemCandidatesData}
@@ -29,10 +31,12 @@ public interface ItemCandidatesService {
 
   /**
    * Retrieves all the available item candidates
+   * If an exam is complete, the list contains a single ItemCandidatesData with algorithm
+   * {@link tds.dll.api.IItemSelectionDLL#SATISFIED}.
    *
    * @param examId the exam item
    * @return the entire list of available {@link tds.itemselection.base.ItemCandidatesData}
-   * @throws ReturnStatusException
+   * @throws ReturnStatusException if there are any issues
    */
   List<ItemCandidatesData> getAllItemCandidates(UUID examId) throws ReturnStatusException;
 
@@ -85,7 +89,6 @@ public interface ItemCandidatesService {
    * @param examId exam id
    * @param designation designation
    * @param segmentKey the segment key
-   * @param reason the reason to add off grade items
    * @return
    * @throws ReturnStatusException
    */
