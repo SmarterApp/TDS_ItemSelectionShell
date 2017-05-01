@@ -18,6 +18,9 @@ import tds.itemselection.services.ItemCandidatesService;
 import tds.itemselection.services.ItemSelectionService;
 import tds.itemselection.services.MsbAssessmentSelectionService;
 
+import static tds.itemselection.model.ItemResponse.Status.FAILURE;
+import static tds.itemselection.model.ItemResponse.Status.SATISFIED;
+
 /**
  * NOTE - Port of {@link AIROnline2013}
  */
@@ -30,7 +33,11 @@ public class ItemSelectionServiceImpl implements ItemSelectionService {
   private final FixedFormSelector fixedFormSelector;
   private final FieldTestSelector fieldTestSelector;
 
-  public ItemSelectionServiceImpl(Map<AlgorithmType, ItemSelector> adaptiveItemSelectors, ItemCandidatesService itemCandidatesService, MsbAssessmentSelectionService msbAssessmentSelectionService, FixedFormSelector fixedFormSelector, FieldTestSelector fieldTestSelector) {
+  public ItemSelectionServiceImpl(Map<AlgorithmType, ItemSelector> adaptiveItemSelectors,
+                                  ItemCandidatesService itemCandidatesService,
+                                  MsbAssessmentSelectionService msbAssessmentSelectionService,
+                                  FixedFormSelector fixedFormSelector,
+                                  FieldTestSelector fieldTestSelector) {
     this.adaptiveItemSelectors = adaptiveItemSelectors;
     this.itemCandidatesService = itemCandidatesService;
     this.msbAssessmentSelectionService = msbAssessmentSelectionService;
@@ -81,15 +88,10 @@ public class ItemSelectionServiceImpl implements ItemSelectionService {
                 // this segment has been terminated based on configured conditions.
                 //  Call recursively in case there are more segments to administer.
                 //  Eventually we'll drop down into the SATISFIED case.
-                ItemResponse<ItemGroup> response = getNextItemGroup(examId, isMsb);
-
-                if(response.getErrorMessage().isPresent()) {
-                  message = response.getErrorMessage().get();
-                } else if (response.getResponseData().isPresent()){
-                  result = response.getResponseData().get();
-                } else {
-                  message = "Bad response data from the the selector";
+                if (logger.isDebugEnabled()) {
+                  logger.debug("Recursing to select next item group for exam: {}", examId);
                 }
+                return getNextItemGroup(examId, isMsb);
               } else {
                 message = "Adaptive item selection failed: Segment is not completed";
               }
@@ -97,8 +99,7 @@ public class ItemSelectionServiceImpl implements ItemSelectionService {
           }
           break;
         case SATISFIED:
-          message = "Test Complete";
-          break;
+          return new ItemResponse<>(SATISFIED);
         default:
           message = String.format("Unknown algorithm:  %s", itemCandidates.getAlgorithm());
       }
