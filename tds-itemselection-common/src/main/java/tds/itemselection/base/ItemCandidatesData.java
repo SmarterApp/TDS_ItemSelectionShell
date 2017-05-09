@@ -8,12 +8,11 @@
  ******************************************************************************/
 package tds.itemselection.base;
 
-import java.util.UUID;
-
+import TDS.Shared.Exceptions.ReturnStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import TDS.Shared.Exceptions.ReturnStatusException;
+import java.util.UUID;
 
 /**
  * @author akulakov
@@ -44,7 +43,7 @@ public class ItemCandidatesData
     }
 
     public boolean isActive() {
-        return isActive;
+        return isActive == null ? false : isActive;
     }
 
     public void setActive(boolean active) {
