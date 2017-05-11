@@ -31,7 +31,7 @@
 	</licenses>
 
 	<properties>
-		<tds-dll.version>3.0.0</tds-dll.version>
+		<tds-dll.version>3.0.1</tds-dll.version>
 	</properties>
 
 	<dependencyManagement>
