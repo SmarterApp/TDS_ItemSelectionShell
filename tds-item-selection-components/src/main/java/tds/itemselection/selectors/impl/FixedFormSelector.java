@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * Educational Online Test Delivery System 
  * Copyright (c) 2014 American Institutes for Research
  *
@@ -24,7 +24,7 @@ import tds.itemselection.services.ItemCandidatesService;
  */
 @Component
 public class FixedFormSelector extends AbstractItemSelector implements ItemSelector {
-  private static Logger _logger = LoggerFactory.getLogger(FixedFormSelector.class);
+  private static Logger logger = LoggerFactory.getLogger(FixedFormSelector.class);
   private static final String messageTemplate = "Exception %1$s executing fixed form selection algorithm. Exception error: %2$s";
   private final ItemCandidatesService itemCandidatesService;
 
@@ -43,7 +43,7 @@ public class FixedFormSelector extends AbstractItemSelector implements ItemSelec
         false);
     } catch (Exception e) {
       String error = String.format(messageTemplate, "Error: ", e.getMessage());
-      _logger.error(error);
+      logger.error(error);
       throw new ItemSelectionException(error);
     }
   }

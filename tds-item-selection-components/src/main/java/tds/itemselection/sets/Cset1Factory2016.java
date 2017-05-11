@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.ItemGroup;
@@ -37,7 +36,6 @@ import tds.itemselection.impl.sets.ItemPool;
 import tds.itemselection.impl.sets.PriorAdmins;
 import tds.itemselection.loader.StudentHistory2013;
 import tds.itemselection.loader.TestSegment;
-import tds.itemselection.services.ItemCandidatesService;
 
 /**
  * Updated implementation with minimal fixes of {@link tds.itemselection.impl.sets.Cset1Factory2013}
@@ -49,7 +47,6 @@ public class Cset1Factory2016 extends BlueprintEnabledCsetFactory {
   private CsetGroupCollection itemGroups = new CsetGroupCollection();
 
   private Cset1 cset1 = null;
-  private UUID oppkey = null;
   private List<String> customPool = new ArrayList<String>();
   // blueprint and itempool for segment
   private TestSegment segment;
@@ -68,26 +65,25 @@ public class Cset1Factory2016 extends BlueprintEnabledCsetFactory {
   // Indexed by sequence.
   private PriorAdmins priorAdmins = new PriorAdmins();
 
+  private StudentHistory2013 oppHData;
+
   // the bp-match routine, actual theta and info calcs, and the pruning strategy
   //  vary between the current algorithm and the new one.  The Cset1Factory is configured accordingly.
   private final BlueprintMatchComputation bpSatisfactionCalc;
   private final ActualInfoComputation actualInfoCalc;
   private final PruningStrategy pruningStrategy;
-  private final ItemCandidatesService itemCandidatesService;
 
   //TODO - Passing these services into an object that is holding state is a bit odd.  Carrying forward
-  public Cset1Factory2016(final UUID opportunityKey,
-                          final BlueprintMatchComputation bpMatchComp,
+  public Cset1Factory2016(final BlueprintMatchComputation bpMatchComp,
                           final ActualInfoComputation actualInfoComp,
                           final PruningStrategy pruningStrategy,
-                          final ItemCandidatesService itemCandidatesService,
-                          final TestSegment testSegment) {
-    this.oppkey = opportunityKey;
+                          final TestSegment testSegment,
+                          final StudentHistory2013 oppHData) {
     this.bpSatisfactionCalc = bpMatchComp;
     this.actualInfoCalc = actualInfoComp;
     this.pruningStrategy = pruningStrategy;
-    this.itemCandidatesService = itemCandidatesService;
     this.segment = testSegment;
+    this.oppHData = oppHData;
   }
 
   public Cset1 MakeCset1() throws ItemSelectionException, ReturnStatusException {
@@ -125,8 +121,6 @@ public class Cset1Factory2016 extends BlueprintEnabledCsetFactory {
    * @throws TDS.Shared.Exceptions.ReturnStatusException
    */
   public void LoadHistory() throws ItemSelectionException, ReturnStatusException {
-    StudentHistory2013 oppHData = itemCandidatesService.loadOppHistory(oppkey, segment.getSegmentKey());
-
     customPool = oppHData.get_itemPool();
     previousGroups = oppHData.get_previousTestItemGroups();
     excludeGroups = oppHData.get_previousFieldTestItemGroups();

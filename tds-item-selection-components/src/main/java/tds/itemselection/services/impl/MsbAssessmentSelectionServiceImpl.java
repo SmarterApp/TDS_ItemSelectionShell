@@ -13,19 +13,19 @@ import tds.itemselection.base.ItemGroup;
 import tds.itemselection.base.TestItem;
 import tds.itemselection.loader.TestSegment;
 import tds.itemselection.model.AlgorithmType;
-import tds.itemselection.selectors.ItemSelector;
+import tds.itemselection.selectors.MsbItemSelector;
 import tds.itemselection.services.ItemCandidatesService;
 import tds.itemselection.services.MsbAssessmentSelectionService;
 import tds.itemselection.services.SegmentService;
 
 @Service
 public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelectionService {
-  private final ItemSelector adaptiveSelector;
+  private final MsbItemSelector adaptiveSelector;
   private final ItemCandidatesService itemCandidatesService;
   private final SegmentService segmentService;
 
   @Autowired
-  public MsbAssessmentSelectionServiceImpl(ItemSelector adaptiveSelector, ItemCandidatesService itemCandidatesService, SegmentService segmentService) {
+  public MsbAssessmentSelectionServiceImpl(MsbItemSelector adaptiveSelector, ItemCandidatesService itemCandidatesService, SegmentService segmentService) {
     this.adaptiveSelector = adaptiveSelector;
     this.itemCandidatesService = itemCandidatesService;
     this.segmentService = segmentService;

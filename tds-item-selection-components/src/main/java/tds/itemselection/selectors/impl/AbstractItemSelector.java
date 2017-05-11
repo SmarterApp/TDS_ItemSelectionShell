@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * Educational Online Test Delivery System 
  * Copyright (c) 2014 American Institutes for Research
  *
@@ -8,24 +8,16 @@
  ******************************************************************************/
 package tds.itemselection.selectors.impl;
 
-import org.apache.commons.lang.NotImplementedException;
-
-import java.util.List;
-
-import tds.itemselection.api.ItemSelectionException;
-import tds.itemselection.base.ItemCandidatesData;
-import tds.itemselection.base.ItemGroup;
 import tds.itemselection.selectors.ItemSelector;
 
 public abstract class AbstractItemSelector implements ItemSelector {
-  String _error = null;
+  private String error = null;
 
-  // have termination condition(s) been met.
-  boolean isSegmentCompleted = false;
+  private boolean isSegmentCompleted = false;
 
   @Override
   public String getItemSelectorError() {
-    return _error;
+    return error;
   }
 
   @Override
@@ -33,8 +25,11 @@ public abstract class AbstractItemSelector implements ItemSelector {
     return isSegmentCompleted;
   }
 
-  @Override
-  public ItemGroup getNextItemGroup(ItemCandidatesData itemData, List<ItemGroup> itemGroups) throws ItemSelectionException {
-    throw new NotImplementedException("This method is for Multi-Stage Braille use only");
+  void setError(final String error) {
+    this.error = error;
+  }
+
+  void setSegmentCompleted(final boolean segmentCompleted) {
+    isSegmentCompleted = segmentCompleted;
   }
 }

@@ -1,11 +1,11 @@
-/*******************************************************************************
+/*
  * Educational Online Test Delivery System 
  * Copyright (c) 2014 American Institutes for Research
  *
  * Distributed under the AIR Open Source License, Version 1.0 
  * See accompanying file AIR-License-1_0.txt or at
  * http://www.smarterapp.org/documents/American_Institutes_for_Research_Open_Source_Software_License.pdf
- ******************************************************************************/
+ */
 package tds.itemselection.selectors.impl;
 
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ import tds.itemselection.services.ItemCandidatesService;
  */
 @Component
 public class FieldTestSelector extends AbstractItemSelector implements ItemSelector {
-  private static Logger _logger = LoggerFactory.getLogger(FieldTestSelector.class);
+  private static Logger logger = LoggerFactory.getLogger(FieldTestSelector.class);
 
   private final ItemCandidatesService itemCandidatesService;
 
@@ -43,7 +43,7 @@ public class FieldTestSelector extends AbstractItemSelector implements ItemSelec
         true);
     } catch (Exception e) {
       String error = String.format("Exception %1$s executing field test selection algorithm. Exception error: %2$s", "Exception", e.getMessage());
-      _logger.error(error);
+      logger.error(error);
       throw new ItemSelectionException(error);
     }
   }

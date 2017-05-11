@@ -18,7 +18,6 @@ import tds.itemselection.services.ItemCandidatesService;
 import tds.itemselection.services.ItemSelectionService;
 import tds.itemselection.services.MsbAssessmentSelectionService;
 
-import static tds.itemselection.model.ItemResponse.Status.FAILURE;
 import static tds.itemselection.model.ItemResponse.Status.SATISFIED;
 
 /**

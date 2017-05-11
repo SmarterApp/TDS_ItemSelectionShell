@@ -9,6 +9,7 @@ import java.util.Map;
 
 import tds.itemselection.model.AlgorithmType;
 import tds.itemselection.selectors.ItemSelector;
+import tds.itemselection.selectors.MsbItemSelector;
 import tds.itemselection.selectors.impl.FieldTestSelector;
 import tds.itemselection.selectors.impl.FixedFormSelector;
 import tds.itemselection.services.ItemCandidatesService;
@@ -42,7 +43,7 @@ public class ItemSelectionConfiguration {
   }
 
   @Bean
-  public MsbAssessmentSelectionService getMsbAssessmentService(@Qualifier("adaptiveSelector") ItemSelector adaptiveSelector,
+  public MsbAssessmentSelectionService getMsbAssessmentService(@Qualifier("adaptiveSelector") MsbItemSelector adaptiveSelector,
                                                                ItemCandidatesService itemCandidatesService,
                                                                SegmentService segmentService) {
     return new MsbAssessmentSelectionServiceImpl(adaptiveSelector, itemCandidatesService, segmentService);
