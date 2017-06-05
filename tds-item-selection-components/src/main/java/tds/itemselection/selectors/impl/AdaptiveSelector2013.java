@@ -40,13 +40,6 @@ public class AdaptiveSelector2013 extends AbstractItemSelector implements MsbIte
   private static final String messageTemplate = "Exception %1$s executing adaptive algorithm. Exception error: %2$s.";
   private static Logger logger = LoggerFactory.getLogger(AdaptiveSelector2013.class);
 
-  // a combination of test-constant and examinee-variable data
-  private Blueprint blueprint;
-  private Cset1 cset1;
-  private ItemCandidatesData itemCandidates;
-  private TestSegment segment;
-  private Random rand = new Random();
-
   private final SegmentService segmentService;
   private final ItemCandidatesService itemCandidatesService;
 
@@ -66,16 +59,16 @@ public class AdaptiveSelector2013 extends AbstractItemSelector implements MsbIte
     String error = "";
 
     try {
-      itemCandidates = itemData;
+      ItemCandidatesData itemCandidates = itemData;
 
-      segment = segmentService.getSegment(null, itemCandidates.getSegmentKey());
+      TestSegment segment = segmentService.getSegment(null, itemCandidates.getSegmentKey());
       if (segment == null) {
         error = "Unable to load blueprint";
         logger.error(String.format(messageTemplate, "AdaptiveSelection", error));
         throw new ItemSelectionException(error);
       }
 
-      result = selectNext(itemGroups);
+      result = selectNext(itemGroups, itemCandidates, segment);
 
       if (result == null) {
         error = "Adaptive item selection failed: Try to find next segment";
@@ -94,12 +87,13 @@ public class AdaptiveSelector2013 extends AbstractItemSelector implements MsbIte
   }
 
 
-  private ItemGroup selectNext(List<ItemGroup> itemGroups) throws ItemSelectionException, ReturnStatusException {
+  private ItemGroup selectNext(List<ItemGroup> itemGroups, ItemCandidatesData itemCandidates, TestSegment segment) throws ItemSelectionException, ReturnStatusException {
     /*
      *  1. Compute initial candidate itemgroup set (Cset1) (moved outside of adaptive selector)
      *  2. Compute second candidate itemgroup set Cset2
      *  3. Return best itemgroup within Cset2
      */
+    final Random rand = new Random();
 
     StudentHistory2013 oppHData = itemCandidatesService.loadOppHistory(itemCandidates.getOppkey(), segment.getSegmentKey());
 
@@ -123,7 +117,7 @@ public class AdaptiveSelector2013 extends AbstractItemSelector implements MsbIte
       TerminationManager termMgr = new TerminationManager(csetFactory.getBp());
       if (termMgr.IsSegmentComplete() && (itemGroups == null || itemGroups.isEmpty())) {
         String reason = termMgr.SegmentCompleteReason;
-        terminateSegment(itemCandidates, reason);
+        terminateSegment(itemCandidates, reason, segment);
         return null;
       }
 
@@ -159,16 +153,16 @@ public class AdaptiveSelector2013 extends AbstractItemSelector implements MsbIte
        *	a valid criteria for excluding retrieved item groups. Ignoring exclusion allows tests paused along
        *	segment barriers to be restarted properly.
        */
-      cset1 = csetFactory.MakeCset1(itemGroups != null);
-      this.blueprint = cset1.getBlueprint();
+      Cset1 cset1 = csetFactory.MakeCset1(itemGroups != null);
+      Blueprint blueprint = cset1.getBlueprint();
 
       //Per Jon, if we're out of groups, terminate the segment.
-      if (this.cset1.itemGroups.size() < 1) {
-        terminateSegment(itemCandidates, "POOL EMPTY");
+      if (cset1.itemGroups.size() < 1) {
+        terminateSegment(itemCandidates, "POOL EMPTY", segment);
         return null;
       }
-      int minitems = Math.max(1, this.blueprint.randomizerIndex);
-      int minfirstitems = Math.max(1, this.blueprint.randomizerInitialIndex);
+      int minitems = Math.max(1, blueprint.randomizerIndex);
+      int minfirstitems = Math.max(1, blueprint.randomizerInitialIndex);
 
       if (blueprint.numAdministered < blueprint.getReportingCategories().size()) {
         minitems = minfirstitems;
@@ -201,7 +195,7 @@ public class AdaptiveSelector2013 extends AbstractItemSelector implements MsbIte
       }
 
       // compute the ability match for each group in cset1
-      computeAbilityMatch();
+      computeAbilityMatch(cset1);
 
       // Once the ability match for each item is computed, call cset1 to finalize the selection metrics
       // by normalizing ability metrics and combining with blueprint metrics.
@@ -211,8 +205,8 @@ public class AdaptiveSelector2013 extends AbstractItemSelector implements MsbIte
       int index = rand.nextInt(n);
 
       CsetGroup cg = cset1.itemGroups.get(index);
-      sortSelectedGroup(cg);
-      PruneSelectedGroup(cg);
+      sortSelectedGroup(cg, blueprint, rand);
+      PruneSelectedGroup(cg, blueprint);
       ItemGroup result = new ItemGroup(cg.groupID, blueprint.segmentKey, blueprint.segmentID, blueprint.segmentPosition,
         cg.getNumberOfItemsRequired(), cg.getMaximumNumberOfItems());
 
@@ -229,7 +223,7 @@ public class AdaptiveSelector2013 extends AbstractItemSelector implements MsbIte
     }
   }
 
-  private void pruneItemGroup(CsetGroup group, boolean pruneForStrictMax) {
+  private void pruneItemGroup(CsetGroup group, boolean pruneForStrictMax, Blueprint blueprint) {
     if (group.getActiveIncludedCount() <= 1)
       return; // must have more than one item to prune
 
@@ -238,7 +232,7 @@ public class AdaptiveSelector2013 extends AbstractItemSelector implements MsbIte
     // Then prune for items over the test max length
     // In no case should the group be pruned down to zero.
     if (pruneForStrictMax)
-      pruneStrictMaxes(group);
+      pruneStrictMaxes(group, blueprint);
 
     if (group.getActiveCount() <= 1)
       return;
@@ -258,7 +252,7 @@ public class AdaptiveSelector2013 extends AbstractItemSelector implements MsbIte
 
   }
 
-  private void pruneStrictMaxes(CsetGroup group) {
+  private void pruneStrictMaxes(CsetGroup group, Blueprint blueprint) {
     // even though no individual item violates a strict max, the combined
     // administration of all group items may do so
     // determine which strict maxes are violated and delete just enough items to
@@ -301,7 +295,7 @@ public class AdaptiveSelector2013 extends AbstractItemSelector implements MsbIte
     }
   }
 
-  private void computeAbilityMatch() throws ReturnStatusException {
+  private void computeAbilityMatch(Cset1 cset1) throws ReturnStatusException {
     cset1.ComputeExpectedAbility(new ExpectedAbilityComputationSmarter());
   }
 
@@ -311,8 +305,8 @@ public class AdaptiveSelector2013 extends AbstractItemSelector implements MsbIte
   // / prior to the final pruning stage.
   // / </summary>
   // / <param name="cg"></param>
-  private void sortSelectedGroup(CsetGroup cg) {
-    cg.sort(blueprint, true, rand);
+  private void sortSelectedGroup(CsetGroup cg, Blueprint blueprint, Random r) {
+    cg.sort(blueprint, true, r);
   }
 
   // / <summary>
@@ -320,15 +314,15 @@ public class AdaptiveSelector2013 extends AbstractItemSelector implements MsbIte
   // strict maxes
   // / </summary>
   // / <param name="group"></param>
-  private void PruneSelectedGroup(CsetGroup group) {
-    pruneItemGroup(group, false);
+  private void PruneSelectedGroup(CsetGroup group, Blueprint blueprint) {
+    pruneItemGroup(group, false, blueprint);
   }
 
   /// <summary>
   /// Terminates the current segment for the reason provided.
   /// </summary>
   /// <param name="reason"></param>
-  private void terminateSegment(ItemCandidatesData itemCandidates, String reason) throws ReturnStatusException {
+  private void terminateSegment(ItemCandidatesData itemCandidates, String reason, TestSegment segment) throws ReturnStatusException {
     if (itemCandidatesService.setSegmentSatisfied(itemCandidates.getOppkey(), segment.position, reason)) {
       setSegmentCompleted(true);
     } else
