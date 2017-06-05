@@ -37,6 +37,11 @@ public class MsbAssessmentSelectionServiceImpl implements MsbAssessmentSelection
       itemCandidatesService.getAllItemCandidates(opportunityKey);
     if (itemCandidates.isEmpty()) return null;
     ItemCandidatesData adaptiveSegmentData = itemCandidates.get(0);
+
+    if(adaptiveSegmentData.getAlgorithm().equalsIgnoreCase(AlgorithmType.SATISFIED.getType())) {
+      return adaptiveSegmentData;
+    }
+
     if (itemCandidates.get(0).getSegmentPosition() == 1 && itemCandidates.get(0).isActive()) {
       return itemCandidates.get(0);
     }
