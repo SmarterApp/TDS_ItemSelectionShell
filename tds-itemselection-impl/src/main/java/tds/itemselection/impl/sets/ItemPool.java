@@ -328,12 +328,16 @@ public class ItemPool
     // for debug only
     public Collection<ItemGroup> getItemGroups()
     {
-    	return this._itemGroups.values();
+		return this._itemGroups.values();
     }
+
     public Collection<TestItem> getItems()
     {
-    	return this._items.values();
+		return this._items.values();
     }
 
-
+    public Collection<TestItem> getSiblingItems()
+	{
+		return this._siblingItems.values();
+    }
 }

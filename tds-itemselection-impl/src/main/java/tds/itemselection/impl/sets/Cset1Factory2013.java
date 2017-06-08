@@ -1,12 +1,17 @@
-/*******************************************************************************
+/*
  * Educational Online Test Delivery System 
  * Copyright (c) 2014 American Institutes for Research
- *   
+ *
  * Distributed under the AIR Open Source License, Version 1.0 
  * See accompanying file AIR-License-1_0.txt or at
  * http://www.smarterapp.org/documents/American_Institutes_for_Research_Open_Source_Software_License.pdf
- ******************************************************************************/
+ */
 package tds.itemselection.impl.sets;
+
+import AIR.Common.DB.SQLConnection;
+import TDS.Shared.Exceptions.ReturnStatusException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,25 +21,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.ItemGroup;
 import tds.itemselection.base.TestItem;
 import tds.itemselection.impl.ItemResponse;
 import tds.itemselection.impl.blueprint.ActualInfoComputation;
-import tds.itemselection.impl.blueprint.Blueprint;
 import tds.itemselection.impl.bpmatchcomputation.BlueprintMatchComputation;
 import tds.itemselection.impl.item.CsetItem;
 import tds.itemselection.impl.item.PruningStrategy;
 import tds.itemselection.loader.IItemSelectionDBLoader;
 import tds.itemselection.loader.StudentHistory2013;
 import tds.itemselection.loader.TestSegment;
-import AIR.Common.DB.SQLConnection;
-import TDS.Shared.Exceptions.ReturnStatusException;
 
-public class Cset1Factory2013 {
+public class Cset1Factory2013 extends BlueprintEnabledCsetFactory {
 	  private static Logger  _logger  = LoggerFactory.getLogger (Cset1Factory2013.class);
 	  /*
 	   * What can we expect the db to provide? The items in the student's customized
@@ -50,7 +49,6 @@ public class Cset1Factory2013 {
 	   * Blueprint (for now, provided by the db on each item selection request)
 	   */
 
-	  private Blueprint                           bp             = null;
 	  private Map<String, CsetItem>     		  items          = new HashMap<String, CsetItem> ();
 	  private CsetGroupCollection                 itemGroups     = new CsetGroupCollection ();
 
@@ -86,7 +84,7 @@ public class Cset1Factory2013 {
 	  // collection of items used, each element is a sequence.
 	  // Indexed by sequence.
 	  private PriorAdmins                         priorAdmins    = new PriorAdmins ();
-	  
+
 	  // the bp-match routine, actual theta and info calcs, and the pruning strategy
 	  //  vary between the current algorithm and the new one.  The Cset1Factory is configured accordingly.
 	  private BlueprintMatchComputation bpSatisfactionCalc;
@@ -94,19 +92,13 @@ public class Cset1Factory2013 {
 	  private PruningStrategy pruningStrategy;
 
 
-	  public Blueprint getBp() {
-		return bp;
-	}
-	public void setBp(Blueprint bp) {
-		this.bp = bp;
-	}
 	public Cset1Factory2013 (UUID opportunityKey, IItemSelectionDBLoader loader, TestSegment segment)
 	  {
 	    this.loader = loader;
 	    this.oppkey = opportunityKey;
 	    this.segment = segment;
 	  }
-	  public Cset1Factory2013 (UUID opportunityKey, IItemSelectionDBLoader loader, 
+	  public Cset1Factory2013 (UUID opportunityKey, IItemSelectionDBLoader loader,
 			  BlueprintMatchComputation bpMatchComp, ActualInfoComputation actualInfoComp, PruningStrategy pruningStrategy)
 	  {
 	    this.loader = loader;
@@ -117,7 +109,12 @@ public class Cset1Factory2013 {
 
 	  }
 
-	 public Cset1 MakeCset1 (SQLConnection connection) throws ItemSelectionException, ReturnStatusException
+	  public Cset1 MakeCset1() throws ItemSelectionException, ReturnStatusException
+	  {
+		  return MakeCset1(false);
+	  }
+
+	 public Cset1 MakeCset1 (boolean ignoreParent) throws ItemSelectionException, ReturnStatusException
 	  {
 
 		// initialized Pool and created itemGroups!
@@ -136,34 +133,34 @@ public class Cset1Factory2013 {
 	    }
 	    // remove all item groups that are completely pruned or remain in 'used'
 	    // status
-	    itemGroups.removeUsed ();
+	    itemGroups.removeUsed (ignoreParent);
 
 	    ComputeSatisfaction ();
 
 	    return this.cset1;
 	  }
-	 
+
 	/**
 	 * Load the student's previous responses into a copy of the BP that can be
 	 * modified for this student/opp.
-	 * @throws ItemSelectionException 
-	 * @throws ReturnStatusException 
+	 * @throws ItemSelectionException
+	 * @throws ReturnStatusException
 	 */
      public void LoadHistory(SQLConnection connection) throws ItemSelectionException, ReturnStatusException
      {
  	    StudentHistory2013 oppHData =  loader.loadOppHistory (connection, oppkey, segment.getSegmentKey ());
-	    
+
  	    customPool 		= oppHData.get_itemPool();
  	    previousGroups 	= oppHData.get_previousTestItemGroups();
  	    excludeGroups 	= oppHData.get_previousFieldTestItemGroups();
  	    responses 		= oppHData.get_previousResponses();
  	    startAbility 	= oppHData.getStartAbility ();
- 	    
+
  	    bp = segment.getBp ().copy();
  	    bp.setStartAbilityRC( startAbility);
  	    bp.setActualInfoComputation(actualInfoCalc);
  	    bp.offGradePoolFilter = oppHData.getOffgradeFilter();
- 	    
+
         ProcessResponses();
 
 		// if there are previous responses, calculate the standard error at the BP and RC levels
@@ -176,7 +173,7 @@ public class Cset1Factory2013 {
 	 /**
 	   * Add response item groups to excludeGroups, and update blueprint
 	   * satisfaction and ability estimates
-	 * @throws ReturnStatusException 
+	 * @throws ReturnStatusException
 	   */
 	  private void ProcessResponses () throws ReturnStatusException
 	  {
@@ -251,7 +248,7 @@ public class Cset1Factory2013 {
 	      if (item == null)
 	        continue;
 	     // If all items are notActive or FieldTest we will have empty itemGroups !
-	      if (!excludeGroups.contains (item.groupID) && item.isActive && !item.isFieldTest 
+	      if (!excludeGroups.contains (item.groupID) && item.isActive && !item.isFieldTest
 	          && !items.containsKey (item.itemID)) // added in version from 2015-03-13
 	      {
 
@@ -259,7 +256,7 @@ public class Cset1Factory2013 {
 	      // Here is the only point in code where we load ItemGroup from pool in itemGroups member
 	        csetGrp = itemGroups.setAndGet (grp); // makes the csetgroup if it does not
 	                                        // exist and adds to the collection
-	        
+
 	        cSetItem = new CSetItem (item, csetGrp);
 	        csetGrp.addItem (cSetItem);
 
@@ -285,11 +282,11 @@ public class Cset1Factory2013 {
 	    // through them all when recycling.
 	    priorAdmins.sortItems ();
 	  }
-	  
+
 	  /**
-	   * Computes blueprint satisfaction 
+	   * Computes blueprint satisfaction
 	   * on all remaining itemgroups (not pruned or used)
-	 * @throws ReturnStatusException 
+	 * @throws ReturnStatusException
 	   */
 	  private void ComputeSatisfaction () throws ItemSelectionException, ReturnStatusException
 	  {
@@ -306,8 +303,8 @@ public class Cset1Factory2013 {
 	    CsetGroup group;
 	    CsetGroup firstGroup;
 	    if (cset1 == null)
-	      cset1 = new Cset1 (bp); 
-	    
+	      cset1 = new Cset1 (bp);
+
 	    this.bpSatisfactionCalc.execute(this, itemGroups.getValues ());
 //	    for (CsetGroup grp : itemGroups.getValues ())
 //	    {
@@ -336,14 +333,14 @@ public class Cset1Factory2013 {
 	    	return;
 	    } else
 	    {
-	        firstGroup =  groups.get (0);  // for debugging  	
+	        firstGroup =  groups.get (0);  // for debugging
 	    }
 
 	    if (bp.numAdministered == 0)
 	      cset1Size = Math.max (bp.cSet1Size, bp.randomizerInitialIndex);
 	    else
 	      cset1Size = Math.max (bp.cSet1Size, bp.randomizerIndex);
-	    
+
 	    maxMetric = firstGroup.selectionMetric;
 	    // find the 'last' group index
 	    last = Math.min (cset1Size, groups.size ()) - 1;

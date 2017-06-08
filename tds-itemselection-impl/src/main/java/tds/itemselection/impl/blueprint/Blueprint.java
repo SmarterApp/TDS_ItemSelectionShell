@@ -85,7 +85,7 @@ public class Blueprint implements IBpInfoContainer {
 	public double startAbility;
 	public double slope = SLOPE;
 	public double intercept = INTERCEPT;
-	protected double startInfo = START_INFO;
+	public double startInfo = START_INFO;
 	public String adaptiveVersion = ADAPTIVE_VERSION;
 	// adaptiveVersion required to discriminate between different methods of
 	// computing blueprint metric (for now)
@@ -932,6 +932,14 @@ public class Blueprint implements IBpInfoContainer {
 	 * Constructor
 	 */
 	public Blueprint() {
+	}
+
+	public void setBluePrintElements(final HashMap<String, BpElement> _bluePrintElements) {
+		this._bluePrintElements = _bluePrintElements;
+	}
+
+	public void setReportingCategories(final HashMap<String, ReportingCategory> _reportingCategories) {
+		this._reportingCategories = _reportingCategories;
 	}
 
 	/**

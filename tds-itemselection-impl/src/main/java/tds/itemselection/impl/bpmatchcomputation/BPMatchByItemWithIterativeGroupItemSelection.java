@@ -8,6 +8,8 @@
  ******************************************************************************/
 package tds.itemselection.impl.bpmatchcomputation;
 
+import TDS.Shared.Exceptions.ReturnStatusException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import TDS.Shared.Exceptions.ReturnStatusException;
 import tds.itemselection.base.TestItem;
 import tds.itemselection.expectedability.ExpectedAbilityComputationSmarter;
 import tds.itemselection.impl.blueprint.Blueprint;
@@ -26,8 +27,8 @@ import tds.itemselection.impl.item.PruningStrategy;
 import tds.itemselection.impl.sets.CSetItem;
 import tds.itemselection.impl.sets.CSetItemByAbilityMatchDescComparer;
 import tds.itemselection.impl.sets.CSetItemByRequiredSelectionMetricDescComparer;
-import tds.itemselection.impl.sets.Cset1Factory2013;
 import tds.itemselection.impl.sets.CsetGroup;
+import tds.itemselection.impl.sets.BlueprintEnabledCsetFactory;
 
 public class BPMatchByItemWithIterativeGroupItemSelection extends BlueprintMatchComputation{
 
@@ -39,15 +40,15 @@ public class BPMatchByItemWithIterativeGroupItemSelection extends BlueprintMatch
 		super(rand);
 	}
 
-    private void InitializePrunedState(Cset1Factory2013 cset1Factory)
+    private void InitializePrunedState(BlueprintEnabledCsetFactory cset1Factory)
     {
-        initialItemPrunedState = new HashMap<String, Boolean>();
+        initialItemPrunedState = new HashMap<>();
         for (CSetItem item : cset1Factory.getBp().getItems())
             initialItemPrunedState.put(item.itemID, item.pruned);
     }
 
 	@Override
-	protected void CalculateBpMatchForGroup(Cset1Factory2013 csetFactory,
+	protected void CalculateBpMatchForGroup(BlueprintEnabledCsetFactory csetFactory,
 			CsetGroup group) throws ReturnStatusException {
 		// populate content levels
 		group.populateContentLevels();
@@ -235,7 +236,7 @@ public class BPMatchByItemWithIterativeGroupItemSelection extends BlueprintMatch
     /// <param name="csetFactory"></param>
     /// <param name="groups"></param>
     @Override
-    public void execute(Cset1Factory2013 csetFactory, Collection<CsetGroup> groups) throws ReturnStatusException
+    public void execute(BlueprintEnabledCsetFactory csetFactory, Collection<CsetGroup> groups) throws ReturnStatusException
     {
         super.execute (csetFactory, groups);
         
@@ -256,9 +257,8 @@ public class BPMatchByItemWithIterativeGroupItemSelection extends BlueprintMatch
         }
     }
     
-    // 
-    public void execute(Cset1Factory2013 csetFactory, CsetGroup group) throws ReturnStatusException
-    {
+    @Override
+    public void execute(BlueprintEnabledCsetFactory csetFactory, CsetGroup group) throws ReturnStatusException {
         // if this group has no more than 1 item, we can just run bp2.
         //  Same if all items in the group are marked as required.
         if (group.getActiveCount() <= 1 || group.isAllItemsRequired())

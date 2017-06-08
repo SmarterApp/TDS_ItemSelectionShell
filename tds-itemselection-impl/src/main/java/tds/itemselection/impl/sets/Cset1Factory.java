@@ -39,7 +39,7 @@ import tds.itemselection.loader.TestSegment;
  * @author akulakov
  * 
  */
-public class Cset1Factory
+public class Cset1Factory extends BlueprintEnabledCsetFactory
 {
   private static Logger  _logger  = LoggerFactory.getLogger (Cset1Factory.class);
   /*
@@ -56,7 +56,6 @@ public class Cset1Factory
    * Blueprint (for now, provided by the db on each item selection request)
    */
 
-  private Blueprint                           bp             = null;
   private Map<String, CsetItem>     		  items          = new HashMap<String, CsetItem> ();
   private CsetGroupCollection                 itemGroups     = new CsetGroupCollection ();
 

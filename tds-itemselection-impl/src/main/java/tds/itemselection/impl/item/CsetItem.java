@@ -136,9 +136,15 @@ public void setContentLevelCollection(
   // / Cset1 factory may remove this item from the pool even though the base
   // item is active
   // / </summary>
+  public boolean isActive (boolean ignoreParent)
+  {
+    return !pruned && this.isActive && !ItemUsed &&
+          (ignoreParent || !_parentGroup.getUsed ());
+  }
+
   public boolean isActive ()
   {
-    return !pruned && !_parentGroup.getUsed () && this.isActive && !ItemUsed;
+    return isActive(false);
   }
 
 //  // / <summary>

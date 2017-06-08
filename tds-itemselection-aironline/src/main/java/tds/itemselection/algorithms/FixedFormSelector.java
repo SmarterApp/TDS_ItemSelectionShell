@@ -7,12 +7,12 @@
  * http://www.smarterapp.org/documents/American_Institutes_for_Research_Open_Source_Software_License.pdf
  ******************************************************************************/
 package tds.itemselection.algorithms;
+
+import AIR.Common.DB.SQLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import AIR.Common.DB.SQLConnection;
 import tds.itemselection.api.IItemSelection;
 import tds.itemselection.api.ItemSelectionException;
 import tds.itemselection.base.ItemCandidatesData;
@@ -47,4 +47,4 @@ public class FixedFormSelector  extends AbstractItemSelector  implements IItemSe
 	    }
 	    return result;
 	  }
- }
+}
