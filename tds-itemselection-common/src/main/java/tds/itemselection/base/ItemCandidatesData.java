@@ -8,12 +8,11 @@
  ******************************************************************************/
 package tds.itemselection.base;
 
-import java.util.UUID;
-
+import TDS.Shared.Exceptions.ReturnStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import TDS.Shared.Exceptions.ReturnStatusException;
+import java.util.UUID;
 
 /**
  * @author akulakov
@@ -33,6 +32,23 @@ public class ItemCandidatesData
   String                blockID;
   UUID                  session;
   Boolean               isSimulation = false;
+    Boolean isActive;
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public boolean isActive() {
+        return isActive == null ? false : isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 
   public String getAlgorithm() {
 	return algorithm;
@@ -150,9 +166,9 @@ public void setIsSimulation(Boolean isSimulation) {
    * @param segmentPosition
    * @param groupID
    * @param blockID
-   * @param itempool
    * @param session
    * @param isSimulation
+   * @param isActive
    */
   public ItemCandidatesData (UUID oppkey,
       String algorithm,
@@ -162,7 +178,8 @@ public void setIsSimulation(Boolean isSimulation) {
       String groupID,
       String blockID,
       UUID session,
-      Boolean isSimulation) {
+      Boolean isSimulation,
+      Boolean isActive) {
     super ();
     this.oppkey = oppkey;
     this.algorithm = algorithm;
@@ -173,6 +190,7 @@ public void setIsSimulation(Boolean isSimulation) {
     this.blockID = blockID;
     this.session = session;
     this.isSimulation = isSimulation;
+    this.isActive = isActive;
   }
 
   public ItemCandidatesData (UUID oppkey,
@@ -183,7 +201,8 @@ public void setIsSimulation(Boolean isSimulation) {
       String groupID,
       String blockID,
       UUID session,
-      Boolean isSimulation) {
+      Boolean isSimulation,
+      Boolean isActive) {
     super ();
     this.oppkey = oppkey;
     this.algorithm = algorithm;
@@ -194,6 +213,7 @@ public void setIsSimulation(Boolean isSimulation) {
     this.blockID = blockID;
     this.session = session;
     this.isSimulation = isSimulation;
+      this.isActive = isActive;
   }
 
   public ItemCandidatesData (UUID oppkey,

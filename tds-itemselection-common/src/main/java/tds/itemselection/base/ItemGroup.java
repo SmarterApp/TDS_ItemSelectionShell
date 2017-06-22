@@ -8,14 +8,13 @@
  ******************************************************************************/
 package tds.itemselection.base;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
+import AIR.Common.DB.results.DbResultRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import AIR.Common.DB.results.DbResultRecord;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author temp_rreddy
@@ -115,7 +114,7 @@ public class ItemGroup
    * @return the _numRequired
    */
   public int getNumRequired () {
-    return numberOfItemsRequired;
+    return numberOfItemsRequired == null ? 0 : numberOfItemsRequired;
   }
 
   /**
@@ -176,6 +175,8 @@ public class ItemGroup
    * @return the _maxItems
    */
   public int getMaxItems () {
+    if (maximumNumberOfItems == null) return 0;
+
     if (maximumNumberOfItems == -1)
       return this.getActiveCount ();
     else

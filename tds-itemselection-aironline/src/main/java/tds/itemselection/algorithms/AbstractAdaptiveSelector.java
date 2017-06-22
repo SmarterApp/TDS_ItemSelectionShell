@@ -8,6 +8,17 @@
  ******************************************************************************/
 package tds.itemselection.algorithms;
 
-public abstract class AbstractAdaptiveSelector extends AbstractItemSelector {
+import AIR.Common.DB.SQLConnection;
+import org.apache.commons.lang.NotImplementedException;
+import tds.itemselection.api.ItemSelectionException;
+import tds.itemselection.base.ItemCandidatesData;
+import tds.itemselection.base.ItemGroup;
 
+import java.util.List;
+
+public abstract class AbstractAdaptiveSelector extends AbstractItemSelector {
+    @Override
+    public ItemGroup getNextItemGroup(SQLConnection connection, ItemCandidatesData itemData, List<ItemGroup> itemGroups) throws ItemSelectionException {
+        throw new NotImplementedException("This method is for Multi-Stage Braille use only");
+    }
 }

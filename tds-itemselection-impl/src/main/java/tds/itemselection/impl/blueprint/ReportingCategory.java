@@ -28,6 +28,13 @@ import AIR.Common.DB.results.DbResultRecord;
 
 public class ReportingCategory extends BpElement implements IReportingCategory
 {
+	public static final Double DEFAULT_ABILITY_WEIGHT = 1.0;
+	public static final Double DEFAULT_ADAPTIVE_WEIGHT = 5.0;
+	public static final Double DEFAULT_PRECISION_TARGET = Double.MAX_VALUE;
+	public static final Double DEFAULT_PRECISION_TARGET_MET_WEIGHT = 1.0;
+	public static final Double DEFAULT_PRECISION_TARGET_NOT_MET_WEIGHT = 1.0;
+	public static final double DEFAULT_LAMBDA = 0.00632;
+
 	/**
 	 * Ability weight for this reporting category (qk)
 	 */
@@ -49,7 +56,7 @@ public class ReportingCategory extends BpElement implements IReportingCategory
 	//public Double targetInformation = 0.0;	// DEFAUL value;
 	
 	//  = targetInformation
-	public Double precisionTarget = Double.MAX_VALUE;
+	public Double precisionTarget = DEFAULT_PRECISION_TARGET;
 	
     // independent of examinee
     public double adaptiveCut ;  // the cut point for strands in adaptive ability match
@@ -60,8 +67,8 @@ public class ReportingCategory extends BpElement implements IReportingCategory
     // specific to examinee
     public double standardError = AAMath.SEfromInfo(this.startInfo);
     public double theta;
-    public double lambda = 0.00632;    // lambda is an intermediate value used for computing Phi*_kt
-    public double minLambda = 0.00632;
+    public double lambda = DEFAULT_LAMBDA;    // lambda is an intermediate value used for computing Phi*_kt
+    public double minLambda = DEFAULT_LAMBDA;
     public double info;
  
 	@Override
@@ -174,13 +181,13 @@ public class ReportingCategory extends BpElement implements IReportingCategory
             this.startInfo = this.info = info;
             this.standardError = AAMath.SEfromInfo(this.startInfo);  // initialize SE based on start info
             this.startAbility = startAbility;
-            this.abilityWeight = (abilityWeight != null && abilityWeight != 0.)? abilityWeight: 1.0;
+            this.abilityWeight = (abilityWeight != null && abilityWeight != 0.)? abilityWeight: DEFAULT_ABILITY_WEIGHT;
             this.adaptiveWeight = (scalar != null)?scalar: 5.0; // previous default
             this.precisionTarget = (precisionTarget  != null)? precisionTarget: Double.MAX_VALUE;
-            this.precisionTargetMetWeight = (precisionTargetMetWeight != null && precisionTargetMetWeight != 0.)? precisionTargetMetWeight: 1.0;
-            this.precisionTargetNotMetWeight = (precisionTargetNotMetWeight != null && precisionTargetNotMetWeight != 0.)? precisionTargetNotMetWeight: 1.0;
+            this.precisionTargetMetWeight = (precisionTargetMetWeight != null && precisionTargetMetWeight != 0.)? precisionTargetMetWeight: DEFAULT_PRECISION_TARGET_MET_WEIGHT;
+            this.precisionTargetNotMetWeight = (precisionTargetNotMetWeight != null && precisionTargetNotMetWeight != 0.)? precisionTargetNotMetWeight: DEFAULT_PRECISION_TARGET_NOT_MET_WEIGHT;
 
-            minLambda = lambda = 0.00632; // previous default
+            minLambda = lambda = DEFAULT_LAMBDA; // previous default
     }
     
     public ReportingCategory() {
@@ -203,24 +210,24 @@ public class ReportingCategory extends BpElement implements IReportingCategory
     	standardError 					= AAMath.SEfromInfo(this.startInfo);
     	    	
     	abilityWeight 					= float2Double(record, "abilityWeight");
-       	abilityWeight 					= (abilityWeight != null && abilityWeight != 0.)? abilityWeight: 1.0;
+       	abilityWeight 					= (abilityWeight != null && abilityWeight != 0.)? abilityWeight: DEFAULT_ABILITY_WEIGHT;
        	
        	adaptiveWeight					= float2Double(record, "Scalar");
-       	adaptiveWeight 					= (adaptiveWeight != null && adaptiveWeight != 0.)? adaptiveWeight: 5.0;
+       	adaptiveWeight 					= (adaptiveWeight != null && adaptiveWeight != 0.)? adaptiveWeight: DEFAULT_ADAPTIVE_WEIGHT;
     	
     	precisionTarget 				= float2Double(record, "precisionTarget");
     	precisionTarget					= (precisionTarget != null)?precisionTarget: Double.MAX_VALUE;
     	
     	precisionTargetMetWeight 		= float2Double(record, "precisionTargetMetWeight");
-    	precisionTargetMetWeight		= (precisionTargetMetWeight != null && precisionTargetMetWeight != 0.)? precisionTargetMetWeight: 1.0;
+    	precisionTargetMetWeight		= (precisionTargetMetWeight != null && precisionTargetMetWeight != 0.)? precisionTargetMetWeight: DEFAULT_PRECISION_TARGET_MET_WEIGHT;
     	
     	precisionTargetNotMetWeight 	= float2Double(record, "precisionTargetNotMetWeight");
-    	precisionTargetNotMetWeight		= (precisionTargetNotMetWeight != null && precisionTargetNotMetWeight != 0.)? precisionTargetNotMetWeight: 1.0;
+    	precisionTargetNotMetWeight		= (precisionTargetNotMetWeight != null && precisionTargetNotMetWeight != 0.)? precisionTargetNotMetWeight: DEFAULT_PRECISION_TARGET_NOT_MET_WEIGHT;
     	
     	isStrand 						= false;
     	isReportingCategory 			= true;
     	
-    	minLambda = lambda = 0.00632; // previous default
+    	minLambda = lambda = DEFAULT_LAMBDA; // previous default
     	
      }
     private Double float2Double(DbResultRecord record, String columnName)

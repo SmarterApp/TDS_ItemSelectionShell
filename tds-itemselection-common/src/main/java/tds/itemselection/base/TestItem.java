@@ -8,16 +8,17 @@
  ******************************************************************************/
 package tds.itemselection.base;
 
+import AIR.Common.DB.results.DbResultRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import tds.itemgroupselection.measurementmodels.IRTModel;
-import AIR.Common.DB.results.DbResultRecord;
 
 /**
  * @author akulakov
@@ -62,6 +63,7 @@ public class TestItem implements Comparable<Object>
   public double[]                       bVector;
   // not used yet
   public int                            _scorePoints;
+  private String itemType;
   /*
    * Members for Adaptive Algorithm2 only
    */  
@@ -92,7 +94,15 @@ public class TestItem implements Comparable<Object>
 		  return avg;
 	  } 
   }
-  
+
+  public String getItemType() {
+    return itemType;
+  }
+
+  public void setItemType(final String itemType) {
+    this.itemType = itemType;
+  }
+
   /**
    * @return the _groupID
    */
@@ -478,9 +488,7 @@ public class TestItem implements Comparable<Object>
 		isFieldTest = record.<Boolean> get("isFieldTest");
 		strandName = record.<String> get("strand");
 //		irtModel = record.<String> get("irtModel");
-		String strContentLevels = record.<String> get("clString");
-		if (strContentLevels != null)
-			contentLevels = Arrays.asList(strContentLevels.split("\\s*;\\s*"));
+    setContentLevels(record.<String> get("clString"));
 		
 /*
 		
@@ -505,6 +513,11 @@ public class TestItem implements Comparable<Object>
 		dimensions = CreateDimensions(this.irtModel, this.a, this.b, bVectrs, this.c, 0.0);
 */
 	}
+
+	public void setContentLevels(String contentLevels) {
+    if(contentLevels == null) return;
+    this.contentLevels = Arrays.asList(contentLevels.split("\\s*;\\s*"));
+  }
 
 	/**
 	 * Initialize dimension parameter entry collected from database

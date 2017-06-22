@@ -389,7 +389,7 @@ public class ISDBLoader extends AbstractDBLoader implements IItemSelectionDBLoad
       Double slope = new Double(record.<Float> get ("slope"));
       Double intercept = new Double(record.<Float> get ("intercept"));
       String adaptiveVersion = record.<String> get ("adaptiveVersion");
-      Integer abilityWeight = record.<Integer> get ("abilityweight");
+      Integer abilityWeight = (int)(float) record.<Float> get ("abilityweight");
       // Not needed for old algorithm
       OffGradeItemsProps offGradeItemsProps = new OffGradeItemsProps();
       String offGradePoolFilter = null;

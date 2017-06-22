@@ -12,6 +12,8 @@ import AIR.Common.DB.SQLConnection;
 import tds.itemselection.base.ItemCandidatesData;
 import tds.itemselection.base.ItemGroup;
 
+import java.util.List;
+
 /**
  * @author akulakov
  *
@@ -22,18 +24,31 @@ public interface IItemSelection
    * this is one interface function yet
    * 
    * @param connection
-   * @param oppkey
+   * @param itemData
    *
    * @return ItemGroup
    */
-  public ItemGroup getNextItemGroup (SQLConnection connection, ItemCandidatesData itemData)  throws ItemSelectionException;
+  ItemGroup getNextItemGroup (SQLConnection connection, ItemCandidatesData itemData)  throws ItemSelectionException;
+
+  /**
+   *
+   * @param connection
+   * @param itemData Metadata about the segment
+   * @param itemGroups These item groups will only be present if the test is a Multi-Stage Braille (MSB) test. In that
+   *                   case, each group will represent the entire contents of a fixed-form segment.
+   * @return ItemGroup if this is a MSB test, this item group will be the next fixed-form segment to execute
+   * @throws ItemSelectionException
+   */
+  ItemGroup getNextItemGroup (SQLConnection connection, ItemCandidatesData itemData, List<ItemGroup> itemGroups)  throws ItemSelectionException;
+
   /**
    * 
    * @return
    */
-  public String getItemSelectorError();
+  String getItemSelectorError();
+
   /**
    * 
    */
-  public Boolean isSegmentCompleted();
+  Boolean isSegmentCompleted();
 }

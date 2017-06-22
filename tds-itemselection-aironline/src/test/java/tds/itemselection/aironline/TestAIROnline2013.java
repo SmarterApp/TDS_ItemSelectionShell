@@ -94,7 +94,7 @@ public class TestAIROnline2013 {
 
 	    	_Ref<String> errorRef = new _Ref<>();
 	    	
-			ItemGroup itemGr = _aironline.getNextItemGroup(_connection, oppkey, errorRef);
+			ItemGroup itemGr = _aironline.getNextItemGroup(_connection, oppkey, false, errorRef);
 			
 	        if(errorRef.get() != null  && !errorRef.get().isEmpty())
 	        {
@@ -183,7 +183,7 @@ public class TestAIROnline2013 {
 
 	    	_Ref<String> errorRef = new _Ref<>();
 	    	
-			ItemGroup itemGr = _aironline.getNextItemGroup(_connection, oppkey, errorRef);
+			ItemGroup itemGr = _aironline.getNextItemGroup(_connection, oppkey, false, errorRef);
 			
 	        if(errorRef.get() != null  && !errorRef.get().isEmpty())
 	        {
@@ -241,7 +241,7 @@ public class TestAIROnline2013 {
 
 	    	_Ref<String> errorRef = new _Ref<>();
 	    	
-			ItemGroup itemGr = _aironline.getNextItemGroup(_connection, oppkey, errorRef);
+			ItemGroup itemGr = _aironline.getNextItemGroup(_connection, oppkey, false, errorRef);
 			
 	        if(errorRef.get() != null  && !errorRef.get().isEmpty())
 	        {

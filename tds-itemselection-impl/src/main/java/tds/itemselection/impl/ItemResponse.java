@@ -212,7 +212,7 @@ public ItemResponse()
     
   }
   
-  private void loadDimensionScores(String scoreDimensions) {
+  public void loadDimensionScores(String scoreDimensions) {
 	  if(scoreDimensions != null) // if (scoreDimensions == null) dimensionScores = new HashMap<String, Integer>();
 	  {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
