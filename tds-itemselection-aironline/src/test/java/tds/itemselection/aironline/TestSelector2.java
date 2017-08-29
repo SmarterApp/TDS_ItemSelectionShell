@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opentestsystem.shared.test.LifecycleManagingTestRunner;
@@ -41,6 +42,7 @@ import TDS.Shared.Exceptions.ReturnStatusException;
 
 @RunWith (LifecycleManagingTestRunner.class)
 @ContextConfiguration (locations = "/test-context.xml")
+@Ignore
 public class TestSelector2 {
 	@Autowired
 	@Qualifier("aa2Selector")

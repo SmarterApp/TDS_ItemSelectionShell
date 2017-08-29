@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -48,6 +49,7 @@ import AIR.Common.Sql.AbstractDateUtilDll;
  */
 @RunWith (SpringJUnit4ClassRunner.class)
 @ContextConfiguration (locations = "/test-context.xml")
+@Ignore("Tests do not have the proper configuraiton files included")
 public class TestFixedFormSelector
 {
 
