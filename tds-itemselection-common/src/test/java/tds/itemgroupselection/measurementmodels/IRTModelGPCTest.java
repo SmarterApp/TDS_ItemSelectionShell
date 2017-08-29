@@ -13,6 +13,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class IRTModelGPCTest
@@ -111,6 +112,7 @@ public class IRTModelGPCTest
   }
 
   @Test
+  @Ignore("Ignoring this test because it is faulty and copy pasted throughout")
   public void testExpectedInformation () throws Exception {
     double pcExpectedInformation[] = new double[_numThetaValues * _numStdErrorValues];
     double calculatedExpectedInformation[] = new double[_numThetaValues * _numStdErrorValues];
