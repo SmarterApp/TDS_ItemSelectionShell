@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>org.opentestsystem.shared</groupId>
 		<artifactId>shared-master</artifactId>
-		<version>4.0.4</version>
+		<version>4.0.5</version>
 	</parent>
 
 	<modules>
@@ -31,7 +31,7 @@
 	</licenses>
 
 	<properties>
-		<tds-dll.version>4.0.1</tds-dll.version>
+		<tds-dll.version>4.0.2</tds-dll.version>
 	</properties>
 
 	<dependencyManagement>
