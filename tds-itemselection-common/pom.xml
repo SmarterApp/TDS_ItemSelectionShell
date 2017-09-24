@@ -1,64 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  	<modelVersion>4.0.0</modelVersion>
-  
-  <parent>
-    <groupId>org.opentestsystem.delivery</groupId>
-    <artifactId>tds-itemselection-master</artifactId>
-	  <version>4.0.3-SNAPSHOT</version>
-  </parent>
-  
-  <artifactId>tds-itemselection-common</artifactId>
-  <name>TDS Item Selection COMMON</name>
-  <packaging>jar</packaging>
-  <description>Interface</description>
-  
-  	<licenses>
-		<license>
-			<name>AIR-License-1.0</name>
-			<url>http://www.smarterapp.org/documents/American_Institutes_for_Research_Open_Source_Software_License.pdf</url>
-			<distribution>repo</distribution>
-			<comments>Educational Online Test Delivery System Copyright (c) 2013 American Institutes for Research</comments>
-		</license>
-	</licenses>
-	
-	<dependencies>
-		<dependency>
-			<groupId>org.opentestsystem.shared</groupId>
-			<artifactId>shared-db</artifactId>
-		</dependency>
-	    <dependency>
-	      <groupId>junit</groupId>
-	      <artifactId>junit</artifactId>
-	      <scope>test</scope>
-	    </dependency>
-		<dependency>
-			<groupId> log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<scope>test</scope>
-		</dependency>		
-	</dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<profiles>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>attach-sources</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-	
+    <parent>
+        <groupId>org.opentestsystem.delivery</groupId>
+        <artifactId>tds-itemselection-master</artifactId>
+        <version>4.0.3-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>tds-itemselection-common</artifactId>
+    <name>TDS Item Selection COMMON</name>
+    <packaging>jar</packaging>
+    <description>Interface</description>
+
+    <licenses>
+        <license>
+            <name>AIR-License-1.0</name>
+            <url>http://www.smarterapp.org/documents/American_Institutes_for_Research_Open_Source_Software_License.pdf
+            </url>
+            <distribution>repo</distribution>
+            <comments>Educational Online Test Delivery System Copyright (c) 2013 American Institutes for Research
+            </comments>
+        </license>
+    </licenses>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.opentestsystem.shared</groupId>
+            <artifactId>shared-db</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
