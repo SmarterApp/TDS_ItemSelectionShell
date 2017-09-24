@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.opentestsystem.delivery</groupId>
         <artifactId>tds-itemselection-master</artifactId>
-		<version>4.0.2-SNAPSHOT</version>
+		<version>4.0.3-SNAPSHOT</version>
     </parent>
 
   <dependencies>
@@ -48,8 +48,7 @@
 			<scope>test</scope>
 	</dependency> 				
   </dependencies>
-  <description>Output points of the project ItemSelectionShell.
-Invoke from SelectionService</description>
+  <description>Output points of the project ItemSelectionShell. Invoke from SelectionService</description>
 
 	<profiles>
 		<profile>
