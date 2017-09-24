@@ -11,13 +11,13 @@
 	<parent>
 		<groupId>org.opentestsystem.shared</groupId>
 		<artifactId>shared-master</artifactId>
-		<version>4.0.5</version>
+		<version>4.0.6.RELEASE</version>
 	</parent>
 
 	<modules>
 		<module>tds-itemselection-common</module>
 		<module>tds-itemselection-impl</module>
-   		<module>tds-itemselection-aironline</module>
+   	<module>tds-itemselection-aironline</module>
 		<module>tds-item-selection-components</module>
 	</modules>
 
@@ -31,7 +31,9 @@
 	</licenses>
 
 	<properties>
-		<tds-dll.version>4.0.2</tds-dll.version>
+		<tds-dll.version>4.0.3.RELEASE</tds-dll.version>
+    <assertj.version>2.5.0</assertj.version>
+    <mockito.version>1.10.19</mockito.version>		
 	</properties>
 
 	<dependencyManagement>
@@ -46,6 +48,16 @@
 				<artifactId>tds-dll-mysql</artifactId>
 				<version>${tds-dll.version}</version>
 			</dependency>
+	    <dependency>
+	      <groupId>org.assertj</groupId>
+	      <artifactId>assertj-core</artifactId>
+	      <version>${assertj.version}</version>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.mockito</groupId>
+	      <artifactId>mockito-all</artifactId>
+	      <version>${mockito.version}</version>
+	    </dependency>			
 		</dependencies>
 	</dependencyManagement>
 

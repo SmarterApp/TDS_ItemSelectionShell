@@ -48,8 +48,7 @@
 			<scope>test</scope>
 	</dependency> 				
   </dependencies>
-  <description>Output points of the project ItemSelectionShell.
-Invoke from SelectionService</description>
+  <description>Output points of the project ItemSelectionShell. Invoke from SelectionService</description>
 
 	<profiles>
 		<profile>
