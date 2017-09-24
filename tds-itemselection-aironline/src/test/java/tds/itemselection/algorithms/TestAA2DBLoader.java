@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opentestsystem.shared.test.LifecycleManagingTestRunner;
@@ -52,6 +53,7 @@ import tds.itemselection.loader.TestSegment;
 
 @RunWith (LifecycleManagingTestRunner.class)
 @ContextConfiguration (locations = "/test-context.xml")
+@Ignore("Tests do not have the proper configuraiton files included")
 public class TestAA2DBLoader {
 
 	@Autowired
