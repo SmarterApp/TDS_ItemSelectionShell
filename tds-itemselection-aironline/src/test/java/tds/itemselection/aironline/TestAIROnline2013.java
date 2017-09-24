@@ -16,6 +16,7 @@ import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opentestsystem.shared.test.LifecycleManagingTestRunner;
@@ -34,6 +35,7 @@ import tds.itemselection.base.TestItem;
 
 @RunWith (LifecycleManagingTestRunner.class)
 @ContextConfiguration (locations = "/test-context.xml")
+@Ignore
 public class TestAIROnline2013 {
 
 	@Autowired
